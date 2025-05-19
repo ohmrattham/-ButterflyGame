@@ -337,20 +337,27 @@
     }
 
     function openScanner() {
-      const voice = document.getElementById("voice");
-      if (!voice.paused) {
-        voice.pause();
-        voice.currentTime = 0;
-      }
+  const voice = document.getElementById("voice");
+  if (!voice.paused) {
+    voice.pause();
+    voice.currentTime = 0;
+  }
 
-      document.getElementById("scanner").style.display = "flex";
-      html5QrCode = new Html5Qrcode("reader");
-      html5QrCode.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: 250 },
-        qrSuccess
-      ).catch(e => alert("ไม่สามารถเปิดกล้องได้: " + e));
-    }
+  const nameVoice = document.getElementById("nameVoice");
+  if (!nameVoice.paused) {
+    nameVoice.pause();
+    nameVoice.currentTime = 0;
+  }
+
+  document.getElementById("scanner").style.display = "flex";
+  html5QrCode = new Html5Qrcode("reader");
+  html5QrCode.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 250 },
+    qrSuccess
+  ).catch(e => alert("ไม่สามารถเปิดกล้องได้: " + e));
+}
+
 
     function closeScanner(event) {
       if (event.target.id === "scanner") {
