@@ -305,19 +305,26 @@
       nameVoice.play().catch(() => { });
     }
 
-    function submitName() {
-      const input = document.getElementById("nickname");
-      const name = input.value.trim();
-      if (!name) {
-        alert("กรุณากรอกชื่อเล่น");
-        return;
-      }
-      localStorage.setItem("playerName", name);
-      showMapPage(name);
-      const nameVoice = document.getElementById("nameVoice");
-      nameVoice.currentTime = 0;
-      nameVoice.play().catch(() => {});
-    }
+function submitName() {
+  const input = document.getElementById("nickname");
+  const name = input.value.trim();
+  if (!name) {
+    alert("กรุณากรอกชื่อเล่น");
+    return;
+  }
+  localStorage.setItem("playerName", name);
+  showMapPage(name);
+
+  const nameVoice = document.getElementById("nameVoice");
+  try {
+    nameVoice.pause();             // หยุดเสียงหากกำลังเล่นอยู่
+    nameVoice.currentTime = 0;     // รีเซ็ตเวลา
+    nameVoice.play();              // เล่นใหม่
+  } catch (e) {
+    console.warn("ไม่สามารถเล่นเสียง nameVoice ได้:", e);
+  }
+}
+
 
     function showMapPage(name) {
       hideAllPages();
@@ -340,17 +347,15 @@
     }
 
     function openScanner() {
-  const voice = document.getElementById("voice");
-  if (!voice.paused) {
-    voice.pause();
-    voice.currentTime = 0;
-  }
+  try {
+    document.getElementById("voice").pause();
+    document.getElementById("voice").currentTime = 0;
+  } catch (e) {}
 
-  const nameVoice = document.getElementById("nameVoice");
-  if (!nameVoice.paused) {
-    nameVoice.pause();
-    nameVoice.currentTime = 0;
-  }
+  try {
+    document.getElementById("nameVoice").pause();
+    document.getElementById("nameVoice").currentTime = 0;
+  } catch (e) {}
 
   document.getElementById("scanner").style.display = "flex";
   html5QrCode = new Html5Qrcode("reader");
@@ -360,6 +365,7 @@
     qrSuccess
   ).catch(e => alert("ไม่สามารถเปิดกล้องได้: " + e));
 }
+
 
 
     function closeScanner(event) {
