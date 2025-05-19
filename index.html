@@ -365,16 +365,19 @@ function stopScanner() {
 // ฟังก์ชันรับค่าจาก QR ที่สแกนได้
 function qrSuccess(decodedText, decodedResult) {
   stopScanner();
-  alert("QR สแกนได้: " + decodedText);
+  console.log("QR สแกนได้:", decodedText);
 
-  // สมมติ decodedText เป็น "mission1" หรือ "mission2" หรือ "mission3"
   if (decodedText.startsWith("mission")) {
     const missionId = decodedText.replace("mission", "");
     markMissionComplete(missionId);
+
+    // ✅ ไปยังหน้า HTML ที่ระบุ
+    window.location.href = `${missionId}.html`;
   } else {
     alert("QR Code นี้ไม่ถูกต้อง");
   }
 }
+
 
 // บันทึกสถานะทำภารกิจใน localStorage แล้วอัพเดต UI
 function markMissionComplete(id) {
