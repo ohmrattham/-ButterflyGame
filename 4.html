@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
   <meta charset="UTF-8" />
   <title>ด่านที่ 4</title>
@@ -26,17 +25,6 @@
       padding: 20px;
     }
 
-    #intro h1 {
-      color: #333;
-      font-size: 2em;
-    }
-
-    #intro p {
-      color: #555;
-      font-size: 1.2em;
-      margin-top: 10px;
-    }
-
     #startBtn {
       margin-top: 20px;
       padding: 10px 20px;
@@ -48,9 +36,7 @@
       cursor: pointer;
     }
 
-    #game,
-    #section2,
-    #section3 {
+    #game, #section2, #section3 {
       position: relative;
       width: 100%;
       max-width: 600px;
@@ -116,9 +102,7 @@
       color: white;
     }
 
-    #checkBtn,
-    #checkBtn2,
-    #checkBtn3 {
+    #checkBtn, #checkBtn2, #checkBtn3 {
       background: green;
     }
 
@@ -142,46 +126,30 @@
     }
 
     @keyframes glowPulse {
-      0% {
-        filter: drop-shadow(0 0 5px #ffff00) drop-shadow(0 0 10px #ffff00);
-      }
-
-      50% {
-        filter: drop-shadow(0 0 20px #ffff00) drop-shadow(0 0 30px #ffff00);
-      }
-
-      100% {
-        filter: drop-shadow(0 0 5px #ffff00) drop-shadow(0 0 10px #ffff00);
-      }
+      0% { filter: drop-shadow(0 0 5px #ffff00) drop-shadow(0 0 10px #ffff00); }
+      50% { filter: drop-shadow(0 0 20px #ffff00) drop-shadow(0 0 30px #ffff00); }
+      100% { filter: drop-shadow(0 0 5px #ffff00) drop-shadow(0 0 10px #ffff00); }
     }
 
-    #bf1,
-    #bf2,
-    #bf3,
-    #bf4,
-    #bf5,
-    #bf6,
-    #bf7,
-    #bf8,
-    #bf9,
-    #bf10 {
+    #bf1, #bf2, #bf3, #bf4, #bf5, #bf6, #bf7, #bf8, #bf9, #bf10 {
       position: absolute;
     }
   </style>
 </head>
-
 <body>
-  <!-- หน้า Intro -->
+
   <div id="intro">
     <button id="startBtn">เริ่มทำภารกิจ</button>
   </div>
 
   <audio id="backgroundSound" src="bgmusic.mp3" preload="auto" loop></audio>
+  <audio id="clickSound" src="click.mp3" preload="auto"></audio>
+  <audio id="soundSuccess" src="success.mp3" preload="auto"></audio>
+  <audio id="soundFail" src="fail.mp3" preload="auto"></audio>
 
-
-  <!-- ป็อปอัพลอยอยู่ด้านบนสุด -->
   <div id="popup"></div>
 
+  <!-- ภารกิจที่ 1: Drag & Drop -->
   <div id="game" style="background-image: url('bg41.png');">
     <div id="overlayContainer"></div>
     <div class="buttonContainer">
@@ -190,6 +158,7 @@
     </div>
   </div>
 
+  <!-- ภารกิจที่ 2: เลือกผีเสื้อที่ต้องอนุรักษ์ -->
   <div id="section2" style="background-image: url('bg42.png');">
     <div id="butterflyOptions">
       <img id="bf1" src="bf1.png" class="select-image" data-name="protected" style="top:30%; left:13%;" />
@@ -204,6 +173,7 @@
     </div>
   </div>
 
+  <!-- ภารกิจที่ 3: เลือกผีเสื้อที่ต้องอนุรักษ์ -->
   <div id="section3" style="background-image: url('bg43.png');">
     <div id="butterflyOptions2">
       <img id="bf7" src="bf7.png" class="select-image" data-name="normal" style="top:30%; left:13%;" />
@@ -216,25 +186,13 @@
     </div>
   </div>
 
-  <audio id="clickSound" src="click.mp3" preload="auto"></audio>
-  <audio id="soundSuccess" src="success.mp3" preload="auto"></audio>
-  <audio id="soundFail" src="fail.mp3" preload="auto"></audio>
-
   <script>
-    // Intro to game
-    // เมื่อเริ่มทำภารกิจ
     document.getElementById("startBtn").addEventListener("click", () => {
-      // ซ่อนหน้า Intro
       document.getElementById("intro").style.display = "none";
-      // แสดงหน้าเกม
       document.getElementById("game").style.display = "block";
-
-      // เริ่มเล่นเสียงพื้นหลัง
-      const backgroundSound = document.getElementById("backgroundSound");
-      backgroundSound.currentTime = 0; // รีเซ็ตเวลาเสียง
-      backgroundSound.play(); // เล่นเสียง
+      document.getElementById("backgroundSound").play();
+      createElements();
     });
-
 
     const dropZones = [
       { top: 32, left: 40, answer: "butterfly" },
@@ -254,7 +212,7 @@
 
     function createElements() {
       container.innerHTML = "";
-      dropZones.forEach((zone) => {
+      dropZones.forEach(zone => {
         const div = document.createElement("div");
         div.className = "drop-zone";
         div.style.top = zone.top + "%";
@@ -263,7 +221,7 @@
         container.appendChild(div);
       });
 
-      images.forEach((img) => {
+      images.forEach(img => {
         const image = document.createElement("img");
         image.src = img.src;
         image.className = "drag-image";
@@ -280,9 +238,8 @@
     function setupDragEvents() {
       let draggedItem = null;
       document.querySelectorAll(".drag-image").forEach(img => {
-        img.addEventListener("dragstart", e => {
+        img.addEventListener("dragstart", () => {
           draggedItem = img;
-          img.style.zIndex = "10";
         });
       });
 
@@ -291,13 +248,9 @@
         zone.addEventListener("drop", e => {
           e.preventDefault();
           if (draggedItem) {
-            zone.innerHTML = '';
+            zone.innerHTML = "";
             zone.appendChild(draggedItem);
-            draggedItem.style.top = "0";
-            draggedItem.style.left = "0";
-            draggedItem.style.position = "relative";
-            draggedItem.style.width = "100%";
-            draggedItem.style.zIndex = "1";
+            draggedItem.style = "position: relative; width: 100%; top: 0; left: 0; z-index:1;";
           }
         });
       });
@@ -305,20 +258,11 @@
 
     function showPopup(text, type = "success") {
       const popup = document.getElementById("popup");
-      const soundSuccess = document.getElementById("soundSuccess");
-      const soundFail = document.getElementById("soundFail");
-
+      const sound = document.getElementById(type === "success" ? "soundSuccess" : "soundFail");
       popup.innerText = text;
       popup.style.display = "block";
-
-      if (type === "success") {
-        soundSuccess.currentTime = 0;
-        soundSuccess.play();
-      } else {
-        soundFail.currentTime = 0;
-        soundFail.play();
-      }
-
+      sound.currentTime = 0;
+      sound.play();
       setTimeout(() => popup.style.display = "none", 3000);
     }
 
@@ -328,29 +272,24 @@
         const child = zone.querySelector("img");
         if (child && child.dataset.name === zone.dataset.answer) correct++;
       });
-
       if (correct === 4) {
-        showPopup("ผ่าน! \n ไปยังภารกิจที่ 2", "success");
+        showPopup("ผ่าน! \n ไปยังภารกิจที่ 2");
         setTimeout(() => {
           document.getElementById("game").style.display = "none";
           document.getElementById("section2").style.display = "block";
-          setupSelectEvents(".select-image");
+          setupSelectEvents("#section2 .select-image");
         }, 3000);
       } else {
-        showPopup(`ยังมีคำตอบผิด\nลองใหม่อีกครั้ง!`, "fail");
+        showPopup("ยังมีคำตอบผิด\nลองใหม่อีกครั้ง!", "fail");
       }
     });
 
     document.getElementById("resetBtn").addEventListener("click", () => {
       createElements();
-      document.getElementById("section2").style.display = "none";
-      document.getElementById("section3").style.display = "none";
-      document.getElementById("game").style.display = "block";
     });
 
     function setupSelectEvents(selector) {
       const clickSound = document.getElementById("clickSound");
-
       document.querySelectorAll(selector).forEach(img => {
         img.addEventListener("click", () => {
           img.classList.toggle("selected");
@@ -362,61 +301,45 @@
 
     document.getElementById("checkBtn2").addEventListener("click", () => {
       const selected = document.querySelectorAll("#section2 .select-image.selected");
-      let correct = 0;
-      let hasWrong = false;
-
+      let correct = 0, wrong = false;
       selected.forEach(img => {
-        if (img.dataset.name === "protected") {
-          correct++;
-        } else {
-          hasWrong = true;
-        }
+        if (img.dataset.name === "protected") correct++;
+        else wrong = true;
       });
 
       const totalCorrect = document.querySelectorAll('#section2 .select-image[data-name="protected"]').length;
-
-      if (correct === totalCorrect && !hasWrong) {
-        showPopup(`ผ่าน! \n ไปยังภารกิจที่ 3`, "success");
+      if (correct === totalCorrect && !wrong) {
+        showPopup("ผ่าน! \n ไปยังภารกิจที่ 3");
         setTimeout(() => {
           document.getElementById("section2").style.display = "none";
           document.getElementById("section3").style.display = "block";
           setupSelectEvents("#section3 .select-image");
         }, 3000);
       } else {
-        showPopup(`ยังมีคำตอบผิด \nลองใหม่อีกครั้ง!`, "fail");
+        showPopup("ยังมีคำตอบผิด\nลองใหม่!", "fail");
       }
     });
 
     document.getElementById("checkBtn3").addEventListener("click", () => {
       const selected = document.querySelectorAll("#section3 .select-image.selected");
-      let correct = 0;
-      let hasWrong = false;
-
+      let correct = 0, wrong = false;
       selected.forEach(img => {
-        if (img.dataset.name === "protected") {
-          correct++;
-        } else {
-          hasWrong = true;
-        }
+        if (img.dataset.name === "protected") correct++;
+        else wrong = true;
       });
 
       const totalCorrect = document.querySelectorAll('#section3 .select-image[data-name="protected"]').length;
-
-      if (correct === totalCorrect && !hasWrong) {
-        showPopup(`คุณผ่านครบ 3 ภารกิจแล้ว \n ระบบยังพาคุณกลับไปยังหน้าแผนที่ `, "success");
-        localStorage.setItem("mission4Completed", "true");
+      if (correct === totalCorrect && !wrong) {
+        showPopup("ผ่านภารกิจที่ 4 สำเร็จ!");
         setTimeout(() => {
-          window.location.href = "index.html#map";
+          alert("ภารกิจเสร็จสิ้น!");
+          window.location.href = "index.html";
+
         }, 3000);
       } else {
-        showPopup(`คำตอบผิดนะคร้าบบ \nลองใหม่อีกครั้ง!`, "fail");
+        showPopup("ยังมีคำตอบผิด\nลองใหม่!", "fail");
       }
-    });
-
-    window.addEventListener("DOMContentLoaded", () => {
-      createElements();
     });
   </script>
 </body>
-
 </html>
