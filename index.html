@@ -355,7 +355,7 @@ function submitName() {
 
     function renderCheckmarks() {
       const missionStatus = JSON.parse(localStorage.getItem("missionStatus") || "{}");
-      for (let i = 1; i <= 3; i++) {
+      for (let i = 1; i <= 6; i++) {
         const el = document.getElementById("check" + i);
         if (missionStatus["mission" + i]) {
           el.style.display = "block";
