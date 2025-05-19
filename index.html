@@ -181,18 +181,21 @@
     /* ✅ Checkmark จะอิงกับ .map-container */
     .checkmark {
       position: absolute;
-      font-size: 6em;
-      color: #00ff00;
-      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.9);
+      background-image: url('cm.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      width: 60px;   /* ขนาดของไอคอน */
+      height: 60px;
       display: none;
       z-index: 10;
 }
 
 
+
     /* ปรับตำแหน่งแต่ละด่านจากภาพ map.png */
     #check1 {
-      top: 53%;
-      left: 75%;
+      top: 57%;
+      left: 78%;
     }
 
     /* ด่าน 1: Tiny Insect Village */
@@ -241,14 +244,14 @@
   <!-- หน้าใส่ชื่อ -->
   <div id="namePage" class="page">
     <input id="nickname" class="input-name" type="text" placeholder="กรุณากรอกชื่อเล่น" />
-    <button class="submit-button" onclick="submitName()">ตกลง</button>
+    <button class="submit-button" style="display:none" onclick="submitName()">ตกลง</button>
     <audio id="nameVoice" src="ชื่อ.mp3" autoplay></audio>
   </div>
 
   <!-- หน้าแผนที่ -->
 <div id="mapPage" class="page" style="background-image: url('map.png');">
   <div id="nicknameDisplay"></div>
-  <div class="checkmark" id="check1">✔</div>
+  <div class="checkmark" id="check1"></div>
   <div class="checkmark" id="check2">✔</div>
   <div class="checkmark" id="check3">✔</div>
 
