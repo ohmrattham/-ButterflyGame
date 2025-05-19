@@ -245,7 +245,7 @@
   <div id="namePage" class="page">
     <input id="nickname" class="input-name" type="text" placeholder="กรุณากรอกชื่อเล่น" />
     <button class="submit-button" style="display:none" onclick="submitName()">ตกลง</button>
-    <audio id="nameVoice" src="ชื่อ.mp3" autoplay></audio>
+    <audio id="nameVoice" src="ชื่อ.mp3" ></audio>
   </div>
 
   <!-- หน้าแผนที่ -->
@@ -314,6 +314,9 @@
       }
       localStorage.setItem("playerName", name);
       showMapPage(name);
+      const nameVoice = document.getElementById("nameVoice");
+      nameVoice.currentTime = 0;
+      nameVoice.play().catch(() => {});
     }
 
     function showMapPage(name) {
