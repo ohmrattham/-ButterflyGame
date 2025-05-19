@@ -363,21 +363,54 @@ function stopScanner() {
 }
 
 // ฟังก์ชันรับค่าจาก QR ที่สแกนได้
-function qrSuccess(decodedText, decodedResult) {
-  stopScanner();
+function processQr(code) {
+      switch (code) {
+        case "mission1":
+          if (localStorage.getItem("mission1Complete") === "true") {
+            showAlreadyCompletedPopup();
+          } else {
+            localStorage.setItem("playVoice", "true"); // บอกให้ด่าน 2 เล่นเสียง
+            window.location.href = "1.html";
+          }
+          break;
+        case "mission2":
+          if (localStorage.getItem("mission2Complete") === "true") {
+            showAlreadyCompletedPopup();
+          } else {
+            window.location.href = "2.html"; // เพิ่มด่าน 2
+          }
+          break;
+        case "mission3":
+          if (localStorage.getItem("mission3Complete") === "true") {
+            showAlreadyCompletedPopup();
+          } else {
+            window.location.href = "3.html"; // เพิ่มด่าน 3
+          }
+          break;
+        case "mission4":
+          if (localStorage.getItem("mission4Complete") === "true") {
+            showAlreadyCompletedPopup();
+          } else {
+            window.location.href = "4.html";
+          }
+          break;
+        case "mission5":
+          if (localStorage.getItem("mission5Complete") === "true") {
+            showAlreadyCompletedPopup();
+          } else {
+            window.location.href = "5.html";
+          }
+        case "mission6":
+          if (localStorage.getItem("mission6Complete") === "true") {
+            showAlreadyCompletedPopup();
+          } else {
+            window.location.href = "6.html";
+          }
+        default:
+          alert("QR นี้ไม่รองรับ");
+      }
+    }
 
-  // ตรวจว่า QR ที่สแกนขึ้นต้นด้วย mission และตามด้วยตัวเลข 1-6
-  const match = decodedText.match(/^mission([1-6])$/);
-  if (match) {
-    const missionId = match[1]; // จะได้เป็น "1", "2", ..., "6"
-    markMissionComplete(missionId);
-
-    // ไปยังหน้า HTML เช่น 1.html, 2.html, ..., 6.html
-    window.location.href = `${missionId}.html`;
-  } else {
-    alert("QR Code นี้ไม่ถูกต้อง");
-  }
-}
 
 
 
