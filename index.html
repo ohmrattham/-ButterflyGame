@@ -19,14 +19,12 @@
       height: 100vh;
       overflow: hidden;
       background-image: url('bgb.png');
-  
       text-align: center;
       position: relative;
     }
 
     .page {
       position: relative;
-    
       width: 100%;
       max-width: 600px;
       margin: auto;
@@ -41,17 +39,25 @@
     #homePage {
       background-image: url('mean.png');
       display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     #gamePage {
       background-image: url('กติกา.png');
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     #namePage {
       background-image: url('กรอกชื่อ.png');
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-   #mapPage {
+    #mapPage {
       position: relative;
       width: 100%;
       max-width: 600px;
@@ -63,8 +69,6 @@
       padding-bottom: 20px;
       display: none;
     }
-
-
 
     button {
       font-weight: bold;
@@ -128,7 +132,6 @@
       padding: 0.7em 1.5em;
       width: 20%;
       height: 10%;
-
     }
 
     #cameraBtn img {
@@ -163,14 +166,11 @@
     .map-container {
       position: relative;
       width: 90vw;
-      /* หรือขนาดที่ต้องการให้เหมาะกับจอ */
       max-width: 700px;
       aspect-ratio: 3 / 4;
-      /* ปรับตามอัตราส่วนของ map.png จริง */
       margin: 0 auto;
     }
 
-    /* ✅ รูปภาพแผนที่ */
     .map-image {
       width: 100%;
       height: 100%;
@@ -178,49 +178,42 @@
       display: block;
     }
 
-    /* ✅ Checkmark จะอิงกับ .map-container */
     .checkmark {
       position: absolute;
       background-image: url('cm.png');
       background-size: contain;
       background-repeat: no-repeat;
-      width: 60px;   /* ขนาดของไอคอน */
+      width: 60px;
       height: 60px;
       display: none;
       z-index: 10;
-}
+    }
 
-
-
-    /* ปรับตำแหน่งแต่ละด่านจากภาพ map.png */
     #check1 {
       top: 57%;
       left: 78%;
     }
 
-    /* ด่าน 1: Tiny Insect Village */
     #check2 {
       top: 34%;
       left: 82%;
     }
 
-    /* ด่าน 2: Economic Insects */
     #check3 {
       top: 17%;
       left: 50%;
     }
+
     #check4 {
       top: 57%;
       left: 75%;
     }
 
-    /* ด่าน 1: Tiny Insect Village */
     #check5 {
       top: 34%;
       left: 89%;
     }
 
-    /* ด่าน 2: Economic Insects */
     #check6 {
       top: 17%;
       left: 56%;
@@ -242,30 +235,31 @@
     .reset-button:hover {
       background-color: #c0392b;
     }
-    .popup {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-.popup-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-}
 
+    .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .popup-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
   </style>
 </head>
 
 <body>
-   <!-- หน้าเริ่มต้น -->
+  <!-- หน้าเริ่มต้น -->
   <div id="homePage" class="page">
     <button class="start-button" onclick="startGame()">START</button>
   </div>
@@ -280,33 +274,33 @@
   <div id="namePage" class="page">
     <input id="nickname" class="input-name" type="text" placeholder="กรุณากรอกชื่อเล่น" />
     <button class="submit-button" style="display:none" onclick="submitName()">ตกลง</button>
-    <audio id="nameVoice" src="ชื่อ.mp3" ></audio>
+    <audio id="nameVoice" src="ชื่อ.mp3"></audio>
   </div>
 
   <!-- หน้าแผนที่ -->
-<div id="mapPage" class="page" style="background-image: url('map.png');">
-  <div id="nicknameDisplay"></div>
-  <div class="checkmark" id="check1"></div>
-  <div class="checkmark" id="check2"></div>
-  <div class="checkmark" id="check3"></div>
-  <div class="checkmark" id="check4"></div>
-  <div class="checkmark" id="check5"></div>
-  <div class="checkmark" id="check6"></div>
-  <div id="missionCompletePopup" class="popup">
-    <div class="popup-content">
-      <h2>🎉 ยินดีด้วย!</h2>
-      <p id="popupMessage"></p>
-      <button onclick="closePopup()">ตกลง</button>
-    </div>
-  </div>
+  <div id="mapPage" class="page" style="background-image: url('map.png');">
+    <div id="nicknameDisplay"></div>
+    <div class="checkmark" id="check1"></div>
+    <div class="checkmark" id="check2"></div>
+    <div class="checkmark" id="check3"></div>
+    <div class="checkmark" id="check4"></div>
+    <div class="checkmark" id="check5"></div>
+    <div class="checkmark" id="check6"></div>
 
-  <!-- ✅ ย้ายปุ่มเข้ามาในนี้ -->
-  <button id="cameraBtn" onclick="openScanner()">
-    <img src="camera-icon.png" alt="เปิดกล้อง" />
-  </button>
-  
-  <button class="reset-button" onclick="resetGame()">รีเซ็ตเกม</button>
-</div>
+    <div id="missionCompletePopup" class="popup">
+      <div class="popup-content">
+        <h2>🎉 ยินดีด้วย!</h2>
+        <p id="popupMessage"></p>
+        <button onclick="closePopup()">ตกลง</button>
+      </div>
+    </div>
+
+    <button id="cameraBtn" onclick="openScanner()">
+      <img src="camera-icon.png" alt="เปิดกล้อง" />
+    </button>
+
+    <button class="reset-button" onclick="resetGame()">รีเซ็ตเกม</button>
+  </div>
 
   <!-- Popup สแกน QR -->
   <div id="scanner" onclick="closeScanner(event)">
@@ -348,28 +342,43 @@
       document.getElementById("namePage").style.display = "flex";
       const nameVoice = document.getElementById("nameVoice");
       nameVoice.play().catch(() => { });
+      showSubmitButtonOnInput();
     }
 
-function submitName() {
-  const input = document.getElementById("nickname");
-  const name = input.value.trim();
-  if (!name) {
-    alert("กรุณากรอกชื่อเล่น");
-    return;
-  }
-  localStorage.setItem("playerName", name);
-  showMapPage(name);
+    // แสดงปุ่มตกลงเมื่อมีการพิมพ์ชื่อ
+    function showSubmitButtonOnInput() {
+      const input = document.getElementById("nickname");
+      const submitBtn = document.querySelector(".submit-button");
+      submitBtn.style.display = "none";
+      input.value = "";
+      input.addEventListener("input", () => {
+        if (input.value.trim().length > 0) {
+          submitBtn.style.display = "block";
+        } else {
+          submitBtn.style.display = "none";
+        }
+      });
+    }
 
-  const nameVoice = document.getElementById("nameVoice");
-  try {
-    nameVoice.pause();             // หยุดเสียงหากกำลังเล่นอยู่
-    nameVoice.currentTime = 0;     // รีเซ็ตเวลา
-    nameVoice.play();              // เล่นใหม่
-  } catch (e) {
-    console.warn("ไม่สามารถเล่นเสียง nameVoice ได้:", e);
-  }
-}
+    function submitName() {
+      const input = document.getElementById("nickname");
+      const name = input.value.trim();
+      if (!name) {
+        alert("กรุณากรอกชื่อเล่น");
+        return;
+      }
+      localStorage.setItem("playerName", name);
+      showMapPage(name);
 
+      const nameVoice = document.getElementById("nameVoice");
+      try {
+        nameVoice.pause();
+        nameVoice.currentTime = 0;
+        nameVoice.play();
+      } catch (e) {
+        console.warn("ไม่สามารถเล่นเสียง nameVoice ได้:", e);
+      }
+    }
 
     function showMapPage(name) {
       hideAllPages();
@@ -377,6 +386,7 @@ function submitName() {
       document.getElementById("cameraBtn").style.display = "block";
       document.getElementById("nicknameDisplay").textContent = name;
       renderCheckmarks();
+      checkCompletedMissions();
     }
 
     function renderCheckmarks() {
@@ -392,29 +402,31 @@ function submitName() {
     }
 
     function openScanner() {
-  try {
-    document.getElementById("voice").pause();
-    document.getElementById("voice").currentTime = 0;
-  } catch (e) {}
+      try {
+        document.getElementById("voice").pause();
+        document.getElementById("voice").currentTime = 0;
+      } catch (e) { }
 
-  try {
-    document.getElementById("nameVoice").pause();
-    document.getElementById("nameVoice").currentTime = 0;
-  } catch (e) {}
+      try {
+        document.getElementById("nameVoice").pause();
+        document.getElementById("nameVoice").currentTime = 0;
+      } catch (e) { }
 
-  document.getElementById("scanner").style.display = "flex";
-  html5QrCode = new Html5Qrcode("reader");
-  html5QrCode.start(
-    { facingMode: "environment" },
-    { fps: 10, qrbox: 250 },
-    qrSuccess
-  ).catch(e => alert("ไม่สามารถเปิดกล้องได้: " + e));
-}
-
-
+      document.getElementById("scanner").style.display = "flex";
+      html5QrCode = new Html5Qrcode("reader");
+      html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        qrSuccess
+      ).catch(err => {
+        alert("ไม่สามารถเปิดกล้องได้");
+        closeScanner();
+      });
+    }
 
     function closeScanner(event) {
-      if (event.target.id === "scanner") {
+      // กดพื้นที่รอบๆ ปิดกล้อง
+      if (event && event.target.id === "scanner") {
         stopScanner();
       }
     }
@@ -423,9 +435,10 @@ function submitName() {
       if (html5QrCode) {
         html5QrCode.stop().then(() => {
           html5QrCode.clear();
+          html5QrCode = null;
           document.getElementById("scanner").style.display = "none";
-        }).catch(err => {
-          alert("เกิดข้อผิดพลาดในการปิดกล้อง: " + err);
+        }).catch(() => {
+          document.getElementById("scanner").style.display = "none";
         });
       } else {
         document.getElementById("scanner").style.display = "none";
@@ -449,6 +462,7 @@ function submitName() {
         missionStatus[missionKey] = true;
         localStorage.setItem("missionStatus", JSON.stringify(missionStatus));
         renderCheckmarks();
+        checkCompletedMissions();
 
         window.location.href = `${missionId}.html`;
       } else {
@@ -456,40 +470,41 @@ function submitName() {
       }
     }
 
+    function checkCompletedMissions() {
+      const missionStatus = JSON.parse(localStorage.getItem("missionStatus") || "{}");
+      let completedCount = 0;
+      for (let i = 1; i <= 6; i++) {
+        if (missionStatus["mission" + i]) {
+          completedCount++;
+        }
+      }
+      if (completedCount === 6) {
+        showMissionCompletePopup();
+      }
+    }
+
+    function showMissionCompletePopup() {
+      const playerName = localStorage.getItem("playerName") || "";
+      document.getElementById("popupMessage").innerText = `คุณ ${playerName} ทำครบทุกด่านแล้ว!`;
+      document.getElementById("missionCompletePopup").style.display = "flex";
+    }
+
+    function closePopup() {
+      document.getElementById("missionCompletePopup").style.display = "none";
+    }
+
     function resetGame() {
-      if (confirm("คุณต้องการรีเซ็ตเกมใช่หรือไม่? ข้อมูลทั้งหมดจะถูกลบ")) {
-        localStorage.clear();
+      if (confirm("ต้องการรีเซ็ตสถานะภารกิจและชื่อเล่นทั้งหมดหรือไม่?")) {
+        localStorage.removeItem("missionStatus");
+        localStorage.removeItem("playerName");
         location.reload();
       }
     }
 
-    // เรียกแสดงหน้าแรกเมื่อโหลด
-    window.onload = () => {
-      hideAllPages();
-      document.getElementById("homePage").style.display = "flex";
-    };
-    function showMissionCompletePopup() {
-  const playerName = localStorage.getItem("playerName") || "";
-  document.getElementById("popupMessage").innerText = `คุณ ${playerName} ทำครบทุกด่านแล้ว!`;
-  document.getElementById("missionCompletePopup").style.display = "flex";
-}
-
-function closePopup() {
-  document.getElementById("missionCompletePopup").style.display = "none";
-}
-function checkCompletedMissions() {
-  let completedCount = 0;
-  for (let i = 1; i <= 6; i++) {
-    if (localStorage.getItem(`mission${i}`) === "true") {
-      completedCount++;
-    }
-  }
-
-  if (completedCount === 6) {
-    showMissionCompletePopup();
-  }
-}
-
+    // เริ่มต้นที่หน้า Home
+    hideAllPages();
+    document.getElementById("homePage").style.display = "flex";
   </script>
 </body>
+
 </html>
