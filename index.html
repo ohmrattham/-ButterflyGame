@@ -242,6 +242,25 @@
     .reset-button:hover {
       background-color: #c0392b;
     }
+    .popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+.popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
   </style>
 </head>
 
@@ -273,6 +292,13 @@
   <div class="checkmark" id="check4"></div>
   <div class="checkmark" id="check5"></div>
   <div class="checkmark" id="check6"></div>
+  <div id="missionCompletePopup" class="popup">
+    <div class="popup-content">
+      <h2>🎉 ยินดีด้วย!</h2>
+      <p id="popupMessage"></p>
+      <button onclick="closePopup()">ตกลง</button>
+    </div>
+  </div>
 
   <!-- ✅ ย้ายปุ่มเข้ามาในนี้ -->
   <button id="cameraBtn" onclick="openScanner()">
@@ -442,6 +468,28 @@ function submitName() {
       hideAllPages();
       document.getElementById("homePage").style.display = "flex";
     };
+    function showMissionCompletePopup() {
+  const playerName = localStorage.getItem("playerName") || "";
+  document.getElementById("popupMessage").innerText = `คุณ ${playerName} ทำครบทุกด่านแล้ว!`;
+  document.getElementById("missionCompletePopup").style.display = "flex";
+}
+
+function closePopup() {
+  document.getElementById("missionCompletePopup").style.display = "none";
+}
+function checkCompletedMissions() {
+  let completedCount = 0;
+  for (let i = 1; i <= 6; i++) {
+    if (localStorage.getItem(`mission${i}`) === "true") {
+      completedCount++;
+    }
+  }
+
+  if (completedCount === 6) {
+    showMissionCompletePopup();
+  }
+}
+
   </script>
 </body>
 </html>
