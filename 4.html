@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>ด่านที่ 4</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #f5f5dc;
+    }
+
+    #intro {
+      background: url('intro4.png') center/cover no-repeat;
+      width: 100%;
+      max-width: 600px;
+      margin: auto;
+      aspect-ratio: 1080 / 1920;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 20px;
+    }
+
+    #intro h1 {
+      color: #333;
+      font-size: 2em;
+    }
+
+    #intro p {
+      color: #555;
+      font-size: 1.2em;
+      margin-top: 10px;
+    }
+
+    #startBtn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 10px;
+      background: darkorange;
+      color: white;
+      cursor: pointer;
+    }
+
+    #game,
+    #section2,
+    #section3 {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      margin: auto;
+      aspect-ratio: 1080 / 1920;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      padding-bottom: 20px;
+      display: none;
+    }
+
+    .drop-zone {
+      position: absolute;
+      width: 18%;
+      height: 10%;
+      border: 2px dashed #888;
+      border-radius: 12px;
+      z-index: 2;
+    }
+
+    .drag-image {
+      position: absolute;
+      width: 18%;
+      cursor: grab;
+      z-index: 3;
+    }
+
+    #popup {
+      position: fixed;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      font-size: 1.5em;
+      font-weight: bold;
+      border-radius: 20px;
+      display: none;
+      z-index: 999;
+      text-align: center;
+      white-space: pre-line;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .buttonContainer {
+      position: absolute;
+      bottom: 2%;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      z-index: 5;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1em;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      color: white;
+    }
+
+    #checkBtn,
+    #checkBtn2,
+    #checkBtn3 {
+      background: green;
+    }
+
+    #resetBtn {
+      background: crimson;
+    }
+
+    .select-image {
+      position: absolute;
+      width: 30%;
+      margin: 10px;
+      border: 4px solid transparent;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .select-image.selected {
+      filter: drop-shadow(0 0 10px #ffff00) drop-shadow(0 0 20px #ffff00);
+      animation: glowPulse 1.5s infinite;
+    }
+
+    @keyframes glowPulse {
+      0% {
+        filter: drop-shadow(0 0 5px #ffff00) drop-shadow(0 0 10px #ffff00);
+      }
+
+      50% {
+        filter: drop-shadow(0 0 20px #ffff00) drop-shadow(0 0 30px #ffff00);
+      }
+
+      100% {
+        filter: drop-shadow(0 0 5px #ffff00) drop-shadow(0 0 10px #ffff00);
+      }
+    }
+
+    #bf1,
+    #bf2,
+    #bf3,
+    #bf4,
+    #bf5,
+    #bf6,
+    #bf7,
+    #bf8,
+    #bf9,
+    #bf10 {
+      position: absolute;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- หน้า Intro -->
+  <div id="intro">
+    <button id="startBtn">เริ่มทำภารกิจ</button>
+  </div>
+
+  <audio id="backgroundSound" src="bgmusic.mp3" preload="auto" loop></audio>
+
+
+  <!-- ป็อปอัพลอยอยู่ด้านบนสุด -->
+  <div id="popup"></div>
+
+  <div id="game" style="background-image: url('bg41.png');">
+    <div id="overlayContainer"></div>
+    <div class="buttonContainer">
+      <button id="checkBtn">ตรวจคำตอบ</button>
+      <button id="resetBtn">รีเซ็ต</button>
+    </div>
+  </div>
+
+  <div id="section2" style="background-image: url('bg42.png');">
+    <div id="butterflyOptions">
+      <img id="bf1" src="bf1.png" class="select-image" data-name="protected" style="top:30%; left:13%;" />
+      <img id="bf2" src="bf2.png" class="select-image" data-name="normal" style="top:30%; left:48%;" />
+      <img id="bf3" src="bf3.png" class="select-image" data-name="normal" style="top:48%; left:13%;" />
+      <img id="bf4" src="bf4.png" class="select-image" data-name="protected" style="top:48%; left:48%;" />
+      <img id="bf5" src="bf5.png" class="select-image" data-name="normal" style="top:63%; left:13%;" />
+      <img id="bf6" src="bf6.png" class="select-image" data-name="protected" style="top:63%; left:48%;" />
+    </div>
+    <div class="buttonContainer">
+      <button id="checkBtn2">ตรวจคำตอบ</button>
+    </div>
+  </div>
+
+  <div id="section3" style="background-image: url('bg43.png');">
+    <div id="butterflyOptions2">
+      <img id="bf7" src="bf7.png" class="select-image" data-name="normal" style="top:30%; left:13%;" />
+      <img id="bf8" src="bf8.png" class="select-image" data-name="normal" style="top:30%; left:48%;" />
+      <img id="bf9" src="bf9.png" class="select-image" data-name="protected" style="top:55%; left:13%;" />
+      <img id="bf10" src="bf10.png" class="select-image" data-name="normal" style="top:55%; left:48%;" />
+    </div>
+    <div class="buttonContainer">
+      <button id="checkBtn3">ตรวจคำตอบ</button>
+    </div>
+  </div>
+
+  <audio id="clickSound" src="click.mp3" preload="auto"></audio>
+  <audio id="soundSuccess" src="success.mp3" preload="auto"></audio>
+  <audio id="soundFail" src="fail.mp3" preload="auto"></audio>
+
+  <script>
+    // Intro to game
+    // เมื่อเริ่มทำภารกิจ
+    document.getElementById("startBtn").addEventListener("click", () => {
+      // ซ่อนหน้า Intro
+      document.getElementById("intro").style.display = "none";
+      // แสดงหน้าเกม
+      document.getElementById("game").style.display = "block";
+
+      // เริ่มเล่นเสียงพื้นหลัง
+      const backgroundSound = document.getElementById("backgroundSound");
+      backgroundSound.currentTime = 0; // รีเซ็ตเวลาเสียง
+      backgroundSound.play(); // เล่นเสียง
+    });
+
+
+    const dropZones = [
+      { top: 32, left: 40, answer: "butterfly" },
+      { top: 48, left: 60, answer: "egg" },
+      { top: 63, left: 40, answer: "caterpillar" },
+      { top: 48, left: 20, answer: "chrysalis" },
+    ];
+
+    const images = [
+      { src: "egg.png", name: "egg", top: 78, left: 10 },
+      { src: "caterpillar.png", name: "caterpillar", top: 75, left: 30 },
+      { src: "chrysalis.png", name: "chrysalis", top: 73, left: 50 },
+      { src: "butterfly.png", name: "butterfly", top: 77, left: 70 },
+    ];
+
+    const container = document.getElementById("overlayContainer");
+
+    function createElements() {
+      container.innerHTML = "";
+      dropZones.forEach((zone) => {
+        const div = document.createElement("div");
+        div.className = "drop-zone";
+        div.style.top = zone.top + "%";
+        div.style.left = zone.left + "%";
+        div.dataset.answer = zone.answer;
+        container.appendChild(div);
+      });
+
+      images.forEach((img) => {
+        const image = document.createElement("img");
+        image.src = img.src;
+        image.className = "drag-image";
+        image.style.top = img.top + "%";
+        image.style.left = img.left + "%";
+        image.setAttribute("draggable", true);
+        image.dataset.name = img.name;
+        container.appendChild(image);
+      });
+
+      setupDragEvents();
+    }
+
+    function setupDragEvents() {
+      let draggedItem = null;
+      document.querySelectorAll(".drag-image").forEach(img => {
+        img.addEventListener("dragstart", e => {
+          draggedItem = img;
+          img.style.zIndex = "10";
+        });
+      });
+
+      document.querySelectorAll(".drop-zone").forEach(zone => {
+        zone.addEventListener("dragover", e => e.preventDefault());
+        zone.addEventListener("drop", e => {
+          e.preventDefault();
+          if (draggedItem) {
+            zone.innerHTML = '';
+            zone.appendChild(draggedItem);
+            draggedItem.style.top = "0";
+            draggedItem.style.left = "0";
+            draggedItem.style.position = "relative";
+            draggedItem.style.width = "100%";
+            draggedItem.style.zIndex = "1";
+          }
+        });
+      });
+    }
+
+    function showPopup(text, type = "success") {
+      const popup = document.getElementById("popup");
+      const soundSuccess = document.getElementById("soundSuccess");
+      const soundFail = document.getElementById("soundFail");
+
+      popup.innerText = text;
+      popup.style.display = "block";
+
+      if (type === "success") {
+        soundSuccess.currentTime = 0;
+        soundSuccess.play();
+      } else {
+        soundFail.currentTime = 0;
+        soundFail.play();
+      }
+
+      setTimeout(() => popup.style.display = "none", 3000);
+    }
+
+    document.getElementById("checkBtn").addEventListener("click", () => {
+      let correct = 0;
+      document.querySelectorAll(".drop-zone").forEach(zone => {
+        const child = zone.querySelector("img");
+        if (child && child.dataset.name === zone.dataset.answer) correct++;
+      });
+
+      if (correct === 4) {
+        showPopup("ผ่าน! \n ไปยังภารกิจที่ 2", "success");
+        setTimeout(() => {
+          document.getElementById("game").style.display = "none";
+          document.getElementById("section2").style.display = "block";
+          setupSelectEvents(".select-image");
+        }, 3000);
+      } else {
+        showPopup(`ยังมีคำตอบผิด\nลองใหม่อีกครั้ง!`, "fail");
+      }
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      createElements();
+      document.getElementById("section2").style.display = "none";
+      document.getElementById("section3").style.display = "none";
+      document.getElementById("game").style.display = "block";
+    });
+
+    function setupSelectEvents(selector) {
+      const clickSound = document.getElementById("clickSound");
+
+      document.querySelectorAll(selector).forEach(img => {
+        img.addEventListener("click", () => {
+          img.classList.toggle("selected");
+          clickSound.currentTime = 0;
+          clickSound.play();
+        });
+      });
+    }
+
+    document.getElementById("checkBtn2").addEventListener("click", () => {
+      const selected = document.querySelectorAll("#section2 .select-image.selected");
+      let correct = 0;
+      let hasWrong = false;
+
+      selected.forEach(img => {
+        if (img.dataset.name === "protected") {
+          correct++;
+        } else {
+          hasWrong = true;
+        }
+      });
+
+      const totalCorrect = document.querySelectorAll('#section2 .select-image[data-name="protected"]').length;
+
+      if (correct === totalCorrect && !hasWrong) {
+        showPopup(`ผ่าน! \n ไปยังภารกิจที่ 3`, "success");
+        setTimeout(() => {
+          document.getElementById("section2").style.display = "none";
+          document.getElementById("section3").style.display = "block";
+          setupSelectEvents("#section3 .select-image");
+        }, 3000);
+      } else {
+        showPopup(`ยังมีคำตอบผิด \nลองใหม่อีกครั้ง!`, "fail");
+      }
+    });
+
+    document.getElementById("checkBtn3").addEventListener("click", () => {
+      const selected = document.querySelectorAll("#section3 .select-image.selected");
+      let correct = 0;
+      let hasWrong = false;
+
+      selected.forEach(img => {
+        if (img.dataset.name === "protected") {
+          correct++;
+        } else {
+          hasWrong = true;
+        }
+      });
+
+      const totalCorrect = document.querySelectorAll('#section3 .select-image[data-name="protected"]').length;
+
+      if (correct === totalCorrect && !hasWrong) {
+        showPopup(`คุณผ่านครบ 3 ภารกิจแล้ว \n ระบบยังพาคุณกลับไปยังหน้าแผนที่ `, "success");
+        localStorage.setItem("mission4Completed", "true");
+        setTimeout(() => {
+          window.location.href = "index.html#map";
+        }, 3000);
+      } else {
+        showPopup(`คำตอบผิดนะคร้าบบ \nลองใหม่อีกครั้ง!`, "fail");
+      }
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+      createElements();
+    });
+  </script>
+</body>
+
+</html>

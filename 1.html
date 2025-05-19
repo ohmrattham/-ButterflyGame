@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ภารกิจผีเสื้อ - ด่านที่ 1</title>
+  <style>
+    body {
+      margin: 0;
+     
+      font-family: sans-serif;
+       background: #f5f5dc;
+    }
+
+    .page {
+      background: url('4.png') center/cover no-repeat;
+      width: 100%;
+      max-width: 600px;
+      margin: auto;
+      aspect-ratio: 1080 / 1920;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 20px;
+    }
+    
+    button {
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    #startBtn {
+      background-color: #8B4513;
+      color: white;
+      padding: 12px 24px;
+      position: absolute;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .choice {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 12px;
+    }
+
+    .choice button {
+      background-color: rgba(255, 255, 255, 0.6);
+      color: #8B4513;
+      border: 2px solid #8B4513;
+      padding: 22px 20px;
+      transition: all 0.2s;
+    }
+
+    .choice button.selected {
+      background-color: #8B4513;
+      color: white;
+    }
+
+    .nav {
+      position: absolute;
+      top: 65%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+    }
+
+    .nav button {
+      background-color: #8B4513;
+      color: white;
+      padding: 20px 24px;
+    }
+
+    #status {
+      position: absolute;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(255, 255, 255, 0.7);
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: bold;
+      display: none;
+    }
+
+    #resultPopup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    #resultBox {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      font-size: 24px;
+      color: #8B4513;
+      font-weight: bold;
+    }
+
+    #fireworksCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1000;
+    }
+  </style>
+</head>
+
+<body>
+
+  <audio id="bgMusic" src="bgmusic.mp3" loop></audio>
+
+
+  <div id="mainPage" class="page" style="background-image: url('4.png');">
+    <audio id="voice" src="intro1.mp3"></audio>
+    <audio id="correctSound" src="correct.mp3"></audio>
+
+    <button id="startBtn" onclick="startMission()">เริ่มต้นทำภารกิจ</button>
+
+    <div id="status">ข้อนี้เลือกแล้ว</div>
+
+    <div id="choiceButtons" class="choice" style="display: none;">
+      <button onclick="selectAnswer(1)" id="btn1">1</button>
+      <button onclick="selectAnswer(2)" id="btn2">2</button>
+      <button onclick="selectAnswer(3)" id="btn3">3</button>
+    </div>
+
+    <div id="navButtons" class="nav" style="display: none;">
+      <button onclick="prevQuestion()">ย้อนกลับ</button>
+      <button onclick="nextQuestion()">ถัดไป</button>
+    </div>
+  </div>
+
+  <canvas id="fireworksCanvas"></canvas>
+
+  <div id="resultPopup">
+    <div id="resultBox">
+      <span id="resultText">คุณตอบถูก 0 ข้อ</span>
+    </div>
+  </div>
+
+  <script>
+    const bgImages = ["5.png", "6.png", "7.png"];
+    const correctAnswers = [3, 1, 1];
+    let userAnswers = [null, null, null];
+    let current = 0;
+
+    function startMission() {
+      document.getElementById("startBtn").style.display = "none";
+      document.getElementById("choiceButtons").style.display = "flex";
+      document.getElementById("navButtons").style.display = "flex";
+      updateQuestion();
+
+      // เริ่มเล่นเสียงพื้นหลัง
+      const bgMusic = document.getElementById("bgMusic");
+      bgMusic.volume = 0.4;
+      bgMusic.play().catch((e) => console.log("ไม่สามารถเล่นเสียง:", e));
+    }
+
+
+    function updateQuestion() {
+      document.getElementById("mainPage").style.backgroundImage = `url('${bgImages[current]}')`;
+      updateSelectionUI();
+      updateStatus();
+    }
+
+    function updateSelectionUI() {
+      for (let i = 1; i <= 3; i++) {
+        const btn = document.getElementById("btn" + i);
+        btn.classList.toggle("selected", userAnswers[current] === i);
+      }
+    }
+
+    function updateStatus() {
+      const status = document.getElementById("status");
+      if (userAnswers[current]) {
+        status.style.display = "block";
+        status.textContent = `ข้อนี้เลือกข้อ ${userAnswers[current]}`;
+      } else {
+        status.style.display = "none";
+      }
+    }
+
+    function selectAnswer(choice) {
+      userAnswers[current] = choice;
+      updateSelectionUI();
+      updateStatus();
+    }
+
+    function nextQuestion() {
+      if (userAnswers[current] === null) {
+        alert("กรุณาเลือกคำตอบก่อน");
+        return;
+      }
+
+      if (current < 2) {
+        current++;
+        updateQuestion();
+      } else {
+        checkAnswers();
+      }
+    }
+
+    function prevQuestion() {
+      if (current > 0) {
+        current--;
+        updateQuestion();
+      }
+    }
+
+    function checkAnswers() {
+      const correct = userAnswers.filter((ans, i) => ans === correctAnswers[i]).length;
+
+      const popup = document.getElementById("resultPopup");
+      const resultText = document.getElementById("resultText");
+      const sound = document.getElementById("correctSound");
+
+      resultText.textContent = `คุณตอบถูก ${correct} ข้อ`;
+      popup.style.display = "flex";
+      sound.play().catch(() => { });
+
+      if (correct === 3) {
+        launchFireworks();
+        localStorage.setItem("mission1Complete", "true");
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 3000);
+      } else {
+        setTimeout(() => {
+          popup.style.display = "none";
+          current = 0;
+          userAnswers = [null, null, null];
+          updateQuestion();
+        }, 3000);
+      }
+    }
+
+    // เอฟเฟกต์ยิงพลุ
+    function launchFireworks() {
+      const canvas = document.getElementById("fireworksCanvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      let particles = [];
+
+      function createFirework() {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height / 2;
+        const color = `hsl(${Math.random() * 360}, 100%, 60%)`;
+
+        for (let i = 0; i < 100; i++) {
+          particles.push({
+            x, y,
+            radius: Math.random() * 2 + 1,
+            dx: (Math.random() - 0.5) * 5,
+            dy: (Math.random() - 0.5) * 5,
+            alpha: 1,
+            color
+          });
+        }
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach((p, i) => {
+          p.x += p.dx;
+          p.y += p.dy;
+          p.alpha -= 0.01;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${hexToRgb(p.color)}, ${p.alpha})`;
+          ctx.fill();
+          if (p.alpha <= 0) particles.splice(i, 1);
+        });
+        if (particles.length > 0) requestAnimationFrame(animate);
+      }
+
+      function hexToRgb(h) {
+        const temp = document.createElement("div");
+        temp.style.color = h;
+        document.body.appendChild(temp);
+        const rgb = window.getComputedStyle(temp).color;
+        document.body.removeChild(temp);
+        return rgb.match(/\d+,\s*\d+,\s*\d+/)[0];
+      }
+
+      createFirework();
+      createFirework();
+      createFirework();
+      animate();
+
+      setTimeout(() => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles = [];
+      }, 3000);
+    }
+
+    // เล่นเสียงเมื่อแตะครั้งแรก
+    window.addEventListener('DOMContentLoaded', () => {
+      function playVoiceOnce() {
+        const voice = document.getElementById("voice");
+        voice.play().catch((e) => console.log("ไม่สามารถเล่นเสียง:", e));
+        window.removeEventListener('click', playVoiceOnce);
+        window.removeEventListener('touchstart', playVoiceOnce);
+      }
+      window.addEventListener('click', playVoiceOnce);
+      window.addEventListener('touchstart', playVoiceOnce);
+    });
+  </script>
+
+</body>
+
+</html>

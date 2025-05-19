@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Adventure with Butterflies</title>
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <style>
+    html, body {
+      margin: 0; padding: 0; height: 100%; width: 100%;
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    #appContainer {
+      position: relative;
+      width: 360px;
+      height: 640px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .page {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      text-align: center;
+      padding: 1em;
+      box-sizing: border-box;
+    }
+
+    #homePage { background-image: url('mean.png'); }
+    #gamePage { background-image: url('กติกา.png'); }
+    #namePage { background-image: url('กรอกชื่อ.png'); }
+    #mapPage { background-image: url('map.png'); }
+
+    .page.active { display: flex; }
+
+    button {
+      padding: 1em 2em;
+      font-size: 1.2em;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+      transition: all 0.2s ease;
+      color: #fff;
+      background-color: #f1c40f;
+      margin-top: 1em;
+    }
+    button:hover {
+      background-color: #d4ac0d;
+      transform: scale(1.05);
+    }
+
+    .input-name {
+      padding: 0.8em;
+      font-size: 1.2em;
+      border-radius: 8px;
+      border: 2px solid #ccc;
+      width: 80%;
+      max-width: 250px;
+      margin-top: 1em;
+      text-align: center;
+    }
+
+    #nicknameDisplay, #checkpointDisplay {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 1.1em;
+      color: black;
+      user-select: none;
+      background: rgba(255,255,255,0.8);
+      padding: 5px 10px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    #checkpointDisplay {
+      top: 40px;
+    }
+
+    #cameraBtn {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 60px;
+      background: transparent;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+      overflow: hidden;
+    }
+    #cameraBtn img {
+      width: 60%;
+      height: 60%;
+    }
+
+    #scanner {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    #scannerContent {
+      width: 300px;
+      height: 300px;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div id="appContainer">
+    <div id="homePage" class="page active">
+      <button id="startBtn">START</button>
+    </div>
+
+    <div id="gamePage" class="page">
+      <audio id="voice" src="วิธีการเล่น.mp3"></audio>
+      <button id="nextBtn" style="display:none;">ถัดไป</button>
+    </div>
+
+    <div id="namePage" class="page">
+      <input type="text" id="nickname" class="input-name" placeholder="กรุณากรอกชื่อเล่น" />
+      <button id="submitNameBtn">ตกลง</button>
+      <audio id="nameVoice" src="ชื่อ.mp3"></audio>
+    </div>
+
+    <div id="mapPage" class="page">
+      <div id="nicknameDisplay"></div>
+      <div id="checkpointDisplay"></div>
+      <button id="resetBtn">รีเซ็ตเกม</button>
+    </div>
+
+    <button id="cameraBtn" title="เปิดกล้อง">
+      <img src="camera-icon.png" alt="camera icon" />
+    </button>
+  </div>
+
+  <div id="scanner" onclick="closeScanner(event)">
+    <div id="scannerContent"><div id="reader"></div></div>
+  </div>
+
+  <script>
+    const pages = {
+      home: document.getElementById('homePage'),
+      game: document.getElementById('gamePage'),
+      name: document.getElementById('namePage'),
+      map: document.getElementById('mapPage')
+    };
+
+    const startBtn = document.getElementById('startBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitNameBtn = document.getElementById('submitNameBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const cameraBtn = document.getElementById('cameraBtn');
+    const nicknameInput = document.getElementById('nickname');
+    const nicknameDisplay = document.getElementById('nicknameDisplay');
+    const checkpointDisplay = document.getElementById('checkpointDisplay');
+
+    const voiceAudio = document.getElementById('voice');
+    const nameVoiceAudio = document.getElementById('nameVoice');
+
+    const scannerOverlay = document.getElementById('scanner');
+    const readerElementId = "reader";
+
+    let html5QrCode = null;
+    let checkpoints = new Set(JSON.parse(localStorage.getItem('checkpoints') || '[]'));
+
+    function showPage(pageName) {
+      Object.values(pages).forEach(p => p.classList.remove('active'));
+      pages[pageName].classList.add('active');
+      cameraBtn.style.display = (pageName === 'map') ? 'flex' : 'none';
+      updateCheckpointDisplay();
+    }
+
+    function updateCheckpointDisplay() {
+      checkpointDisplay.textContent = `คะแนนที่ได้: ${checkpoints.size}`;
+    }
+
+    function startGame() {
+      const savedName = localStorage.getItem('playerName');
+      if (savedName) {
+        showPage('map');
+        nicknameDisplay.textContent = `ชื่อของคุณ: ${savedName}`;
+      } else {
+        showPage('game');
+        voiceAudio.volume = 0.4;
+        voiceAudio.play().catch(() => {});
+        voiceAudio.onended = () => nextBtn.style.display = 'block';
+      }
+    }
+
+    function goToNamePage() {
+      voiceAudio.pause();
+      voiceAudio.currentTime = 0;
+      showPage('name');
+      nameVoiceAudio.play().catch(() => {});
+    }
+
+    function submitName() {
+      const name = nicknameInput.value.trim();
+      if (!name) {
+        alert('กรุณากรอกชื่อเล่นก่อนเริ่มเกม');
+        nicknameInput.focus();
+        return;
+      }
+      localStorage.setItem('playerName', name);
+      nicknameDisplay.textContent = `ชื่อของคุณ: ${name}`;
+      showPage('map');
+    }
+
+    function resetGame() {
+      localStorage.clear();
+      checkpoints.clear();
+      location.reload();
+    }
+
+    function openScanner() {
+      scannerOverlay.style.display = 'flex';
+      if (html5QrCode) html5QrCode.clear().catch(() => {});
+      html5QrCode = new Html5Qrcode(readerElementId);
+      Html5Qrcode.getCameras().then(cameras => {
+        if (cameras.length) {
+          html5QrCode.start(
+            { facingMode: "environment" }, 
+            { fps: 10, qrbox: 250 },
+            onScanSuccess,
+            onScanFailure
+          ).catch(err => {
+            alert('ไม่สามารถเปิดกล้องได้: ' + err);
+            closeScanner();
+          });
+        } else {
+          alert('ไม่พบกล้อง');
+          closeScanner();
+        }
+      }).catch(err => {
+        alert('ไม่พบกล้อง: ' + err);
+        closeScanner();
+      });
+    }
+
+    function closeScanner(event) {
+      if (event && event.target !== scannerOverlay) return;
+      if (html5QrCode) {
+        html5QrCode.stop().then(() => {
+          html5QrCode.clear();
+          scannerOverlay.style.display = 'none';
+        }).catch(() => scannerOverlay.style.display = 'none');
+      } else {
+        scannerOverlay.style.display = 'none';
+      }
+    }
+
+    function onScanSuccess(decodedText) {
+      if (!checkpoints.has(decodedText)) {
+        checkpoints.add(decodedText);
+        localStorage.setItem('checkpoints', JSON.stringify(Array.from(checkpoints)));
+        alert(`เช็คพ้อยสำเร็จ! ได้รับคะแนนจาก: ${decodedText}`);
+        updateCheckpointDisplay();
+      } else {
+        alert(`คุณเช็คพ้อยจุดนี้แล้ว`);
+      }
+      closeScanner();
+    }
+
+    function onScanFailure(error) {
+      // ไม่ต้องแสดง error ทุกครั้ง
+    }
+
+    // Event listeners
+    startBtn.addEventListener('click', startGame);
+    nextBtn.addEventListener('click', goToNamePage);
+    submitNameBtn.addEventListener('click', submitName);
+    resetBtn.addEventListener('click', resetGame);
+    cameraBtn.addEventListener('click', openScanner);
+  </script>
+</body>
+</html>

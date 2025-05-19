@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ด่านที่ 6</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            background: #f2f2f2;
+        }
+
+        /* Welcome Screen */
+        #welcomeScreen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to bottom right, #fff3b0, #ffcc70);
+            text-align: center;
+            padding: 40px;
+            height: 100vh;
+        }
+
+        #welcomeScreen h1 {
+            font-size: 48px;
+            color: #ff9900;
+            margin-bottom: 20px;
+        }
+
+        #welcomeScreen p {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        #startButton {
+            padding: 16px 40px;
+            font-size: 24px;
+            background-color: #ffcc00;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #startButton:hover {
+            background-color: #ffdd33;
+        }
+
+        /* Game Screen */
+        #game {
+            position: relative;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        #bgImage {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        #overlayContainer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #quizButton {
+            position: absolute;
+            top: 23.5%;
+            right: 21%;
+            padding: 25px 60px;
+            font-size: 30px;
+            background-color: #ffcc00;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        #quizButton:hover {
+            background-color: #ffdd33;
+        }
+
+        #codeContainer {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            background: #fff8dc;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+            border: 2px solid #ffe799;
+        }
+
+        #codeInput {
+            padding: 12px;
+            font-size: 22px;
+            width: 260px;
+            border-radius: 8px;
+            border: 2px solid #ffd966;
+            background-color: #fffdf2;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        #codeInput::placeholder {
+            color: #aaa;
+            font-style: italic;
+        }
+
+        #verifyButton {
+            padding: 10px 25px;
+            font-size: 18px;
+            background-color: #ffd966;
+            color: #333;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #verifyButton:hover {
+            background-color: #ffe68a;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Welcome Screen -->
+    <div id="welcomeScreen">
+        <h1>ยินดีต้อนรับ!</h1>
+        <p>เตรียมตัวให้พร้อมก่อนเข้าสู่ด่านที่ 6</p>
+        <button id="startButton">เริ่มเกม</button>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="gameScreen" style="display: none;">
+        <div id="game">
+            <img id="bgImage" src="ด่าน6.png" alt="พื้นหลัง" />
+            <audio id="backgroundMusic" src="bgmusic.mp3" loop preload="auto"></audio>
+
+            <div id="overlayContainer"></div>
+
+            <button id="quizButton">📋 ทำแบบสอบถาม</button>
+
+            <div id="codeContainer">
+                <p>ใส่รหัสผ่านที่ได้หลังตอบแบบสอบถาม:</p>
+                <input type="text" id="codeInput" placeholder="รหัสผ่าน" />
+                <br />
+                <button id="verifyButton">ยืนยันรหัสผ่าน</button>
+            </div>
+
+            <audio id="correctSound" src="correct.mp3"></audio>
+            <audio id="wrongSound" src="wrong.mp3"></audio>
+        </div>
+    </div>
+
+    <script>
+        const correctCode = "Butterflypass";
+
+        // เริ่มเกมหลังคลิกปุ่ม "เริ่มเกม"
+        document.getElementById("startButton").addEventListener("click", () => {
+            document.getElementById("welcomeScreen").style.display = "none";
+            document.getElementById("gameScreen").style.display = "block";
+
+            // เล่นเพลงพื้นหลัง
+            const bgMusic = document.getElementById("backgroundMusic");
+            bgMusic.volume = 0.4;
+            bgMusic.play().catch(e => {
+                alert("⚠️ กรุณาอนุญาตให้เล่นเสียงก่อนเริ่มเกม");
+                console.log(e);
+            });
+
+            // ตรวจสอบถ้าเคยผ่านแล้ว
+            const isDone = localStorage.getItem("mission6Complete");
+            if (isDone === "true") {
+                window.location.href = "index.html#map";
+            }
+        });
+
+        // เปิดฟอร์ม Google แบบสอบถาม
+        document.getElementById("quizButton").addEventListener("click", () => {
+            window.open(
+                "https://docs.google.com/forms/d/e/1FAIpQLSdThWQoomnXlRbm2MBIE6NHB5UYspQCmz1OlgHHb6c9Moqcsw/viewform",
+                "_blank"
+            );
+        });
+
+        // ตรวจสอบรหัสผ่าน
+        document.getElementById("verifyButton").addEventListener("click", () => {
+            const userCode = document.getElementById("codeInput").value.trim();
+            if (userCode === correctCode) {
+                localStorage.setItem("mission6Complete", "true");
+                document.getElementById("correctSound").play();
+                alert("✅ ผ่านด่านเรียบร้อย!");
+                window.location.href = "index.html#map";
+            } else {
+                document.getElementById("wrongSound").play();
+                alert("❌ รหัสไม่ถูกต้อง กรุณาลองใหม่");
+            }
+        });
+    </script>
+</body>
+
+</html>

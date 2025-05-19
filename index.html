@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Adventure with Butterflies</title>
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body, html {
+      margin: 0; padding: 0;
+      font-family: "Arial", sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      background: #f0f0f0;
+      text-align: center;
+      position: relative;
+    }
+
+    .page {
+       width: 100vw;
+  height: 100vh;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  background-color: #ffffff;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+    }
+
+    #homePage {
+      background-image: url('mean.png');
+      display: flex;
+    }
+
+    #gamePage {
+      background-image: url('กติกา.png');
+    }
+
+    #namePage {
+      background-image: url('กรอกชื่อ.png');
+    }
+
+    #mapPage {
+      background-image: url('map.png');
+      display: flex;
+    }
+
+    button {
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      padding: 1em 2em;
+      font-size: 1.2em;
+      cursor: pointer;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.2s ease;
+    }
+
+    button:hover {
+      filter: brightness(0.9);
+      transform: scale(1.05);
+    }
+
+    .start-button,
+    .next-button,
+    .submit-button {
+      background-color: #f1c40f;
+      color: #222;
+      position: absolute;
+      bottom: 15%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .input-name {
+      position: absolute;
+      top: 30%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 1em;
+      font-size: 1.2em;
+      border-radius: 10px;
+      border: 2px solid #ccc;
+      width: 250px;
+      max-width: 80vw;
+    }
+
+    #nicknameDisplay {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 1.5em;
+      font-weight: 600;
+      color: black;
+      text-shadow: 1px 1px 2px white;
+      z-index: 20;
+    }
+
+    /* ปุ่มกล้อง */
+    #cameraBtn {
+      position: absolute;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 60px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: none;
+      z-index: 30;
+    }
+
+    #cameraBtn img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* Popup สแกน QR */
+    #scanner {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    #reader {
+      width: 320px;
+      max-width: 90vw;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 15px #f1c40f;
+      background: #fff;
+    }
+
+   .map-container {
+  position: relative;
+  width: 90vw;     /* หรือขนาดที่ต้องการให้เหมาะกับจอ */
+  max-width: 700px;
+  aspect-ratio: 3 / 4; /* ปรับตามอัตราส่วนของ map.png จริง */
+  margin: 0 auto;
+}
+
+/* ✅ รูปภาพแผนที่ */
+.map-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ✅ Checkmark จะอิงกับ .map-container */
+.checkmark {
+  position: absolute;
+  font-size: 2em;
+  color: green;
+  display: none;
+  z-index: 10;
+}
+
+/* ปรับตำแหน่งแต่ละด่านจากภาพ map.png */
+#check1 { top: 72%; left: 78%; } /* ด่าน 1: Tiny Insect Village */
+#check2 { top: 34%; left: 82%; } /* ด่าน 2: Economic Insects */
+#check3 { top: 17%; left: 50%; } /* ด่าน 3: Butterfly Grove */
+    /* ปุ่มรีเซ็ต */
+    .reset-button {
+      position: absolute;
+      bottom: 3%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #e74c3c;
+      color: white;
+      padding: 0.7em 1.5em;
+      font-size: 1.1em;
+      z-index: 30;
+    }
+
+    .reset-button:hover {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- หน้าเริ่มต้น -->
+  <div id="homePage" class="page">
+    <button class="start-button" onclick="startGame()">START</button>
+  </div>
+
+  <!-- หน้าแสดงกติกา -->
+  <div id="gamePage" class="page">
+    <audio id="voice" src="วิธีการเล่น.mp3" autoplay></audio>
+    <button class="next-button" id="nextButton" style="display:none" onclick="goToNamePage()">ถัดไป</button>
+  </div>
+
+  <!-- หน้าใส่ชื่อ -->
+  <div id="namePage" class="page">
+    <input id="nickname" class="input-name" type="text" placeholder="กรุณากรอกชื่อเล่น" />
+    <button class="submit-button" onclick="submitName()">ตกลง</button>
+    <audio id="nameVoice" src="ชื่อ.mp3" autoplay></audio>
+  </div>
+
+  <!-- หน้าแผนที่ -->
+ <div class="page" id="mapPage">
+  <div id="nicknameDisplay"></div>
+   <!-- Checkmark แสดงว่าทำภารกิจแล้ว -->
+  <div class="checkmark" id="check1">✔</div> <!-- ด่าน 1 -->
+  <div class="checkmark" id="check2">✔</div> <!-- ด่าน 2 -->
+  <div class="checkmark" id="check3">✔</div> <!-- ด่าน 3 -->
+</div>
+  <button class="reset-button" onclick="resetGame()">รีเซ็ตเกม</button>
+</div>
+
+  <!-- ปุ่มเปิดกล้องสแกน QR -->
+  <button id="cameraBtn" onclick="openScanner()">
+    <img src="https://cdn-icons-png.flaticon.com/512/747/747314.png" alt="เปิดกล้อง" />
+
+  </button>
+
+  <!-- Popup สแกน QR -->
+  <div id="scanner" onclick="closeScanner(event)">
+    <div id="reader"></div>
+  </div>
+
+  <script>
+    let html5QrCode;
+
+    function hideAllPages() {
+      document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+    }
+
+    function startGame() {
+      const name = localStorage.getItem("playerName");
+      if (name) {
+        showMapPage(name);
+      } else {
+        hideAllPages();
+        document.getElementById("gamePage").style.display = "flex";
+        document.getElementById("nextButton").style.display = "none";
+        const voice = document.getElementById("voice");
+        voice.play().catch(() => { });
+        voice.onended = () => {
+          document.getElementById("nextButton").style.display = "block";
+        };
+      }
+    }
+
+    function goToNamePage() {
+      hideAllPages();
+      document.getElementById("namePage").style.display = "flex";
+      const nameVoice = document.getElementById("nameVoice");
+      nameVoice.play().catch(() => { });
+    }
+
+    function submitName() {
+      const input = document.getElementById("nickname");
+      const name = input.value.trim();
+      if (!name) {
+        alert("กรุณากรอกชื่อเล่น");
+        return;
+      }
+      localStorage.setItem("playerName", name);
+      showMapPage(name);
+    }
+
+    function showMapPage(name) {
+      hideAllPages();
+      document.getElementById("mapPage").style.display = "flex";
+      document.getElementById("cameraBtn").style.display = "block";
+      document.getElementById("nicknameDisplay").textContent = `ชื่อของคุณ: ${name}`;
+      showCompletedMissions();
+    }
+
+    function openScanner() {
+      document.getElementById("scanner").style.display = "flex";
+      html5QrCode = new Html5Qrcode("reader");
+      html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        qrSuccess
+      ).catch(e => alert("ไม่สามารถเปิดกล้องได้: " + e));
+    }
+
+    function closeScanner(e) {
+      if (e.target.id === "scanner") {
+        html5QrCode.stop().then(() => {
+          document.getElementById("scanner").style.display = "none";
+        }).catch(() => {
+          document.getElementById("scanner").style.display = "none";
+        });
+      }
+    }
+
+    function qrSuccess(decodedText) {
+      html5QrCode.stop().then(() => {
+        document.getElementById("scanner").style.display = "none";
+        handleMission(decodedText);
+      });
+    }
+
+    function handleMission(code) {
+      // ตรวจสอบ mission ว่าผ่านแล้วหรือยัง
+      if (code.startsWith("mission")) {
+        const completed = localStorage.getItem(code + "Complete");
+        if (completed === "true") {
+          alert("คุณได้ผ่านด่านนี้ไปแล้ว");
+          return;
+        }
+        // ยังไม่ผ่าน ให้ไปหน้า mission นั้น ๆ
+        // ตัวอย่างเปลี่ยน url หน้า mission (1.html, 2.html ...)
+        window.location.href = code.replace("mission", "") + ".html";
+      } else {
+        alert("QR Code ไม่ถูกต้อง");
+      }
+    }
+
+    function showCompletedMissions() {
+      for (let i = 1; i <= 6; i++) {
+        if (localStorage.getItem("mission" + i + "Complete") === "true") {
+          const cm = document.getElementById("mission" + i + "Check");
+          if (cm) cm.style.display = "block";
+        }
+      }
+    }
+
+    function resetGame() {
+      if (confirm("ต้องการรีเซ็ตเกมและล้างข้อมูลทั้งหมดหรือไม่?")) {
+        localStorage.clear();
+        alert("รีเซ็ตข้อมูลสำเร็จ กรุณาเริ่มเกมใหม่อีกครั้ง");
+        location.reload();
+      }
+    }
+    function logVisitorToSheet(name) {
+  fetch("https://script.google.com/macros/s/AKfycbwuwqFR-FWm2fxE7Rp7TDaCQS1pBdvcbnTt_bzOvXPyiTc_IHvLAprKGsKG25abMRJ5/exec", {
+    method: "POST",
+    body: JSON.stringify({
+      name: name,
+      ua: navigator.userAgent
+    }),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+    .then(res => console.log("✅ บันทึกการเข้าใช้งานสำเร็จ"))
+    .catch(err => console.error("❌ เกิดข้อผิดพลาดในการบันทึก:", err));
+}
+
+// เรียกตอนที่ชื่อผู้เล่นถูกบันทึกใน localStorage แล้ว
+const savedName = localStorage.getItem('playerName');
+if (savedName) {
+  goToPage('mapPage');
+  logVisitorToSheet(savedName); // ✅ เรียกฟังก์ชันบันทึก
+} else {
+  goToPage('startPage');
+}
+
+
+    // โหลดหน้าแรกและเช็คชื่อผู้เล่น
+    window.onload = function () {
+  const savedName = localStorage.getItem('playerName');
+  if (savedName) {
+    goToPage('mapPage');
+  } else {
+    goToPage('startPage');
+  }
+
+  // แสดง checkmark ถ้าทำ mission แล้ว
+  if (localStorage.getItem('mission1') === 'done') {
+    document.getElementById('check1').style.display = 'block';
+  }
+  if (localStorage.getItem('mission2') === 'done') {
+    document.getElementById('check2').style.display = 'block';
+  }
+  if (localStorage.getItem('mission3') === 'done') {
+    document.getElementById('check3').style.display = 'block';
+  }
+}
+
+  </script>
+</body>
+
+</html>
