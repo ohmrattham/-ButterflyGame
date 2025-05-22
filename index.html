@@ -330,12 +330,13 @@
     </div>
 
     <div id="missionCompletePopup" class="popup">
-      <div class="popup-content">
-        <h2>🎉 ยินดีด้วย!</h2>
-        <p id="popupMessage"></p>
-        <button onclick="closePopup()">ตกลง</button>
-      </div>
-    </div>
+  <div class="popup-content">
+    <h2>🎉 ยินดีด้วย!</h2>
+    <p id="popupMessage"></p>
+    <button onclick="goToScorePage()">ดูคะแนน</button> <!-- เพิ่มปุ่มนี้ -->
+    <button onclick="closePopup()">ตกลง</button>
+  </div>
+</div>
 
     <button id="cameraBtn" onclick="openScanner()">
       <img src="camera-icon.png" alt="เปิดกล้อง" />
@@ -562,5 +563,10 @@
     hideAllPages();
     document.getElementById("homePage").style.display = "flex";
     document.addEventListener("DOMContentLoaded", showTotalScore);
+
+    function goToScorePage() {
+    window.location.href = "score.html";
+}
+
   </script>
 </body>
