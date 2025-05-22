@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,25 +7,33 @@
   <style>
     body {
       margin: 0;
-     
       font-family: sans-serif;
-       background: #f5f5dc;
+      background-image: url('bgb.png');
     }
 
     .page {
-      background: url('4.png') center/cover no-repeat;
+      position: relative;
       width: 100%;
       max-width: 600px;
       margin: auto;
       aspect-ratio: 1080 / 1920;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      text-align: center;
-      padding: 20px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      padding-bottom: 20px;
+      display: none;
     }
-    
+
+    #homePage {
+      background-image: url('4.png');
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
     button {
       font-family: inherit;
       font-size: 16px;
@@ -128,13 +135,10 @@
     }
   </style>
 </head>
-
 <body>
 
   <audio id="bgMusic" src="bgmusic.mp3" loop></audio>
-
-
-  <div id="mainPage" class="page" style="background-image: url('4.png');">
+  <div id="homePage" class="page">
     <audio id="voice" src="intro1.mp3"></audio>
     <audio id="correctSound" src="correct.mp3"></audio>
 
@@ -158,13 +162,14 @@
 
   <div id="resultPopup">
     <div id="resultBox">
-      <span id="resultText">คุณตอบถูก 0 ข้อ</span>
+      <span id="resultText">คุณได้ 0 คะแนน</span>
     </div>
   </div>
 
   <script>
     const bgImages = ["5.png", "6.png", "7.png"];
-    const correctAnswers = [3, 1, 1];
+    const correctAnswers = [3, 1, 1]; // ✅ ใส่คำตอบที่ถูกต้องของแต่ละข้อ
+    const scorePerCorrect = 10;
     let userAnswers = [null, null, null];
     let current = 0;
 
@@ -174,15 +179,13 @@
       document.getElementById("navButtons").style.display = "flex";
       updateQuestion();
 
-      // เริ่มเล่นเสียงพื้นหลัง
       const bgMusic = document.getElementById("bgMusic");
       bgMusic.volume = 0.4;
       bgMusic.play().catch((e) => console.log("ไม่สามารถเล่นเสียง:", e));
     }
 
-
     function updateQuestion() {
-      document.getElementById("mainPage").style.backgroundImage = `url('${bgImages[current]}')`;
+      document.getElementById("homePage").style.backgroundImage = `url('${bgImages[current]}')`;
       updateSelectionUI();
       updateStatus();
     }
@@ -232,93 +235,30 @@
     }
 
     function checkAnswers() {
-      const correct = userAnswers.filter((ans, i) => ans === correctAnswers[i]).length;
+      let score = 0;
+      for (let i = 0; i < correctAnswers.length; i++) {
+        if (userAnswers[i] === correctAnswers[i]) {
+          score += scorePerCorrect;
+        }
+      }
 
       const popup = document.getElementById("resultPopup");
       const resultText = document.getElementById("resultText");
       const sound = document.getElementById("correctSound");
 
-      resultText.textContent = `คุณตอบถูก ${correct} ข้อ`;
+      resultText.textContent = `คุณได้ ${score} คะแนนในภารกิจที่ 1`;
       popup.style.display = "flex";
       sound.play().catch(() => { });
 
-      if (correct === 3) {
-        launchFireworks();
-        localStorage.setItem("mission1Complete", "true");
-        setTimeout(() => {
-          window.location.href = "index.html";
-        }, 3000);
-      } else {
-        setTimeout(() => {
-          popup.style.display = "none";
-          current = 0;
-          userAnswers = [null, null, null];
-          updateQuestion();
-        }, 3000);
-      }
-    }
+      localStorage.setItem("mission1Score", score);
+      localStorage.setItem("mission1Complete", "true");
 
-    // เอฟเฟกต์ยิงพลุ
-    function launchFireworks() {
-      const canvas = document.getElementById("fireworksCanvas");
-      const ctx = canvas.getContext("2d");
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      let particles = [];
-
-      function createFirework() {
-        const x = Math.random() * canvas.width;
-        const y = Math.random() * canvas.height / 2;
-        const color = `hsl(${Math.random() * 360}, 100%, 60%)`;
-
-        for (let i = 0; i < 100; i++) {
-          particles.push({
-            x, y,
-            radius: Math.random() * 2 + 1,
-            dx: (Math.random() - 0.5) * 5,
-            dy: (Math.random() - 0.5) * 5,
-            alpha: 1,
-            color
-          });
-        }
-      }
-
-      function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach((p, i) => {
-          p.x += p.dx;
-          p.y += p.dy;
-          p.alpha -= 0.01;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${hexToRgb(p.color)}, ${p.alpha})`;
-          ctx.fill();
-          if (p.alpha <= 0) particles.splice(i, 1);
-        });
-        if (particles.length > 0) requestAnimationFrame(animate);
-      }
-
-      function hexToRgb(h) {
-        const temp = document.createElement("div");
-        temp.style.color = h;
-        document.body.appendChild(temp);
-        const rgb = window.getComputedStyle(temp).color;
-        document.body.removeChild(temp);
-        return rgb.match(/\d+,\s*\d+,\s*\d+/)[0];
-      }
-
-      createFirework();
-      createFirework();
-      createFirework();
-      animate();
-
+      // ✅ กลับไปหน้าแผนที่
       setTimeout(() => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles = [];
+        window.location.href = "index.html#mapPage";
       }, 3000);
     }
 
-    // เล่นเสียงเมื่อแตะครั้งแรก
     window.addEventListener('DOMContentLoaded', () => {
       function playVoiceOnce() {
         const voice = document.getElementById("voice");
@@ -330,7 +270,5 @@
       window.addEventListener('touchstart', playVoiceOnce);
     });
   </script>
-
 </body>
-
 </html>

@@ -10,33 +10,45 @@
       font-family: sans-serif;
       overflow: hidden;
     }
-
-    #mainPage {
-      position: absolute;
-      width: 100vw;
-      height: 100vh;
-      background-image: url('intro2.png');
-      background-size: cover;
+     .page {
+      
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      margin: auto;
+      aspect-ratio: 1080 / 1920;
+      background-size: contain;
+      background-repeat: no-repeat;
       background-position: center;
-      z-index: 5;
+      padding-bottom: 20px;
+      display: none;
+    }
+    #mainPage {
+     
+      background-image: url('intro2.png');
+     position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     #startBtn {
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background-color: #8B4513;
+      color: white;
+      padding: 12px 24px;
       position: absolute;
-      top: 65%;
+      top: 55%;
       left: 50%;
       transform: translate(-50%, -50%);
-      padding: 20px 40px;
-      background: rgba(255, 255, 255, 0.8);
-      color: #5c3c10;
-      border: 4px solid #5c3c10;
-      border-radius: 50px;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
-      z-index: 10;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      transition: 0.3s;
     }
 
     #startBtn:hover {
@@ -98,13 +110,13 @@
 <body>
 <audio id="bgMusic" src="bgmusic.mp3" loop></audio>
 
-<div id="mainPage">
+<div id="mainPage"class="page">
   <audio id="voice" src="intro1.mp3"></audio>
   <audio id="correctSound" src="correct.mp3"></audio>
   <button id="startBtn">เริ่มทำภารกิจ</button>
 </div>
 
-<div id="game">
+<div id="game"class="page">
   <img id="bgImage" src="2.png" alt="พื้นหลัง" />
   <canvas id="lineCanvas"></canvas>
   <canvas id="fireworks"></canvas>

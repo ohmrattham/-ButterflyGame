@@ -1,6 +1,6 @@
+<!-- บันทึกเป็นไฟล์ .html แล้วเปิดในเบราว์เซอร์ -->
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,61 +9,60 @@
     body {
       margin: 0;
       font-family: sans-serif;
-      background: #f2f2f2;
+      background-image: url('bgb.png');
+    }
+
+    .page {
+      width: 100%;
+      max-width: 600px;
+      margin: auto;
+      aspect-ratio: 1080 / 1920;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      display: none;
     }
 
     #startScreen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(to bottom right, #f7b22c, #d7c3a5);
+      background-image: url('3.0.png');
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 100;
-    }
-
-    #startContent {
-      background: white;
-      padding: 5vw 10vw;
-      border-radius: 20px;
-      text-align: center;
-      box-shadow: 0 1vh 2vh rgba(0, 0, 0, 0.3);
-    }
-
-    #startContent h1 {
-      font-size: 5vw;
-      margin-bottom: 2vh;
-    }
-
-    #startContent p {
-      font-size: 3vw;
-      margin-bottom: 3vh;
     }
 
     #startBtn {
-      font-size: 3vw;
-      padding: 1vh 3vh;
+      font-size: 18px;
+      font-weight: bold;
       border: none;
-      border-radius: 1.5vh;
-      background-color: #28a745;
-      color: white;
+      border-radius: 10px;
       cursor: pointer;
+      background-color: #8B4513;
+      color: white;
+      padding: 14px 28px;
+      z-index: 2;
+    }
+
+    #game, #game2, #game3 {
+      height: 100vh;
+      position: relative;
+      justify-content: center;
+      align-items: center;
     }
 
     #game {
-      position: relative;
-      width: 100%;
-      max-width: 1000px;
-      margin: auto;
+      background-image: url('3.png');
     }
 
-    #bgImage {
-      width: 100%;
-      height: auto;
-      display: block;
+    #game2 {
+      background-image: url('3.2.png');
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    #game3 {
+      background-image: url('3.3.png');
+      flex-direction: column;
     }
 
     #overlayContainer {
@@ -74,8 +73,7 @@
       height: 100%;
     }
 
-    .drop-zone,
-    .drag-option {
+    .drop-zone, .drag-option {
       position: absolute;
       width: 18%;
       height: 5%;
@@ -111,10 +109,10 @@
       display: none;
       z-index: 20;
       text-align: center;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
     }
 
-    #checkBtn,
-    #resetBtn {
+    button {
       position: absolute;
       bottom: 5vh;
       padding: 1.5vh 3vh;
@@ -122,11 +120,11 @@
       border: none;
       border-radius: 1.5vh;
       cursor: pointer;
+      z-index: 10;
       box-shadow: 0 0.5vh 1vh rgba(0, 0, 0, 0.3);
-      transition: background-color 0.3s ease, transform 0.2s ease;
     }
 
-    #checkBtn {
+    #checkBtn, #game3CheckBtn {
       left: 35%;
       transform: translateX(-50%);
       background-color: #28a745;
@@ -140,37 +138,133 @@
       color: white;
     }
 
-    #checkBtn:hover,
-    #resetBtn:hover {
-      transform: translateX(-50%) scale(1.05);
-      opacity: 0.9;
+    #toGame2Btn, #toGame3Btn {
+      left: 50%;
+      background-color: #007bff;
+      color: white;
+      transform: translateX(-50%);
+      position: fixed;
+      display: none;
     }
+
+    select {
+      font-size: 1em;
+      padding: 6px;
+      width: 30%;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    #game2Result, #game3Result {
+      font-weight: bold;
+      font-size: 1.3em;
+      color: #333;
+      position: absolute;
+      top: 90%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+   #game2CheckBtn {
+  top: 80%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #28a745;
+  color: rgb(0, 0, 0);
+  padding: 1.5vh 3vh;       /* ลดขนาด padding ให้เล็กลง */
+  font-size: 1.8vh;        /* ลดขนาดตัวอักษรให้เหมาะสม */
+  border-radius: 12px;     /* ปรับให้มุมปุ่มโค้งมนมากขึ้น */
+  box-shadow: 0 0.3vh 0.6vh rgba(0, 0, 0, 0.2); /* เงานุ่มๆ */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#game2CheckBtn:hover {
+  background-color: #76a07f; /* เปลี่ยนสีเมื่อเอาเมาส์วาง */
+}
   </style>
 </head>
-
 <body>
 
-  <div id="startScreen">
-    <div id="startContent">
-      <h1>ยินดีต้อนรับสู่ด่านที่ 3</h1>
-      <p>ลากคำศัพท์ไปยังตำแหน่งที่ถูกต้อง</p>
-      <button id="startBtn">เริ่มเกม</button>
-    </div>
+  <!-- Start Screen -->
+  <div id="startScreen" class="page" style="display: flex;">
+    <button id="startBtn">เริ่มเกม</button>
   </div>
 
-  <div id="game" style="display: none;">
+  <!-- Game 1 -->
+  <div id="game" class="page">
     <audio id="bgm" src="bgmusic.mp3" autoplay loop hidden></audio>
-    <img id="bgImage" src="3.png" alt="พื้นหลัง" />
-    <div id="overlayContainer"></div>
-
     <audio id="correctSound" src="correct.mp3"></audio>
     <audio id="wrongSound" src="wrong.mp3"></audio>
+    <div id="overlayContainer"></div>
     <div id="popup"></div>
     <button id="checkBtn">ตรวจคำตอบ</button>
     <button id="resetBtn">รีเซ็ต</button>
+    <button id="toGame2Btn">ไปยังเกมที่ 2</button>
+  </div>
+
+  <!-- Game 2 -->
+  <div id="game2" class="page">
+    <select style="position:absolute;top:48%;left:17%;" onchange="checkGame2Answer(this, 1)">
+      <option value="">-- เลือกชื่อ ข้อ 1 --</option>
+      <option value="ผีเสื้อหางติ่ง">ผีเสื้อหางติ่ง</option>
+      <option value="ผีเสื้อหนอนใบรัก">ผีเสื้อหนอนใบรัก</option>
+      <option value="ผีเสื้อกะลาสี">ผีเสื้อกะลาสี</option>
+      <option value="ผีเสื้อฟ้า">ผีเสื้อฟ้า</option>
+    </select>
+
+    <select style="position:absolute;top:48%;left:53%;" onchange="checkGame2Answer(this, 2)">
+      <option value="">-- เลือกชื่อ ข้อ 2 --</option>
+      <option value="ผีเสื้อหางติ่ง">ผีเสื้อหางติ่ง</option>
+      <option value="ผีเสื้อหนอนใบรัก">ผีเสื้อหนอนใบรัก</option>
+      <option value="ผีเสื้อกะลาสี">ผีเสื้อกะลาสี</option>
+      <option value="ผีเสื้อฟ้า">ผีเสื้อฟ้า</option>
+    </select>
+
+    <select style="position:absolute;top:74%;left:17%;" onchange="checkGame2Answer(this, 3)">
+      <option value="">-- เลือกชื่อ ข้อ 3 --</option>
+      <option value="ผีเสื้อหางติ่ง">ผีเสื้อหางติ่ง</option>
+      <option value="ผีเสื้อหนอนใบรัก">ผีเสื้อหนอนใบรัก</option>
+      <option value="ผีเสื้อกะลาสี">ผีเสื้อกะลาสี</option>
+      <option value="ผีเสื้อฟ้า">ผีเสื้อฟ้า</option>
+    </select>
+
+    <select style="position:absolute;top:74%;left:53%;" onchange="checkGame2Answer(this, 4)">
+      <option value="">-- เลือกชื่อ ข้อ 4 --</option>
+      <option value="ผีเสื้อหางติ่ง">ผีเสื้อหางติ่ง</option>
+      <option value="ผีเสื้อหนอนใบรัก">ผีเสื้อหนอนใบรัก</option>
+      <option value="ผีเสื้อกะลาสี">ผีเสื้อกะลาสี</option>
+      <option value="ผีเสื้อฟ้า">ผีเสื้อฟ้า</option>
+    </select>
+
+    <div id="game2Result"></div>
+    <button id="game2CheckBtn" onclick="checkAllGame2Answers()">ตรวจคำตอบ</button>
+    <button id="toGame3Btn">ไปยังเกมที่ 3</button>
+  </div>
+
+  <!-- Game 3 -->
+  <div id="game3" class="page">
+    <div style="margin-top: 40vh; text-align: center;">
+      <select id="game3Select">
+        <option value="">-- เลือกคำตอบ --</option>
+        <option value="กล้วยไม้">กล้วยไม้</option>
+        <option value="เฟิร์น">เฟิร์น</option>
+        <option value="บัว">บัว</option>
+        <option value="หญ้า">หญ้า</option>
+      </select>
+      <div id="game3Result" style="margin-top: 20px;"></div>
+      <button id="game3CheckBtn">ตรวจคำตอบ</button>
+    </div>
   </div>
 
   <script>
+    const correctAnswers = {
+      1: "หนวด", 2: "ปีก", 3: "หัว", 4: "ลำตัว", 5: "ท้อง"
+    };
+    const game2CorrectAnswers = {
+      1: "ผีเสื้อกะลาสี", 2: "ผีเสื้อฟ้า", 3: "ผีเสื้อหางติ่ง", 4: "ผีเสื้อหนอนใบรัก"
+    };
+
     const dropZonesData = [
       { top: 30, left: 15, answer: "1" },
       { top: 32, left: 55, answer: "2" },
@@ -187,18 +281,9 @@
       { top: 20, left: 65, index: "5", text: "ท้อง" },
     ];
 
-    const correctAnswers = {
-      1: "หนวด",
-      2: "ปีก",
-      3: "หัว",
-      4: "ลำตัว",
-      5: "ท้อง",
-    };
-
     function createElements() {
       const container = document.getElementById("overlayContainer");
-      container.innerHTML = '';
-
+      container.innerHTML = "";
       dropZonesData.forEach(zone => {
         const div = document.createElement("div");
         div.className = "drop-zone";
@@ -207,7 +292,6 @@
         div.dataset.answer = zone.answer;
         container.appendChild(div);
       });
-
       dragOptionsData.forEach(opt => {
         const div = document.createElement("div");
         div.className = "drag-option";
@@ -221,29 +305,19 @@
     }
 
     function setupDragDrop() {
-      const options = document.querySelectorAll(".drag-option");
-      const zones = document.querySelectorAll(".drop-zone");
-      let draggedElement = null;
-
-      options.forEach(option => {
-        option.addEventListener("dragstart", e => {
-          e.dataTransfer.setData("text/plain", option.dataset.index);
-          draggedElement = option;
-        });
-
-        option.addEventListener("dragend", () => {
-          draggedElement = null;
+      document.querySelectorAll(".drag-option").forEach(opt => {
+        opt.addEventListener("dragstart", e => {
+          e.dataTransfer.setData("text/plain", opt.dataset.index);
         });
       });
 
-      zones.forEach(zone => {
+      document.querySelectorAll(".drop-zone").forEach(zone => {
         zone.addEventListener("dragover", e => e.preventDefault());
-
         zone.addEventListener("drop", e => {
           e.preventDefault();
           const index = e.dataTransfer.getData("text/plain");
           const dropped = document.querySelector(`.drag-option[data-index='${index}']`);
-          if (!zone.innerText && dropped) {
+          if (!zone.innerText) {
             zone.innerText = dropped.innerText;
             zone.dataset.index = index;
             dropped.style.display = "none";
@@ -252,56 +326,101 @@
       });
     }
 
-    document.getElementById("startBtn").addEventListener("click", () => {
+    document.getElementById("startBtn").onclick = () => {
       document.getElementById("startScreen").style.display = "none";
-      document.getElementById("game").style.display = "block";
+      document.getElementById("game").style.display = "flex";
+      createElements();
+      setupDragDrop();
+      document.getElementById("bgm").volume = 0.3;
+    };
 
-      const bgMusic = document.getElementById("bgm");
-      bgMusic.volume = 0.4;
-      bgMusic.play().catch(err => {
-        console.log("Autoplay blocked:", err);
-      });
-
-      if (!localStorage.getItem("firstVisit")) {
-        const popup = document.getElementById("popup");
-        popup.style.display = "block";
-        popup.innerHTML = "ยินดีต้อนรับสู่ด่านที่ 3! กรุณาลากคำตอบที่ถูกต้องใส่ในช่องที่กำหนด";
-        localStorage.setItem("firstVisit", "true");
-        setTimeout(() => popup.style.display = "none", 5000);
-      }
-    });
-
-    document.getElementById("checkBtn").addEventListener("click", () => {
+    document.getElementById("checkBtn").onclick = () => {
       let correct = 0;
       document.querySelectorAll(".drop-zone").forEach(zone => {
         const expected = correctAnswers[zone.dataset.answer];
         if (zone.innerText === expected) correct++;
       });
-
       const popup = document.getElementById("popup");
+     if (correct === 5) {
+  popup.innerText = "ถูกต้องทั้งหมด!";
+  localStorage.setItem("game1Done", "true");
+  document.getElementById("correctSound").play();
+  
+  // แสดง popup สัก 2 วินาทีแล้วเปลี่ยนหน้าเกม 2 อัตโนมัติ
+  popup.style.display = "block";
+  setTimeout(() => {
+    popup.style.display = "none";
+    // ซ่อนหน้าเกม 1 แล้วแสดงเกม 2
+    document.getElementById("game").style.display = "none";
+    document.getElementById("game2").style.display = "flex";
+  }, 2000);
+} else {
+  popup.innerText = `ตอบถูก ${correct} ข้อ`;
+  popup.style.display = "block";
+  document.getElementById("wrongSound").play();
+  setTimeout(() => popup.style.display = "none", 3000);
+}
+
       popup.style.display = "block";
+      setTimeout(() => popup.style.display = "none", 3000);
+    };
 
-      if (correct === Object.keys(correctAnswers).length) {
-        document.getElementById("correctSound").play();
-        popup.innerHTML = "สุดยอด! คุณตอบถูกทั้งหมด 🎉";
-        localStorage.setItem("mission3Complete", "true");
-        setTimeout(() => window.location.href = "index.html#map", 4000);
-      } else {
-        document.getElementById("wrongSound").play();
-        popup.innerHTML = `คุณตอบถูก ${correct} จาก ${Object.keys(correctAnswers).length} ลองอีกครั้ง`;
-        setTimeout(() => popup.style.display = "none", 3000);
+    document.getElementById("resetBtn").onclick = () => {
+      createElements();
+      setupDragDrop();
+    };
+
+    document.getElementById("toGame2Btn").onclick = () => {
+      document.getElementById("game").style.display = "none";
+      document.getElementById("game2").style.display = "flex";
+    };
+
+    const selectedAnswers = {};
+    function checkGame2Answer(select, qnum) {
+      selectedAnswers[qnum] = select.value;
+      const allAnswered = Object.keys(selectedAnswers).length === 4 && Object.values(selectedAnswers).every(v => v);
+      document.getElementById("game2CheckBtn").style.display = allAnswered ? "block" : "none";
+    }
+
+    function checkAllGame2Answers() {
+      let correct = 0;
+      for (let i = 1; i <= 4; i++) {
+        if (selectedAnswers[i] === game2CorrectAnswers[i]) correct++;
       }
-    });
+      const result = document.getElementById("game2Result");
+      if (correct === 4) {
+        result.innerText = "ตอบถูกทั้งหมด!";
+        localStorage.setItem("game2Done", "true");
+        document.getElementById("correctSound").play();
+        document.getElementById("toGame3Btn").style.display = "block";
+      } else {
+        result.innerText = `ตอบถูก ${correct} ข้อ`;
+        document.getElementById("wrongSound").play();
+      }
+    }
 
-    document.getElementById("resetBtn").addEventListener("click", () => {
-      createElements();
-      setupDragDrop();
-    });
+    document.getElementById("toGame3Btn").onclick = () => {
+      document.getElementById("game2").style.display = "none";
+      document.getElementById("game3").style.display = "flex";
+    };
 
-    window.addEventListener("load", () => {
-      createElements();
-      setupDragDrop();
-    });
+    document.getElementById("game3CheckBtn").onclick = () => {
+      const answer = document.getElementById("game3Select").value;
+      const result = document.getElementById("game3Result");
+      if (answer === "กล้วยไม้") {
+        result.innerText = "ตอบถูกต้อง!";
+        localStorage.setItem("game3Done", "true");
+        document.getElementById("correctSound").play();
+      } else {
+        result.innerText = "ตอบผิด ลองอีกครั้ง!";
+        document.getElementById("wrongSound").play();
+      }
+    };
+
+    window.onload = () => {
+      if (localStorage.getItem("game1Done")) document.getElementById("toGame2Btn").style.display = "block";
+      if (localStorage.getItem("game2Done")) document.getElementById("toGame3Btn").style.display = "block";
+    };
   </script>
 </body>
 </html>
