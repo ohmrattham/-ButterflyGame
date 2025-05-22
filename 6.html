@@ -1,215 +1,311 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ด่านที่ 6</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: sans-serif;
-            background: #f2f2f2;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ด่านที่ 6</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Arial", sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      background-image: url(bgb.png);
+    }
 
-        /* Welcome Screen */
-        #welcomeScreen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(to bottom right, #fff3b0, #ffcc70);
-            text-align: center;
-            padding: 40px;
-            height: 100vh;
-        }
+    #welcomeScreen {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-        #welcomeScreen h1 {
-            font-size: 48px;
-            color: #ff9900;
-            margin-bottom: 20px;
-        }
+    #welcomeBg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
 
-        #welcomeScreen p {
-            font-size: 20px;
-            color: #333;
-            margin-bottom: 30px;
-        }
+    #startButton {
+      padding: 16px 40px;
+      font-size: 24px;
+      background-color: #ffcc00;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      z-index: 2;
+    }
 
-        #startButton {
-            padding: 16px 40px;
-            font-size: 24px;
-            background-color: #ffcc00;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+    #startButton:hover {
+      background-color: #ffdd33;
+    }
 
-        #startButton:hover {
-            background-color: #ffdd33;
-        }
+    .butterfly {
+      position: absolute;
+      width: 80px;
+      animation: float 6s ease-in-out infinite;
+      z-index: 1;
+    }
 
-        /* Game Screen */
-        #game {
-            position: relative;
-            max-width: 1000px;
-            margin: auto;
-        }
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
+      50% { transform: translateY(-20px) rotate(10deg); opacity: 1; }
+      100% { transform: translateY(0) rotate(-5deg); opacity: 0.8; }
+    }
 
-        #bgImage {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
+    #gameScreen {
+      display: none;
+      width: 100%;
+      height: 100vh;
+      position: relative;
+    }
 
-        #overlayContainer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
+    #game {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
 
-        #quizButton {
-            position: absolute;
-            top: 23.5%;
-            right: 21%;
-            padding: 25px 60px;
-            font-size: 30px;
-            background-color: #ffcc00;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            z-index: 10;
-        }
+    #bgImage {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      height: auto;
+      max-height: 100%;
+      object-fit: contain;
+      z-index: 1;
+    }
 
-        #quizButton:hover {
-            background-color: #ffdd33;
-        }
+    #overlayContainer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+    }
 
-        #codeContainer {
-            position: absolute;
-            bottom: 10%;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            background: #fff8dc;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
-            border: 2px solid #ffe799;
-        }
+    #quizButton {
+      position: absolute;
+      top: 27%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px 40px;
+      font-size: 20px;
+      background-color: #ffcc00;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      z-index: 2;
+    }
 
-        #codeInput {
-            padding: 12px;
-            font-size: 22px;
-            width: 260px;
-            border-radius: 8px;
-            border: 2px solid #ffd966;
-            background-color: #fffdf2;
-            color: #333;
-            margin-bottom: 15px;
-            text-align: center;
-        }
+    #quizButton:hover {
+      background-color: #ffdd33;
+    }
 
-        #codeInput::placeholder {
-            color: #aaa;
-            font-style: italic;
-        }
+    #codeContainer {
+      position: absolute;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      background: #fff8dc;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+      border: 2px solid #ffe799;
+      z-index: 3;
+    }
 
-        #verifyButton {
-            padding: 10px 25px;
-            font-size: 18px;
-            background-color: #ffd966;
-            color: #333;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+    #emailInput,
+    #codeInput {
+      padding: 12px;
+      font-size: 20px;
+      width: 260px;
+      border-radius: 8px;
+      border: 2px solid #ffd966;
+      background-color: #fffdf2;
+      color: #333;
+      margin-bottom: 15px;
+      text-align: center;
+    }
 
-        #verifyButton:hover {
-            background-color: #ffe68a;
-        }
-    </style>
+    #emailInput::placeholder,
+    #codeInput::placeholder {
+      color: #aaa;
+      font-style: italic;
+    }
+
+    #verifyButton {
+      padding: 10px 25px;
+      font-size: 18px;
+      background-color: #ffd966;
+      color: #333;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #verifyButton:hover {
+      background-color: #ffe68a;
+    }
+
+    @media (max-width: 600px) {
+      #quizButton {
+        font-size: 20px;
+        padding: 16px 30px;
+      }
+
+      #emailInput,
+      #codeInput {
+        font-size: 18px;
+        width: 200px;
+      }
+
+      #verifyButton {
+        font-size: 16px;
+        padding: 8px 20px;
+      }
+
+      #startButton {
+        font-size: 20px;
+        padding: 12px 30px;
+      }
+    }
+  </style>
 </head>
-
 <body>
-    <!-- Welcome Screen -->
-    <div id="welcomeScreen">
-        <h1>ยินดีต้อนรับ!</h1>
-        <p>เตรียมตัวให้พร้อมก่อนเข้าสู่ด่านที่ 6</p>
-        <button id="startButton">เริ่มเกม</button>
+
+  <!-- Welcome Screen -->
+  <div id="welcomeScreen">
+    <img id="welcomeBg" src="ด่าน6.png" alt="พื้นหลัง Welcome" />
+    <button id="startButton">เริ่มเกม</button>
+    <img class="butterfly" src="butterfly.png" style="top: 10%; left: 10%; animation-delay: 0s;" />
+    <img class="butterfly" src="butterfly.png" style="top: 20%; left: 70%; animation-delay: 2s;" />
+    <img class="butterfly" src="butterfly.png" style="top: 60%; left: 30%; animation-delay: 4s;" />
+  </div>
+
+  <!-- Game Screen -->
+  <div id="gameScreen">
+    <div id="game">
+      <img id="bgImage" src="ด่าน6.png" alt="พื้นหลัง" />
+      <audio id="backgroundMusic" src="bgmusic.mp3" loop preload="auto"></audio>
+
+      <div id="overlayContainer"></div>
+
+      <button id="quizButton">📋 ทำแบบสอบถาม</button>
+
+      <div id="codeContainer">
+        <p>กรอกอีเมลที่ใช้ตอบแบบสอบถาม:</p>
+        <input type="email" id="emailInput" placeholder="example@email.com" />
+        <br />
+        <p>ใส่รหัสผ่านที่ได้หลังตอบแบบสอบถาม:</p>
+        <input type="text" id="codeInput" placeholder="รหัสจะถูกใส่อัตโนมัติ" readonly />
+        <br />
+        <button id="verifyButton">ยืนยันรหัสผ่าน</button>
+      </div>
+
+      <audio id="correctSound" src="correct.mp3"></audio>
+      <audio id="wrongSound" src="wrong.mp3"></audio>
     </div>
+  </div>
 
-    <!-- Game Screen -->
-    <div id="gameScreen" style="display: none;">
-        <div id="game">
-            <img id="bgImage" src="ด่าน6.png" alt="พื้นหลัง" />
-            <audio id="backgroundMusic" src="bgmusic.mp3" loop preload="auto"></audio>
+  <script>
+    const apiUrl = "https://script.google.com/macros/s/AKfycbwsYRjt7_ox6ztea6hs2p3oJjzI6d_cFTkbC7YlSs0QOxBUNwmCREP-kVpr5SFCD72e/exec";
 
-            <div id="overlayContainer"></div>
+    document.getElementById("startButton").addEventListener("click", () => {
+      document.getElementById("welcomeScreen").style.display = "none";
+      document.getElementById("gameScreen").style.display = "block";
 
-            <button id="quizButton">📋 ทำแบบสอบถาม</button>
+      const bgMusic = document.getElementById("backgroundMusic");
+      bgMusic.volume = 0.4;
+      bgMusic.play().catch(() => {
+        alert("⚠️ กรุณาแตะหน้าจอหรืออนุญาตให้เล่นเสียงก่อนเริ่มเกม");
+      });
 
-            <div id="codeContainer">
-                <p>ใส่รหัสผ่านที่ได้หลังตอบแบบสอบถาม:</p>
-                <input type="text" id="codeInput" placeholder="รหัสผ่าน" />
-                <br />
-                <button id="verifyButton">ยืนยันรหัสผ่าน</button>
-            </div>
-
-            <audio id="correctSound" src="correct.mp3"></audio>
-            <audio id="wrongSound" src="wrong.mp3"></audio>
-        </div>
-    </div>
-
-    <script>
-        const correctCode = "Butterflypass";
-
-        // เริ่มเกมหลังคลิกปุ่ม "เริ่มเกม"
-        document.getElementById("startButton").addEventListener("click", () => {
-            document.getElementById("welcomeScreen").style.display = "none";
-            document.getElementById("gameScreen").style.display = "block";
-
-            // เล่นเพลงพื้นหลัง
-            const bgMusic = document.getElementById("backgroundMusic");
-            bgMusic.volume = 0.4;
-            bgMusic.play().catch(e => {
-                alert("⚠️ กรุณาอนุญาตให้เล่นเสียงก่อนเริ่มเกม");
-                console.log(e);
-            });
-
-            // ตรวจสอบถ้าเคยผ่านแล้ว
-            const isDone = localStorage.getItem("mission6Complete");
-            if (isDone === "true") {
-                window.location.href = "index.html#map";
+      const savedEmail = localStorage.getItem("playerEmail");
+      if (savedEmail) {
+        document.getElementById("emailInput").value = savedEmail;
+        fetch(`${apiUrl}?email=${encodeURIComponent(savedEmail)}`)
+          .then(res => res.text())
+          .then(code => {
+            if (code !== "notfound" && code !== "missing") {
+              document.getElementById("codeInput").value = code;
             }
-        });
+          });
+      }
+    });
 
-        // เปิดฟอร์ม Google แบบสอบถาม
-        document.getElementById("quizButton").addEventListener("click", () => {
-            window.open(
-                "https://docs.google.com/forms/d/e/1FAIpQLSdThWQoomnXlRbm2MBIE6NHB5UYspQCmz1OlgHHb6c9Moqcsw/viewform",
-                "_blank"
-            );
-        });
+    document.getElementById("emailInput").addEventListener("change", () => {
+      const email = document.getElementById("emailInput").value.trim();
+      if (!email) {
+        alert("⚠️ กรุณากรอกอีเมลให้ถูกต้อง");
+        return;
+      }
 
-        // ตรวจสอบรหัสผ่าน
-        document.getElementById("verifyButton").addEventListener("click", () => {
-            const userCode = document.getElementById("codeInput").value.trim();
-            if (userCode === correctCode) {
-                localStorage.setItem("mission6Complete", "true");
-                document.getElementById("correctSound").play();
-                alert("✅ ผ่านด่านเรียบร้อย!");
-                window.location.href = "index.html#map";
-            } else {
-                document.getElementById("wrongSound").play();
-                alert("❌ รหัสไม่ถูกต้อง กรุณาลองใหม่");
-            }
+      localStorage.setItem("playerEmail", email);
+
+      fetch(`${apiUrl}?email=${encodeURIComponent(email)}`)
+        .then(res => res.text())
+        .then(code => {
+          if (code === "notfound") {
+            alert("❌ ไม่พบข้อมูลอีเมลนี้ กรุณาตรวจสอบอีกครั้ง");
+          } else if (code === "missing") {
+            alert("⚠️ กรุณาระบุอีเมล");
+          } else {
+            document.getElementById("codeInput").value = code;
+          }
+        })
+        .catch(() => alert("⚠️ ดึงรหัสไม่สำเร็จ กรุณาลองใหม่"));
+    });
+
+    document.getElementById("quizButton").addEventListener("click", () => {
+      window.open(
+        "https://docs.google.com/forms/d/e/1FAIpQLSdThWQoomnXlRbm2MBIE6NHB5UYspQCmz1OlgHHb6c9Moqcsw/viewform",
+        "_blank"
+      );
+    });
+
+    document.getElementById("verifyButton").addEventListener("click", () => {
+      const userCode = document.getElementById("codeInput").value.trim();
+      if (!userCode) {
+        alert("❌ ไม่มีรหัส กรุณาตรวจสอบอีกครั้ง");
+        return;
+      }
+
+      fetch(`${apiUrl}?code=${userCode}`)
+        .then(res => res.text())
+        .then(status => {
+          if (status === "valid") {
+            localStorage.setItem("mission6Complete", "true");
+            document.getElementById("correctSound").play();
+            alert("✅ ผ่านด่านเรียบร้อย!");
+            window.location.href = "index.html#map";
+          } else if (status === "used") {
+            document.getElementById("wrongSound").play();
+            alert("⚠️ รหัสนี้ถูกใช้ไปแล้ว");
+          } else {
+            document.getElementById("wrongSound").play();
+            alert("❌ รหัสไม่ถูกต้อง กรุณาลองใหม่");
+          }
+        })
+        .catch(() => {
+          alert("⚠️ เกิดข้อผิดพลาดในการตรวจสอบรหัส");
         });
-    </script>
+    });
+  </script>
 </body>
-
 </html>
