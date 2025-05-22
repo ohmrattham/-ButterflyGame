@@ -41,12 +41,7 @@
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
       z-index: 2;
-    }
-
-    #startButton:hover {
-      background-color: #ffdd33;
     }
 
     .butterfly {
@@ -111,10 +106,6 @@
       z-index: 2;
     }
 
-    #quizButton:hover {
-      background-color: #ffdd33;
-    }
-
     #codeContainer {
       position: absolute;
       bottom: 10%;
@@ -142,12 +133,6 @@
       text-align: center;
     }
 
-    #emailInput::placeholder,
-    #codeInput::placeholder {
-      color: #aaa;
-      font-style: italic;
-    }
-
     #verifyButton {
       padding: 10px 25px;
       font-size: 18px;
@@ -159,8 +144,10 @@
       transition: background-color 0.3s ease;
     }
 
-    #verifyButton:hover {
-      background-color: #ffe68a;
+    #errorMessage {
+      color: red;
+      margin-top: 10px;
+      display: none;
     }
 
     @media (max-width: 600px) {
@@ -193,9 +180,9 @@
   <div id="welcomeScreen">
     <img id="welcomeBg" src="ด่าน6.png" alt="พื้นหลัง Welcome" />
     <button id="startButton">เริ่มเกม</button>
-    <img class="butterfly" src="butterfly.png" style="top: 10%; left: 10%; animation-delay: 0s;" />
-    <img class="butterfly" src="butterfly.png" style="top: 20%; left: 70%; animation-delay: 2s;" />
-    <img class="butterfly" src="butterfly.png" style="top: 60%; left: 30%; animation-delay: 4s;" />
+    <img class="butterfly" src="butterfly.png" style="top: 10%; left: 10%;" />
+    <img class="butterfly" src="butterfly.png" style="top: 20%; left: 70%;" />
+    <img class="butterfly" src="butterfly.png" style="top: 60%; left: 30%;" />
   </div>
 
   <!-- Game Screen -->
@@ -211,11 +198,11 @@
       <div id="codeContainer">
         <p>กรอกอีเมลที่ใช้ตอบแบบสอบถาม:</p>
         <input type="email" id="emailInput" placeholder="example@email.com" />
-        <br />
         <p>ใส่รหัสผ่านที่ได้หลังตอบแบบสอบถาม:</p>
         <input type="text" id="codeInput" placeholder="รหัสจะถูกใส่อัตโนมัติ" readonly />
         <br />
         <button id="verifyButton">ยืนยันรหัสผ่าน</button>
+        <p id="errorMessage"></p>
       </div>
 
       <audio id="correctSound" src="correct.mp3"></audio>
@@ -251,8 +238,13 @@
 
     document.getElementById("emailInput").addEventListener("change", () => {
       const email = document.getElementById("emailInput").value.trim();
+      const errorMsg = document.getElementById("errorMessage");
+      errorMsg.style.display = "none";
+      errorMsg.textContent = "";
+
       if (!email) {
-        alert("⚠️ กรุณากรอกอีเมลให้ถูกต้อง");
+        errorMsg.textContent = "⚠️ กรุณากรอกอีเมลให้ถูกต้อง";
+        errorMsg.style.display = "block";
         return;
       }
 
@@ -262,27 +254,37 @@
         .then(res => res.text())
         .then(code => {
           if (code === "notfound") {
-            alert("❌ ไม่พบข้อมูลอีเมลนี้ กรุณาตรวจสอบอีกครั้ง");
+            errorMsg.textContent = "❌ ไม่พบข้อมูลอีเมลนี้ กรุณาตรวจสอบอีกครั้ง";
+            errorMsg.style.display = "block";
           } else if (code === "missing") {
-            alert("⚠️ กรุณาระบุอีเมล");
+            errorMsg.textContent = "⚠️ กรุณาระบุอีเมล";
+            errorMsg.style.display = "block";
           } else {
             document.getElementById("codeInput").value = code;
           }
         })
-        .catch(() => alert("⚠️ ดึงรหัสไม่สำเร็จ กรุณาลองใหม่"));
+        .catch(() => {
+          errorMsg.textContent = "⚠️ ดึงรหัสไม่สำเร็จ กรุณาลองใหม่";
+          errorMsg.style.display = "block";
+        });
     });
 
     document.getElementById("quizButton").addEventListener("click", () => {
       window.open(
-        "https://docs.google.com/forms/d/e/1FAIpQLSdThWQoomnXlRbm2MBIE6NHB5UYspQCmz1OlgHHb6c9Moqcsw/viewform",
+        "https://docs.google.com/forms/YOUR_FORM_LINK_HERE",
         "_blank"
       );
     });
 
     document.getElementById("verifyButton").addEventListener("click", () => {
       const userCode = document.getElementById("codeInput").value.trim();
+      const errorMsg = document.getElementById("errorMessage");
+      errorMsg.style.display = "none";
+      errorMsg.textContent = "";
+
       if (!userCode) {
-        alert("❌ ไม่มีรหัส กรุณาตรวจสอบอีกครั้ง");
+        errorMsg.textContent = "❌ ไม่มีรหัส กรุณาตรวจสอบอีกครั้ง";
+        errorMsg.style.display = "block";
         return;
       }
 
@@ -292,18 +294,20 @@
           if (status === "valid") {
             localStorage.setItem("mission6Complete", "true");
             document.getElementById("correctSound").play();
-            alert("✅ ผ่านด่านเรียบร้อย!");
             window.location.href = "index.html#map";
           } else if (status === "used") {
             document.getElementById("wrongSound").play();
-            alert("⚠️ รหัสนี้ถูกใช้ไปแล้ว");
+            errorMsg.textContent = "⚠️ รหัสนี้ถูกใช้ไปแล้ว";
+            errorMsg.style.display = "block";
           } else {
             document.getElementById("wrongSound").play();
-            alert("❌ รหัสไม่ถูกต้อง กรุณาลองใหม่");
+            errorMsg.textContent = "❌ รหัสไม่ถูกต้อง กรุณาลองใหม่";
+            errorMsg.style.display = "block";
           }
         })
         .catch(() => {
-          alert("⚠️ เกิดข้อผิดพลาดในการตรวจสอบรหัส");
+          errorMsg.textContent = "⚠️ เกิดข้อผิดพลาดในการตรวจสอบรหัส";
+          errorMsg.style.display = "block";
         });
     });
   </script>
