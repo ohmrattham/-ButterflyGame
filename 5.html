@@ -11,21 +11,29 @@
             src: url('assets/fonts/WasThongyodNP-Regular.ttf') format('truetype');
         }
 
-        body {
-            font-family: 'Was ThongyodNP', sans-serif;
+        body,
+        html {
             margin: 0;
             padding: 0;
-            height: 100vh;
-            background-image: url('bg6.png');
-            background-size: cover;
-            background-position: center;
+            height: 100%;
+            background-color: black;
+            font-family: 'Was ThongyodNP', sans-serif;
+        }
+
+        .page {
+            background: url('m5bg1.png') center/cover no-repeat;
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+            aspect-ratio: 1080 / 1920;
             display: flex;
-            justify-content: center;
-            align-items: center;
             flex-direction: column;
+            align-items: center;
+            justify-content: center;
             text-align: center;
             overflow: hidden;
             position: relative;
+            padding: 40px 20px;
         }
 
         h1 {
@@ -41,18 +49,20 @@
         }
 
         button {
-            padding: 10px 20px;
-            font-size: 16px;
+            padding: 12px 24px;
+            font-size: 18px;
             cursor: pointer;
-            background-color: #4CAF50;
-            border: none;
-            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            border-radius: 25px;
             color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            margin-top: 30px;
+            transition: background-color 0.3s, transform 0.3s;
         }
 
         button:hover {
-            background-color: #45a049;
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
         }
 
         .question-container {
@@ -62,6 +72,7 @@
             border-radius: 15px;
             color: white;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            margin-top: 20px;
         }
 
         .answer-images {
@@ -74,9 +85,11 @@
         .answer-images div {
             padding: 10px 20px;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 10px;
             cursor: pointer;
             transition: transform 0.3s, box-shadow 0.3s;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
         }
 
         .answer-images div:hover {
@@ -84,53 +97,45 @@
             box-shadow: 0 0 10px rgba(255, 255, 0, 0.7);
         }
 
-        .firework {
+        #popup {
+            display: none;
             position: absolute;
-            width: 20px;
-            height: 20px;
-            background-color: yellow;
-            border-radius: 50%;
-            opacity: 0;
-            animation: firework-animation 2s ease-out forwards;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 18px;
+            border-radius: 10px;
+            z-index: 100;
         }
 
-        @keyframes firework-animation {
-            0% {
-                transform: scale(1) translate(-50%, -50%);
-                opacity: 1;
-            }
-
-            25% {
-                transform: scale(1.5) translate(-50%, -50%);
-                opacity: 1;
-            }
-
-            50% {
-                transform: scale(2.5) translate(-50%, -50%);
-                opacity: 0.8;
-            }
-
-            75% {
-                transform: scale(3) translate(-50%, -50%);
-                opacity: 0.6;
-            }
-
-            100% {
-                transform: scale(0) translate(-50%, -50%);
-                opacity: 0;
-            }
+        canvas#fireworks {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 10;
         }
 
         .firefly {
             position: absolute;
             background-color: yellow;
-            /* เปลี่ยนหิ่งห้อยเป็นสีเหลือง */
             border-radius: 50%;
             width: 10px;
             height: 10px;
             opacity: 0;
             animation: fireflyAnimation 2s infinite ease-in-out;
         }
+
+        .selected-answer {
+            background-color: rgba(255, 255, 0, 0.3);
+            border: 2px solid yellow;
+        }
+
 
         @keyframes fireflyAnimation {
             0% {
@@ -148,70 +153,58 @@
                 opacity: 0;
             }
         }
-
-        #popup {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 20px;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            font-size: 18px;
-            border-radius: 10px;
-        }
-
-        .drop-zone {
-            padding: 10px 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin: 10px;
-            cursor: pointer;
-        }
     </style>
 </head>
 
 <body>
+    <div class="page">
+        <audio id="successSound" src="success.mp3" preload="auto"></audio>
+        <audio id="failSound" src="fail.mp3" preload="auto"></audio>
+        <audio id="correctSound" src="correct.mp3" preload="auto"></audio>
+        <audio id="wrongSound" src="wrong.mp3" preload="auto"></audio>
+        <audio id="backgroundMusic" src="bgmusic.mp3" preload="auto" loop></audio>
 
-    <h1>ยินดีต้อนรับสู่ห้องมืด</h1>
-    <p>เสียงของแมลงและแสงหิ้งห้อยจะนำทางคุณ!</p>
-    <button onclick="startGame()">เริ่มเกม</button>
-    <audio id="backgroundMusic" src="bgmusic.mp3" preload="auto" loop></audio>
+        <canvas id="fireworks"></canvas>
 
-    <div class="question-container" id="question-container">
-        <h2>ในความมืด คุณสังเกตเห็นแสงวูบวาบเป็นจังหวะ แสงนี้มาจากสิ่งมีชีวิตใดในห้อง?</h2>
-        <div class="answer-images">
-            <div onclick="selectAnswer(1, 'question1')">จิ้งหรีด</div>
-            <div onclick="selectAnswer(2, 'question1')">หิ่งห้อย</div>
-            <div onclick="selectAnswer(3, 'question1')">จั๊กจั่น</div>
+        <h1>ยินดีต้อนรับสู่ห้องมืด</h1>
+        <p>เสียงของแมลงและแสงหิ้งห้อยจะนำทางคุณ!</p>
+        <button onclick="startGame()">เริ่มเกม</button>
+
+        <!-- คำถาม 1 -->
+        <div class="question-container" id="question-container">
+            <h2>ในความมืด คุณสังเกตเห็นแสงวูบวาบเป็นจังหวะ แสงนี้มาจากสิ่งมีชีวิตใดในห้อง?</h2>
+            <div class="answer-images">
+                <div onclick="selectAnswer(1, 'question1', event)">จิ้งหรีด</div>
+                <div onclick="selectAnswer(2, 'question1', event)">หิ่งห้อย</div>
+                <div onclick="selectAnswer(3, 'question1', event)">จั๊กจั่น</div>
+            </div>
         </div>
-    </div>
 
-    <div class="question-container" id="question-container-next" style="display: none;">
-        <h2>คุณได้ยินเสียงร้องที่ดังต่อเนื่อง ก้องกังวาน ราวกับการสีเครื่องดนตรี เสียงนี้มาจากแมลงชนิดใด?</h2>
-        <div class="answer-images">
-            <div onclick="selectAnswer(1, 'question2')">จิ้งหรีด</div>
-            <div onclick="selectAnswer(2, 'question2')">หิ่งห้อย</div>
-            <div onclick="selectAnswer(3, 'question2')">ยุง</div>
+        <!-- คำถาม 2 -->
+        <div class="question-container" id="question-container-next">
+            <h2>คุณได้ยินเสียงร้องที่ดังต่อเนื่อง ก้องกังวาน ราวกับการสีเครื่องดนตรี เสียงนี้มาจากแมลงชนิดใด?</h2>
+            <div class="answer-images">
+                <div onclick="selectAnswer(1, 'question2', event)">จิ้งหรีด</div>
+                <div onclick="selectAnswer(2, 'question2', event)">หิ่งห้อย</div>
+                <div onclick="selectAnswer(3, 'question2', event)">ยุง</div>
+            </div>
         </div>
-    </div>
 
-    <div class="question-container" id="question-container-next-2" style="display: none;">
-        <h2>นอกจากเสียงร้องที่ดังต่อเนื่องแล้ว คุณอาจได้ยินเสียงที่แหลม สูง และมักจะดังในช่วงกลางวัน แม้ในห้องมืดนี้
-            เสียงนั้นมาจากแมลงชนิดใด?</h2>
-        <div class="answer-images">
-            <div onclick="selectAnswer(1, 'question3')">ผึ้ง</div>
-            <div onclick="selectAnswer(2, 'question3')">จั๊กจั่น</div>
-            <div onclick="selectAnswer(3, 'question3')">ตั๊กแตน</div>
+        <!-- คำถาม 3 -->
+        <div class="question-container" id="question-container-next-2">
+            <h2>นอกจากเสียงร้องที่ดังต่อเนื่องแล้ว คุณอาจได้ยินเสียงที่แหลม สูง และมักจะดังในช่วงกลางวัน แม้ในห้องมืดนี้
+                เสียงนั้นมาจากแมลงชนิดใด?</h2>
+            <div class="answer-images">
+                <div onclick="selectAnswer(1, 'question3', event)">ผึ้ง</div>
+                <div onclick="selectAnswer(2, 'question3', event)">จั๊กจั่น</div>
+                <div onclick="selectAnswer(3, 'question3', event)">ตั๊กแตน</div>
+            </div>
         </div>
+
+        <button onclick="checkAnswers()" id="check-answers-button" style="display:none">ตรวจสอบคำตอบ</button>
+
+        <div id="popup"></div>
     </div>
-
-    <button onclick="checkAnswers()" style="display: none;" id="check-answers-button">ตรวจสอบคำตอบ</button>
-
-    <div id="popup"></div>
-    <audio id="correctSound" src="correct.mp3" preload="auto"></audio>
-    <audio id="wrongSound" src="wrong.mp3" preload="auto"></audio>
 
     <script>
         let answers = {
@@ -221,38 +214,27 @@
         };
 
         const correctAnswers = {
-            question1: 2, // หิ่งห้อย
-            question2: 1, // จิ้งหรีด
-            question3: 2  // จั๊กจั่น
+            question1: 2,
+            question2: 1,
+            question3: 2
         };
 
         function startGame() {
             document.querySelector('button').style.display = 'none';
             document.getElementById('question-container').style.display = 'block';
-            createFireflies();
-
-            const bgMusic = document.getElementById("backgroundMusic");
-            bgMusic.volume = 0.4; // ปรับระดับเสียงตามต้องการ (0.0 - 1.0)
-            bgMusic.play();
+            document.getElementById("backgroundMusic").volume = 0.4;
+            document.getElementById("backgroundMusic").play();
         }
 
-
-        function createFireflies() {
-            const fireflyContainer = document.querySelector('body');
-            const count = 20;
-
-            for (let i = 0; i < count; i++) {
-                const firefly = document.createElement('div');
-                firefly.classList.add('firefly');
-                firefly.style.top = `${Math.random() * 100}%`;
-                firefly.style.left = `${Math.random() * 100}%`;
-                firefly.style.animationDuration = `${Math.random() * 2 + 1}s`;
-                fireflyContainer.appendChild(firefly);
-            }
-        }
-
-        function selectAnswer(value, question) {
+        function selectAnswer(value, question, event) {
             answers[question] = value;
+
+            // ลบ class จากตัวเลือกอื่น
+            const parent = event.currentTarget.parentElement;
+            Array.from(parent.children).forEach(child => child.classList.remove('selected-answer'));
+
+            // ใส่ class ให้ตัวที่เลือก
+            event.currentTarget.classList.add('selected-answer');
 
             const current = `question-container${question === 'question1' ? '' : question === 'question2' ? '-next' : '-next-2'}`;
             document.getElementById(current).style.display = 'none';
@@ -268,31 +250,25 @@
             }
         }
 
+
         function checkAnswers() {
             let correct = 0;
-
-            // เปรียบเทียบคำตอบที่ผู้เล่นเลือกกับคำตอบที่ถูกต้อง
-            if (answers.question1 === correctAnswers.question1) {
-                correct++;
-            }
-            if (answers.question2 === correctAnswers.question2) {
-                correct++;
-            }
-            if (answers.question3 === correctAnswers.question3) {
-                correct++;
-            }
+            if (answers.question1 === correctAnswers.question1) correct++;
+            if (answers.question2 === correctAnswers.question2) correct++;
+            if (answers.question3 === correctAnswers.question3) correct++;
 
             const popup = document.getElementById("popup");
             popup.style.display = "block";
 
-            if (correct === Object.keys(correctAnswers).length) {
-                document.getElementById("correctSound").play();
+            if (correct === 3) {
+                document.getElementById("successSound").play();
                 popup.innerHTML = "ยอดเยี่ยม! คุณตอบถูกทั้งหมด 🌟";
+                startFireworks();
                 localStorage.setItem("mission5Complete", "true");
                 setTimeout(() => window.location.href = "./index.html#map", 4000);
             } else {
-                document.getElementById("wrongSound").play();
-                popup.innerHTML = `คุณตอบถูก ${correct} จาก ${Object.keys(correctAnswers).length} ข้อ ลองใหม่อีกครั้งนะ!`;
+                document.getElementById("failSound").play();
+                popup.innerHTML = `คุณตอบถูก ${correct} จาก 3 ข้อ ลองใหม่อีกครั้งนะ!`;
                 setTimeout(() => {
                     popup.style.display = "none";
                     location.reload();
@@ -300,9 +276,60 @@
             }
         }
 
+        function startFireworks() {
+            const canvas = document.getElementById("fireworks");
+            const ctx = canvas.getContext("2d");
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            let particles = [];
 
+            function createFirework() {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height / 2;
+                const color = `hsl(${Math.random() * 360}, 100%, 60%)`;
+
+                for (let i = 0; i < 100; i++) {
+                    particles.push({
+                        x, y,
+                        radius: Math.random() * 2 + 1,
+                        dx: (Math.random() - 0.5) * 5,
+                        dy: (Math.random() - 0.5) * 5,
+                        alpha: 1,
+                        color
+                    });
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach((p, i) => {
+                    p.x += p.dx;
+                    p.y += p.dy;
+                    p.alpha -= 0.01;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${hexToRgb(p.color)}, ${p.alpha})`;
+                    ctx.fill();
+                    if (p.alpha <= 0) particles.splice(i, 1);
+                });
+                if (particles.length > 0) requestAnimationFrame(animate);
+            }
+
+            function hexToRgb(h) {
+                const temp = document.createElement("div");
+                temp.style.color = h;
+                document.body.appendChild(temp);
+                const rgb = window.getComputedStyle(temp).color;
+                document.body.removeChild(temp);
+                return rgb.match(/\d+,\s*\d+,\s*\d+/)[0];
+            }
+
+            createFirework();
+            createFirework();
+            createFirework();
+            animate();
+        }
     </script>
-
 </body>
 
 </html>
