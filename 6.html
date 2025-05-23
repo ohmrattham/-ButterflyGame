@@ -150,6 +150,18 @@
       display: none;
     }
 
+    #scoreDisplay {
+      position: absolute;
+      top: 5%;
+      right: 5%;
+      font-size: 22px;
+      background: #ffffcc;
+      padding: 10px 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      z-index: 4;
+    }
+
     @media (max-width: 600px) {
       #quizButton {
         font-size: 20px;
@@ -175,8 +187,6 @@
   </style>
 </head>
 <body>
-
-  <!-- Welcome Screen -->
   <div id="welcomeScreen">
     <img id="welcomeBg" src="ด่าน6.png" alt="พื้นหลัง Welcome" />
     <button id="startButton">เริ่มเกม</button>
@@ -185,16 +195,13 @@
     <img class="butterfly" src="butterfly.png" style="top: 60%; left: 30%;" />
   </div>
 
-  <!-- Game Screen -->
   <div id="gameScreen">
     <div id="game">
       <img id="bgImage" src="ด่าน6.png" alt="พื้นหลัง" />
       <audio id="backgroundMusic" src="bgmusic.mp3" loop preload="auto"></audio>
-
       <div id="overlayContainer"></div>
-
       <button id="quizButton">📋  ทำแบบสอบถาม</button>
-
+      <div id="scoreDisplay">คะแนน: 0</div>
       <div id="codeContainer">
         <p>กรอกอีเมลที่ใช้ตอบแบบสอบถาม:</p>
         <input type="email" id="emailInput" placeholder="example@email.com" />
@@ -204,7 +211,6 @@
         <button id="verifyButton">ยืนยันรหัสผ่าน</button>
         <p id="errorMessage"></p>
       </div>
-
       <audio id="correctSound" src="correct.mp3"></audio>
       <audio id="wrongSound" src="wrong.mp3"></audio>
     </div>
@@ -213,15 +219,17 @@
   <script>
     const apiUrl = "https://script.google.com/macros/s/AKfycbwsYRjt7_ox6ztea6hs2p3oJjzI6d_cFTkbC7YlSs0QOxBUNwmCREP-kVpr5SFCD72e/exec";
 
+    function updateScoreDisplay() {
+      const score = parseInt(localStorage.getItem("playerScore") || "0");
+      document.getElementById("scoreDisplay").textContent = `คะแนน: ${score}`;
+    }
+
     document.getElementById("startButton").addEventListener("click", () => {
       document.getElementById("welcomeScreen").style.display = "none";
       document.getElementById("gameScreen").style.display = "block";
-
-      const bgMusic = document.getElementById("backgroundMusic");
-      bgMusic.volume = 0.4;
-      bgMusic.play().catch(() => {
-        alert("⚠️ กรุณาแตะหน้าจอหรืออนุญาตให้เล่นเสียงก่อนเริ่มเกม");
-      });
+      document.getElementById("backgroundMusic").volume = 0.4;
+      document.getElementById("backgroundMusic").play();
+      updateScoreDisplay();
 
       const savedEmail = localStorage.getItem("playerEmail");
       if (savedEmail) {
@@ -240,14 +248,6 @@
       const email = document.getElementById("emailInput").value.trim();
       const errorMsg = document.getElementById("errorMessage");
       errorMsg.style.display = "none";
-      errorMsg.textContent = "";
-
-      if (!email) {
-        errorMsg.textContent = "⚠️ กรุณากรอกอีเมลให้ถูกต้อง";
-        errorMsg.style.display = "block";
-        return;
-      }
-
       localStorage.setItem("playerEmail", email);
 
       fetch(`${apiUrl}?email=${encodeURIComponent(email)}`)
@@ -262,51 +262,64 @@
           } else {
             document.getElementById("codeInput").value = code;
           }
-        })
-        .catch(() => {
-          errorMsg.textContent = "⚠️ ดึงรหัสไม่สำเร็จ กรุณาลองใหม่";
-          errorMsg.style.display = "block";
         });
     });
 
     document.getElementById("quizButton").addEventListener("click", () => {
-      window.open(
-        "https://docs.google.com/forms/YOUR_FORM_LINK_HERE",
-        "_blank"
-      );
+      window.open("https://docs.google.com/forms/d/e/1FAIpQLSdThWQoomnXlRbm2MBIE6NHB5UYspQCmz1OlgHHb6c9Moqcsw/viewform?usp=preview", "_blank");
     });
 
     document.getElementById("verifyButton").addEventListener("click", () => {
       const userCode = document.getElementById("codeInput").value.trim();
       const errorMsg = document.getElementById("errorMessage");
-      errorMsg.style.display = "none";
-      errorMsg.textContent = "";
+      const verifyButton = document.getElementById("verifyButton");
 
-      if (!userCode) {
-        errorMsg.textContent = "❌ ไม่มีรหัส กรุณาตรวจสอบอีกครั้ง";
-        errorMsg.style.display = "block";
-        return;
-      }
+      errorMsg.style.display = "none";
+      verifyButton.disabled = true;
+      verifyButton.textContent = "⏳ กำลังโหลด...";
 
       fetch(`${apiUrl}?code=${userCode}`)
         .then(res => res.text())
         .then(status => {
+          verifyButton.disabled = false;
+          verifyButton.textContent = "ยืนยันรหัสผ่าน";
+
           if (status === "valid") {
-            localStorage.setItem("mission6Complete", "true");
             document.getElementById("correctSound").play();
+
+            let currentScore = parseInt(localStorage.getItem("playerScore") || "0");
+            if (!localStorage.getItem("mission6Complete")) {
+              currentScore += 10;
+              localStorage.setItem("playerScore", currentScore);
+              localStorage.setItem("mission6Score", 10);
+              localStorage.setItem("mission6Complete", "true");
+            }
+            updateScoreDisplay();
+
+            // กลับหน้าแผนที่หรือหน้าหลัก (แก้ตามต้องการ)
             window.location.href = "index.html#map";
-          } else if (status === "used") {
-            document.getElementById("wrongSound").play();
-            errorMsg.textContent = "⚠️ รหัสนี้ถูกใช้ไปแล้ว";
-            errorMsg.style.display = "block";
           } else {
             document.getElementById("wrongSound").play();
-            errorMsg.textContent = "❌ รหัสไม่ถูกต้อง กรุณาลองใหม่";
+
+            let currentScore = parseInt(localStorage.getItem("playerScore") || "0");
+            currentScore = Math.max(0, currentScore - 5);
+            localStorage.setItem("playerScore", currentScore);
+            localStorage.setItem("mission6Score", 0);
+            localStorage.setItem("mission6Complete", "true");
+            updateScoreDisplay();
+
+            if (status === "used") {
+              errorMsg.textContent = "⚠️ รหัสนี้ถูกใช้ไปแล้ว";
+            } else {
+              errorMsg.textContent = "❌ รหัสไม่ถูกต้อง กรุณาลองใหม่";
+            }
             errorMsg.style.display = "block";
           }
         })
-        .catch(() => {
-          errorMsg.textContent = "⚠️ เกิดข้อผิดพลาดในการตรวจสอบรหัส";
+        .catch(error => {
+          verifyButton.disabled = false;
+          verifyButton.textContent = "ยืนยันรหัสผ่าน";
+          errorMsg.textContent = "เกิดข้อผิดพลาดในการเชื่อมต่อ โปรดลองอีกครั้ง";
           errorMsg.style.display = "block";
         });
     });

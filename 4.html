@@ -8,21 +8,32 @@
     body {
       margin: 0;
       font-family: sans-serif;
-      background: #f5f5dc;
+      background-image: url('bgb.png');
+      display: flex;
+      justify-content: center;
+    }
+
+    #intro, #game, #section2, #section3 {
+      position: relative;
+  width: 100%;
+  max-width: 600px;
+  height: 100vh; /* เพิ่มบรรทัดนี้ */
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding-bottom: 20px;
+  display: none;
+  margin: auto;
     }
 
     #intro {
-      background: url('intro4.png') center/cover no-repeat;
-      width: 100%;
-      max-width: 600px;
-      margin: auto;
-      aspect-ratio: 1080 / 1920;
+      background-image: url('intro4.png');
+     width: 100%;
+      height: 100vh;
+      overflow: hidden;
       display: flex;
-      align-items: center;
       justify-content: center;
-      flex-direction: column;
-      text-align: center;
-      padding: 20px;
+      align-items: center;
     }
 
     #startBtn {
@@ -34,19 +45,6 @@
       background: darkorange;
       color: white;
       cursor: pointer;
-    }
-
-    #game, #section2, #section3 {
-      position: relative;
-      width: 100%;
-      max-width: 600px;
-      margin: auto;
-      aspect-ratio: 1080 / 1920;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      padding-bottom: 20px;
-      display: none;
     }
 
     .drop-zone {
@@ -137,19 +135,14 @@
   </style>
 </head>
 <body>
-
-  <div id="intro">
-    <button id="startBtn">เริ่มทำภารกิจ</button>
-  </div>
+  <div id="intro"><button id="startBtn">เริ่มทำภารกิจ</button></div>
+  <div id="popup"></div>
 
   <audio id="backgroundSound" src="bgmusic.mp3" preload="auto" loop></audio>
   <audio id="clickSound" src="click.mp3" preload="auto"></audio>
   <audio id="soundSuccess" src="success.mp3" preload="auto"></audio>
   <audio id="soundFail" src="fail.mp3" preload="auto"></audio>
 
-  <div id="popup"></div>
-
-  <!-- ภารกิจที่ 1: Drag & Drop -->
   <div id="game" style="background-image: url('bg41.png');">
     <div id="overlayContainer"></div>
     <div class="buttonContainer">
@@ -158,7 +151,6 @@
     </div>
   </div>
 
-  <!-- ภารกิจที่ 2: เลือกผีเสื้อที่ต้องอนุรักษ์ -->
   <div id="section2" style="background-image: url('bg42.png');">
     <div id="butterflyOptions">
       <img id="bf1" src="bf1.png" class="select-image" data-name="protected" style="top:30%; left:13%;" />
@@ -168,12 +160,9 @@
       <img id="bf5" src="bf5.png" class="select-image" data-name="normal" style="top:63%; left:13%;" />
       <img id="bf6" src="bf6.png" class="select-image" data-name="protected" style="top:63%; left:48%;" />
     </div>
-    <div class="buttonContainer">
-      <button id="checkBtn2">ตรวจคำตอบ</button>
-    </div>
+    <div class="buttonContainer"><button id="checkBtn2">ตรวจคำตอบ</button></div>
   </div>
 
-  <!-- ภารกิจที่ 3: เลือกผีเสื้อที่ต้องอนุรักษ์ -->
   <div id="section3" style="background-image: url('bg43.png');">
     <div id="butterflyOptions2">
       <img id="bf7" src="bf7.png" class="select-image" data-name="normal" style="top:30%; left:13%;" />
@@ -181,12 +170,11 @@
       <img id="bf9" src="bf9.png" class="select-image" data-name="protected" style="top:55%; left:13%;" />
       <img id="bf10" src="bf10.png" class="select-image" data-name="normal" style="top:55%; left:48%;" />
     </div>
-    <div class="buttonContainer">
-      <button id="checkBtn3">ตรวจคำตอบ</button>
-    </div>
+    <div class="buttonContainer"><button id="checkBtn3">ตรวจคำตอบ</button></div>
   </div>
 
   <script>
+    let score = 0;
     document.getElementById("startBtn").addEventListener("click", () => {
       document.getElementById("intro").style.display = "none";
       document.getElementById("game").style.display = "block";
@@ -238,9 +226,7 @@
     function setupDragEvents() {
       let draggedItem = null;
       document.querySelectorAll(".drag-image").forEach(img => {
-        img.addEventListener("dragstart", () => {
-          draggedItem = img;
-        });
+        img.addEventListener("dragstart", () => draggedItem = img);
       });
 
       document.querySelectorAll(".drop-zone").forEach(zone => {
@@ -272,21 +258,13 @@
         const child = zone.querySelector("img");
         if (child && child.dataset.name === zone.dataset.answer) correct++;
       });
-      if (correct === 4) {
-        showPopup("ผ่าน! \n ไปยังภารกิจที่ 2");
-        setTimeout(() => {
-          document.getElementById("game").style.display = "none";
-          document.getElementById("section2").style.display = "block";
-          setupSelectEvents("#section2 .select-image");
-        }, 3000);
-      } else {
-        showPopup("ยังมีคำตอบผิด\nลองใหม่อีกครั้ง!", "fail");
-      }
+      score += correct * 3;
+      document.getElementById("game").style.display = "none";
+      document.getElementById("section2").style.display = "block";
+      setupSelectEvents("#section2 .select-image");
     });
 
-    document.getElementById("resetBtn").addEventListener("click", () => {
-      createElements();
-    });
+    document.getElementById("resetBtn").addEventListener("click", () => createElements());
 
     function setupSelectEvents(selector) {
       const clickSound = document.getElementById("clickSound");
@@ -301,44 +279,24 @@
 
     document.getElementById("checkBtn2").addEventListener("click", () => {
       const selected = document.querySelectorAll("#section2 .select-image.selected");
-      let correct = 0, wrong = false;
       selected.forEach(img => {
-        if (img.dataset.name === "protected") correct++;
-        else wrong = true;
+        if (img.dataset.name === "protected") score += 2;
       });
-
-      const totalCorrect = document.querySelectorAll('#section2 .select-image[data-name="protected"]').length;
-      if (correct === totalCorrect && !wrong) {
-        showPopup("ผ่าน! \n ไปยังภารกิจที่ 3");
-        setTimeout(() => {
-          document.getElementById("section2").style.display = "none";
-          document.getElementById("section3").style.display = "block";
-          setupSelectEvents("#section3 .select-image");
-        }, 3000);
-      } else {
-        showPopup("ยังมีคำตอบผิด\nลองใหม่!", "fail");
-      }
+      document.getElementById("section2").style.display = "none";
+      document.getElementById("section3").style.display = "block";
+      setupSelectEvents("#section3 .select-image");
     });
 
     document.getElementById("checkBtn3").addEventListener("click", () => {
       const selected = document.querySelectorAll("#section3 .select-image.selected");
-      let correct = 0, wrong = false;
       selected.forEach(img => {
-        if (img.dataset.name === "protected") correct++;
-        else wrong = true;
+        if (img.dataset.name === "protected") score += 2;
       });
-
-      const totalCorrect = document.querySelectorAll('#section3 .select-image[data-name="protected"]').length;
-      if (correct === totalCorrect && !wrong) {
-        showPopup("ผ่านภารกิจที่ 4 สำเร็จ!");
-        setTimeout(() => {
-          alert("ภารกิจเสร็จสิ้น!");
-          window.location.href = "index.html";
-
-        }, 3000);
-      } else {
-        showPopup("ยังมีคำตอบผิด\nลองใหม่!", "fail");
-      }
+      localStorage.setItem("mission4Score", score);
+      showPopup("คุณได้คะแนน: " + score + "/20");
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 3000);
     });
   </script>
 </body>

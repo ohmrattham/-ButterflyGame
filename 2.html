@@ -5,92 +5,77 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ด่านที่ 2</title>
   <style>
-    body {
+    html, body {
       margin: 0;
-      font-family: sans-serif;
-      overflow: hidden;
-    }
-     .page {
-      
-      position: relative;
+      padding: 0;
       width: 100%;
-      max-width: 600px;
-      margin: auto;
-      aspect-ratio: 1080 / 1920;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      padding-bottom: 20px;
-      display: none;
+      height: 100%;
+      background-image:url('bgb.png');
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: "Tahoma", sans-serif;
     }
-    #mainPage {
-     
-      background-image: url('intro2.png');
-     position: relative;
+    #mainPage, #game {
+      position: absolute;
+      top: 0; left: 0;
       width: 100%;
-      height: 100vh;
-      overflow: hidden;
+      height: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
     }
-
+    #game {
+      display: none;
+      position: relative;
+    }
+    #imageWrapperMain, #imageWrapper {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #bgImageMain, #bgImage {
+      max-width: 100vw;
+      max-height: 100vh;
+      object-fit: contain;
+    }
     #startBtn {
-      font-family: inherit;
-      font-size: 16px;
-      font-weight: bold;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      background-color: #8B4513;
-      color: white;
-      padding: 12px 24px;
       position: absolute;
-      top: 55%;
+      top: 65%;
       left: 50%;
       transform: translate(-50%, -50%);
+      padding: 20px 40px;
+      background: rgba(255, 255, 255, 0.8);
+      color: #5c3c10;
+      border: 4px solid #5c3c10;
+      border-radius: 50px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 2;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
-
-    #startBtn:hover {
-      background: #5c3c10;
-      color: white;
-    }
-
-    #game {
-      position: relative;
-      width: 100vw;
-      height: auto;
-      display: none;
-    }
-
-    #bgImage {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-
     .dot {
       position: absolute;
-      width: 3vw;
-      height: 3vw;
-      max-width: 30px;
-      max-height: 30px;
-      border: 3px solid white;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
-      background-color: rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.8);
+      border: 3px solid white;
       cursor: pointer;
+      z-index: 5;
       transform: translate(-50%, -50%);
-      z-index: 2;
     }
-
-    canvas#lineCanvas, canvas#fireworks {
+    canvas#lineCanvas {
       position: absolute;
       top: 0;
       left: 0;
+      width: 100%;
+      height: 100%;
       z-index: 1;
       pointer-events: none;
     }
-
     #popup {
       position: absolute;
       top: 30%;
@@ -104,59 +89,156 @@
       display: none;
       z-index: 20;
       text-align: center;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    }
+    #scoreDisplay {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      background: rgba(255,255,255,0.9);
+      border: 2px solid #5c3c10;
+      border-radius: 20px;
+      padding: 10px 20px;
+      font-size: 24px;
+      font-weight: bold;
+      z-index: 10;
+      color: #5c3c10;
+      display: none;
+    }
+    #checkBtn {
+      display:none;
+      position:absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 15px 30px;
+      font-size: 20px;
+      font-weight: bold;
+      background:#5c3c10;
+      color:#fff;
+      border:none;
+      border-radius:10px;
+      cursor:pointer;
+      z-index:15;
+    }
+    /* สำหรับแสดงคะแนนรวมบนหน้าหลัก */
+    #scoreDisplayMain {
+      position: absolute;
+      top: 10px;
+      right: 30px;
+      background: rgba(255,255,255,0.9);
+      border: 2px solid #5c3c10;
+      border-radius: 20px;
+      padding: 10px 20px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #5c3c10;
+      z-index: 100;
+      user-select: none;
     }
   </style>
 </head>
 <body>
-<audio id="bgMusic" src="bgmusic.mp3" loop></audio>
 
-<div id="mainPage"class="page">
-  <audio id="voice" src="intro1.mp3"></audio>
-  <audio id="correctSound" src="correct.mp3"></audio>
-  <button id="startBtn">เริ่มทำภารกิจ</button>
+<audio id="bgMusic" src="bgmusic.mp3" loop></audio>
+<audio id="correctSound" src="correct.mp3"></audio>
+<audio id="voice" src="voice.mp3"></audio>
+
+<!-- แสดงคะแนนรวมสะสมบนหน้าหลัก -->
+<div id="scoreDisplayMain">คะแนนรวม: 0</div>
+
+<div id="mainPage">
+  <div id="imageWrapperMain">
+    <img id="bgImageMain" src="intro2.png" alt="intro" />
+    <button id="startBtn">เริ่มทำภารกิจ</button>
+  </div>
 </div>
 
-<div id="game"class="page">
-  <img id="bgImage" src="2.png" alt="พื้นหลัง" />
-  <canvas id="lineCanvas"></canvas>
-  <canvas id="fireworks"></canvas>
+<div id="game">
+  <div id="imageWrapper">
+    <img id="bgImage" src="2.png" alt="พื้นหลัง" />
+    <canvas id="lineCanvas"></canvas>
+  </div>
   <div id="popup"></div>
-
-  <!-- จุดซ้าย -->
-  <div class="dot" style="top: 24%; left: 39%;" data-side="left" data-index="0"></div>
-  <div class="dot" style="top: 38%; left: 39%;" data-side="left" data-index="1"></div>
-  <div class="dot" style="top: 55%; left: 39%;" data-side="left" data-index="2"></div>
-  <div class="dot" style="top: 70%; left: 39%;" data-side="left" data-index="3"></div>
-
-  <!-- จุดขวา -->
-  <div class="dot" style="top: 24%; left: 62%;" data-side="right" data-index="0"></div>
-  <div class="dot" style="top: 38%; left: 62%;" data-side="right" data-index="1"></div>
-  <div class="dot" style="top: 55%; left: 62%;" data-side="right" data-index="2"></div>
-  <div class="dot" style="top: 70%; left: 62%;" data-side="right" data-index="3"></div>
+  <div id="scoreDisplay">คะแนน: <span id="score">0</span></div>
+  <button id="checkBtn">ตรวจคำตอบ</button>
 </div>
 
 <script>
 const canvas = document.getElementById("lineCanvas");
-const bgImage = document.getElementById("bgImage");
 const ctx = canvas.getContext("2d");
+const bgImage = document.getElementById("bgImage");
+
+let score = 0;
+
+function updateScoreDisplay() {
+  // แสดงคะแนนด่าน 2 จาก localStorage
+  const mission2Score = parseInt(localStorage.getItem("mission2Score") || "0", 10);
+  document.getElementById("score").innerText = mission2Score;
+  // อัพเดตบนหน้าหลักด้วย (คะแนนรวม)
+  const totalScore = parseInt(localStorage.getItem("totalScore") || "0", 10);
+  const mainScoreDisplay = document.getElementById("scoreDisplayMain");
+  if(mainScoreDisplay){
+    mainScoreDisplay.innerText = `คะแนนรวม: ${totalScore}`;
+  }
+}
+
+const dotPositions = [
+  { x: 0.39, y: 0.24, side: "left", index: 0 },
+  { x: 0.39, y: 0.38, side: "left", index: 1 },
+  { x: 0.39, y: 0.55, side: "left", index: 2 },
+  { x: 0.39, y: 0.70, side: "left", index: 3 },
+  { x: 0.62, y: 0.24, side: "right", index: 0 },
+  { x: 0.62, y: 0.38, side: "right", index: 1 },
+  { x: 0.62, y: 0.55, side: "right", index: 2 },
+  { x: 0.62, y: 0.70, side: "right", index: 3 }
+];
+
+// สร้างจุดบนภาพ
+dotPositions.forEach(pos => {
+  const dot = document.createElement("div");
+  dot.className = "dot";
+  dot.dataset.side = pos.side;
+  dot.dataset.index = pos.index;
+  document.getElementById("imageWrapper").appendChild(dot);
+});
+
+function updateDotPositions() {
+  const imageRect = bgImage.getBoundingClientRect();
+  const wrapperRect = document.getElementById("imageWrapper").getBoundingClientRect();
+  const offsetX = imageRect.left - wrapperRect.left;
+  const offsetY = imageRect.top - wrapperRect.top;
+  const dots = document.querySelectorAll(".dot");
+  dotPositions.forEach((pos, i) => {
+    const dot = dots[i];
+    const x = offsetX + imageRect.width * pos.x;
+    const y = offsetY + imageRect.height * pos.y;
+    dot.style.left = `${x}px`;
+    dot.style.top = `${y}px`;
+  });
+  drawLines();
+}
 
 let leftDot = null;
 let connections = [];
-const correct = [ [0,2], [1,3], [2,0], [3,1] ]; // คู่ที่ถูกต้อง
+const correct = [ [0,2], [1,3], [2,0], [3,1] ];
 
-// วาดเส้นใหม่เมื่อมีการเชื่อมโยง
 function drawLines() {
+  const wrapper = document.getElementById("imageWrapper");
+  canvas.width = wrapper.clientWidth;
+  canvas.height = wrapper.clientHeight;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.strokeStyle = "#FF0000";
   ctx.lineWidth = 3;
 
   connections.forEach(([l, r]) => {
-    const rect1 = l.element.getBoundingClientRect();
-    const rect2 = r.element.getBoundingClientRect();
-    const x1 = rect1.left + rect1.width / 2;
-    const y1 = rect1.top + rect1.height / 2;
-    const x2 = rect2.left + rect2.width / 2;
-    const y2 = rect2.top + rect2.height / 2;
+    const r1 = l.element.getBoundingClientRect();
+    const r2 = r.element.getBoundingClientRect();
+    const cr = canvas.getBoundingClientRect();
+    const x1 = r1.left + r1.width / 2 - cr.left;
+    const y1 = r1.top + r1.height / 2 - cr.top;
+    const x2 = r2.left + r2.width / 2 - cr.left;
+    const y2 = r2.top + r2.height / 2 - cr.top;
     ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
@@ -164,81 +246,8 @@ function drawLines() {
   });
 }
 
-// ตรวจคำตอบ
-function checkAnswers() {
-  let correctCount = 0;
-  connections.forEach(([l, r]) => {
-    const pair = [l.index, r.index];
-    if (correct.some(c => c[0] === pair[0] && c[1] === pair[1])) {
-      correctCount++;
-    }
-  });
+const checkBtn = document.getElementById("checkBtn");
 
-  const popup = document.getElementById("popup");
-  popup.style.display = "block";
-
-  if (correctCount === 4) {
-    popup.innerHTML = "ยินดีด้วย! คุณจับคู่ได้ถูกต้องทั้งหมด 🎉";
-    startFireworks();
-    document.getElementById("correctSound").play();
-    localStorage.setItem("mission2Complete", "true");
-    setTimeout(() => window.location.href = "index.html#map", 4000);
-  } else {
-    popup.innerHTML = `คุณจับคู่ถูก ${correctCount} คู่ ลองใหม่อีกครั้ง`;
-    setTimeout(() => {
-      popup.style.display = "none";
-      connections = [];
-      drawLines();
-    }, 2500);
-  }
-}
-
-// ดอกไม้ไฟ
-function startFireworks() {
-  const fwCanvas = document.getElementById("fireworks");
-  fwCanvas.width = canvas.width;
-  fwCanvas.height = canvas.height;
-  const fwCtx = fwCanvas.getContext("2d");
-
-  let particles = [];
-  for (let i = 0; i < 50; i++) {
-    particles.push({
-      x: canvas.width / 2,
-      y: canvas.height / 2,
-      vx: Math.random() * 6 - 3,
-      vy: Math.random() * 6 - 3,
-      life: 100,
-      color: `hsl(${Math.random() * 360}, 100%, 50%)`
-    });
-  }
-
-  const interval = setInterval(() => {
-    fwCtx.clearRect(0, 0, fwCanvas.width, fwCanvas.height);
-    particles.forEach(p => {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.life -= 2;
-      fwCtx.beginPath();
-      fwCtx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-      fwCtx.fillStyle = p.color;
-      fwCtx.fill();
-    });
-    particles = particles.filter(p => p.life > 0);
-    if (particles.length === 0) clearInterval(interval);
-  }, 30);
-}
-
-// ตั้งค่า canvas ให้ขนาดเท่ากับภาพพื้นหลัง
-function resizeCanvas() {
-  canvas.width = bgImage.clientWidth;
-  canvas.height = bgImage.clientHeight;
-  drawLines();
-}
-
-window.addEventListener("resize", resizeCanvas);
-bgImage.onload = resizeCanvas;
-
-// จัดการคลิกจุด
 document.querySelectorAll(".dot").forEach(dot => {
   dot.addEventListener("click", () => {
     const side = dot.dataset.side;
@@ -246,41 +255,95 @@ document.querySelectorAll(".dot").forEach(dot => {
     if (side === "left") {
       leftDot = { element: dot, index };
     } else if (leftDot) {
+      const exists = connections.some(pair =>
+        (pair[0].element === leftDot.element && pair[1].element === dot) ||
+        (pair[0].element === dot && pair[1].element === leftDot.element)
+      );
+      if (exists) {
+        leftDot = null;
+        return;
+      }
       const rightDot = { element: dot, index };
       connections.push([leftDot, rightDot]);
       drawLines();
       leftDot = null;
-      if (connections.length === 4) checkAnswers();
+
+      if (connections.length === 4) {
+        checkBtn.style.display = "block";
+      } else {
+        checkBtn.style.display = "none";
+      }
     }
   });
 });
 
-document.getElementById("startBtn").addEventListener("click", () => {
-  document.getElementById("mainPage").style.display = "none";
-  document.getElementById("game").style.display = "block";
-  resizeCanvas();
-
-  // เล่นเพลงพื้นหลัง
-  const music = document.getElementById("bgMusic");
-  Music.volume = 0.4;
-  music.play().catch(() => {
-    document.addEventListener("click", () => music.play(), { once: true });
-  });
+checkBtn.addEventListener("click", () => {
+  checkBtn.style.display = "none";
+  document.getElementById("scoreDisplay").style.display = "block";
+  checkAnswers();
 });
 
+function checkAnswers() {
+  let correctCount = 0;
+  connections.forEach(([l, r]) => {
+    if (correct.some(c => c[0] === l.index && c[1] === r.index)) correctCount++;
+  });
 
-// เล่นเสียงเริ่มต้นถ้ามี
-window.onload = () => {
-  if (localStorage.getItem("playVoice") === "true") {
-    setTimeout(() => {
-      const voice = document.getElementById("voice");
-      voice.play().catch(() => {
-        document.addEventListener("click", () => voice.play(), { once: true });
-      });
-    }, 1500);
-    localStorage.removeItem("playVoice");
+  const popup = document.getElementById("popup");
+  popup.style.display = "block";
+
+  // ดึงคะแนนสะสมรวมเก่า
+  let totalScore = parseInt(localStorage.getItem("totalScore") || "0", 10);
+
+  // คำนวณคะแนนด่าน 2 ใหม่ (5 คะแนนต่อคู่ที่ถูก)
+  const mission2Score = correctCount * 5;
+
+  // อัปเดตคะแนนสะสมรวมโดยลบคะแนนเก่าของด่าน 2 ออกก่อน แล้วบวกคะแนนใหม่
+  const oldMission2Score = parseInt(localStorage.getItem("mission2Score") || "0", 10);
+  totalScore = totalScore - oldMission2Score + mission2Score;
+
+  // บันทึกคะแนนใหม่ลง localStorage
+  localStorage.setItem("mission2Score", mission2Score.toString());
+  localStorage.setItem("totalScore", totalScore.toString());
+
+  updateScoreDisplay();
+
+  popup.innerHTML = `คุณจับคู่ถูก ${correctCount} คู่<br>คะแนนด่านนี้: ${mission2Score}<br>คะแนนรวม: ${totalScore}`;
+
+  if (correctCount === 4) {
+    document.getElementById("correctSound").play();
+    localStorage.setItem("mission2Complete", "true");
   }
+
+  setTimeout(() => {
+    window.location.href = "index.html#map";
+  }, 4000);
+}
+
+document.getElementById("startBtn").addEventListener("click", () => {
+  document.getElementById("mainPage").style.display = "none";
+  document.getElementById("game").style.display = "flex";
+
+  updateScoreDisplay();
+  updateDotPositions();
+  document.getElementById("scoreDisplay").style.display = "none";
+  checkBtn.style.display = "none";
+
+  const music = document.getElementById("bgMusic");
+  music.volume = 0.4;
+  music.play();
+});
+
+// อัพเดตตำแหน่งจุดเมื่อหน้าต่างเปลี่ยนขนาด
+window.addEventListener("resize", () => {
+  updateDotPositions();
+});
+
+// โหลดคะแนนสะสมแสดงบนหน้าหลักตอนโหลดหน้า
+window.onload = () => {
+  updateScoreDisplay();
 };
 </script>
+
 </body>
 </html>

@@ -138,33 +138,9 @@
 
     document.getElementById("total").textContent = total;
 
-    // ส่งคะแนนไปยัง Google Sheet
-    if (!localStorage.getItem("scoreSent") && nickname !== "-" && school !== "-") {
-      const payload = {
-        nickname,
-        school,
-        totalScore: total
-      };
-
-      fetch("https://script.google.com/macros/s/AKfycbwLv1QwW6Ca0RcEHjOFcudSIh7Bi0zh6g1bnYa5Jfnq8bLrd9fNr5tky_yphrMyQMQ8VQ/exec", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      })
-      .then(res => res.text())
-      .then(data => {
-        console.log("✅ ส่งข้อมูลแล้ว:", data);
-        localStorage.setItem("scoreSent", "true");
-      })
-      .catch(err => {
-        console.error("❌ ส่งข้อมูลล้มเหลว:", err);
-      });
-    }
 
     // โหลดอันดับจาก Google Sheets
-    fetch("https://script.google.com/macros/s/AKfycbwLv1QwW6Ca0RcEHjOFcudSIh7Bi0zh6g1bnYa5Jfnq8bLrd9fNr5tky_yphrMyQMQ8VQ/exec")
+    fetch("https://script.google.com/macros/s/AKfycbyqUyTBY35A-T2LlOHPXZzLqI0MkcNfQ7eoxABulEBCJvrE_jZmnx9EckG9yDM3Sj4AJg/exec")
       .then(res => res.json())
       .then(data => {
         const sorted = data.sort((a, b) => b.totalScore - a.totalScore).slice(0, 5);
