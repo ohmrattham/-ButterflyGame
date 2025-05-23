@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
   <meta charset="UTF-8" />
   <title>ด่านที่ 4</title>
@@ -36,7 +37,9 @@
       cursor: pointer;
     }
 
-    #game, #section2, #section3 {
+    #game,
+    #section2,
+    #section3 {
       position: relative;
       width: 100%;
       max-width: 600px;
@@ -102,7 +105,9 @@
       color: white;
     }
 
-    #checkBtn, #checkBtn2, #checkBtn3 {
+    #checkBtn,
+    #checkBtn2,
+    #checkBtn3 {
       background: green;
     }
 
@@ -126,17 +131,37 @@
     }
 
     @keyframes glowPulse {
-      0% { filter: drop-shadow(0 0 5px #ffff00) drop-shadow(0 0 10px #ffff00); }
-      50% { filter: drop-shadow(0 0 20px #ffff00) drop-shadow(0 0 30px #ffff00); }
-      100% { filter: drop-shadow(0 0 5px #ffff00) drop-shadow(0 0 10px #ffff00); }
+      0% {
+        filter: drop-shadow(0 0 5px #ffff00) drop-shadow(0 0 10px #ffff00);
+      }
+
+      50% {
+        filter: drop-shadow(0 0 20px #ffff00) drop-shadow(0 0 30px #ffff00);
+      }
+
+      100% {
+        filter: drop-shadow(0 0 5px #ffff00) drop-shadow(0 0 10px #ffff00);
+      }
     }
 
-    #bf1, #bf2, #bf3, #bf4, #bf5, #bf6, #bf7, #bf8, #bf9, #bf10 {
+    #bf1,
+    #bf2,
+    #bf3,
+    #bf4,
+    #bf5,
+    #bf6,
+    #bf7,
+    #bf8,
+    #bf9,
+    #bf10 {
       position: absolute;
     }
   </style>
 </head>
+
 <body>
+  <canvas id="fireworks"
+    style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:10;"></canvas>
 
   <div id="intro">
     <button id="startBtn">เริ่มทำภารกิจ</button>
@@ -147,7 +172,7 @@
   <audio id="soundSuccess" src="success.mp3" preload="auto"></audio>
   <audio id="soundFail" src="fail.mp3" preload="auto"></audio>
 
-  <div id="popup"></div>
+  <div id="popup" class="popup"></div>
 
   <!-- ภารกิจที่ 1: Drag & Drop -->
   <div id="game" style="background-image: url('bg41.png');">
@@ -328,18 +353,89 @@
         else wrong = true;
       });
 
-      const totalCorrect = document.querySelectorAll('#section3 .select-image[data-name="protected"]').length;
-      if (correct === totalCorrect && !wrong) {
-        showPopup("ผ่านภารกิจที่ 4 สำเร็จ!");
-        setTimeout(() => {
-          alert("ภารกิจเสร็จสิ้น!");
-          window.location.href = "index.html";
+      const isAllCorrect = document.querySelectorAll('#section3 .select-image[data-name="protected"]').length;
+      if (isAllCorrect) {
+        document.getElementById("soundSuccess").play();
+        startFireworks();
 
-        }, 3000);
+        const popup = document.getElementById("popup");
+        popup.style.display = "block"; // <-- แสดง popup ถ้าเคยถูกซ่อนไว้
+        popup.innerText = "เยี่ยมมาก! คุณทำสำเร็จ 🎉";
+
+        setTimeout(() => {
+          location.href = "index.html#map";
+        }, 4000);
       } else {
-        showPopup("ยังมีคำตอบผิด\nลองใหม่!", "fail");
+        document.getElementById("soundFail").play();
+
+        const popup = document.getElementById("popup");
+        popup.style.display = "block";
+        popup.innerText = "ลองอีกครั้งนะ!";
       }
+
+
     });
+
+
+    function startFireworks() {
+      const canvas = document.getElementById("fireworks");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      let particles = [];
+
+      function createFirework() {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height / 2;
+        const color = `hsl(${Math.random() * 360}, 100%, 60%)`;
+
+        for (let i = 0; i < 100; i++) {
+          particles.push({
+            x, y,
+            radius: Math.random() * 2 + 1,
+            dx: (Math.random() - 0.5) * 5,
+            dy: (Math.random() - 0.5) * 5,
+            alpha: 1,
+            color
+          });
+        }
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach((p, i) => {
+          p.x += p.dx;
+          p.y += p.dy;
+          p.alpha -= 0.01;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${hexToRgb(p.color)}, ${p.alpha})`;
+          ctx.fill();
+          if (p.alpha <= 0) particles.splice(i, 1);
+        });
+        if (particles.length > 0) requestAnimationFrame(animate);
+      }
+
+      function hexToRgb(h) {
+        const temp = document.createElement("div");
+        temp.style.color = h;
+        document.body.appendChild(temp);
+        const rgb = window.getComputedStyle(temp).color;
+        document.body.removeChild(temp);
+        return rgb.match(/\d+,\s*\d+,\s*\d+/)[0];
+      }
+
+      createFirework();
+      createFirework();
+      createFirework();
+      animate();
+
+      setTimeout(() => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles = [];
+      }, 3000);
+    }
   </script>
 </body>
+
 </html>

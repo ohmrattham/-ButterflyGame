@@ -3,51 +3,57 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ด่านที่ 2</title>
+  <title>ภารกิจผีเสื้อ - ด่านที่ 2</title>
   <style>
     body {
       margin: 0;
       font-family: sans-serif;
+      background: #f5f5dc;
+    }
+
+    .page {
+      background: url('intro2.png') center/cover no-repeat;
+      width: 100%;
+      max-width: 600px;
+      margin: auto;
+      aspect-ratio: 1080 / 1920;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
       overflow: hidden;
     }
 
-    #mainPage {
-      position: absolute;
-      width: 100vw;
-      height: 100vh;
-      background-image: url('intro2.png');
-      background-size: cover;
-      background-position: center;
-      z-index: 5;
-    }
-
     #startBtn {
+      background-color: #8B4513;
+      color: white;
+      padding: 16px 32px;
+      font-size: 20px;
+      font-weight: bold;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       position: absolute;
       top: 65%;
       left: 50%;
       transform: translate(-50%, -50%);
-      padding: 20px 40px;
-      background: rgba(255, 255, 255, 0.8);
-      color: #5c3c10;
-      border: 4px solid #5c3c10;
-      border-radius: 50px;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
-      z-index: 10;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
       transition: 0.3s;
+      z-index: 10;
     }
 
     #startBtn:hover {
-      background: #5c3c10;
-      color: white;
+      background-color: #5c3c10;
     }
 
     #game {
-      position: relative;
-      width: 100vw;
-      height: auto;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
       display: none;
     }
 
@@ -59,24 +65,27 @@
 
     .dot {
       position: absolute;
-      width: 3vw;
-      height: 3vw;
+      width: 5vw;
+      height: 5vw;
       max-width: 30px;
       max-height: 30px;
       border: 3px solid white;
       border-radius: 50%;
-      background-color: rgba(255,255,255,0.7);
+      background-color: rgba(255, 255, 255, 0.7);
       cursor: pointer;
       transform: translate(-50%, -50%);
       z-index: 2;
     }
 
-    canvas#lineCanvas, canvas#fireworks {
+    canvas#lineCanvas,
+    canvas#fireworks {
       position: absolute;
       top: 0;
       left: 0;
-      z-index: 1;
+      width: 100%;
+      height: 100%;
       pointer-events: none;
+      z-index: 1;
     }
 
     #popup {
@@ -95,180 +104,188 @@
     }
   </style>
 </head>
+
 <body>
-<audio id="bgMusic" src="bgmusic.mp3" loop></audio>
-
-<div id="mainPage">
-  <audio id="voice" src="intro1.mp3"></audio>
+  <audio id="bgMusic" src="bgmusic.mp3" loop></audio>
+  <audio id="successSound" src="success.mp3" preload="auto"></audio>
+  <audio id="failSound" src="fail.mp3" preload="auto"></audio>
+  <audio id="voice" src="intro2voice.mp3"></audio>
   <audio id="correctSound" src="correct.mp3"></audio>
-  <button id="startBtn">เริ่มทำภารกิจ</button>
-</div>
 
-<div id="game">
-  <img id="bgImage" src="2.png" alt="พื้นหลัง" />
-  <canvas id="lineCanvas"></canvas>
-  <canvas id="fireworks"></canvas>
-  <div id="popup"></div>
+  <div class="page" id="mainPage">
+    <button id="startBtn" onclick="startMission()">เริ่มทำภารกิจ</button>
 
-  <!-- จุดซ้าย -->
-  <div class="dot" style="top: 24%; left: 39%;" data-side="left" data-index="0"></div>
-  <div class="dot" style="top: 38%; left: 39%;" data-side="left" data-index="1"></div>
-  <div class="dot" style="top: 55%; left: 39%;" data-side="left" data-index="2"></div>
-  <div class="dot" style="top: 70%; left: 39%;" data-side="left" data-index="3"></div>
+    <div id="game">
+      <img id="bgImage" src="2.png" alt="พื้นหลัง" />
+      <canvas id="lineCanvas"></canvas>
+      <canvas id="fireworks"></canvas>
+      <div id="popup"></div>
 
-  <!-- จุดขวา -->
-  <div class="dot" style="top: 24%; left: 62%;" data-side="right" data-index="0"></div>
-  <div class="dot" style="top: 38%; left: 62%;" data-side="right" data-index="1"></div>
-  <div class="dot" style="top: 55%; left: 62%;" data-side="right" data-index="2"></div>
-  <div class="dot" style="top: 70%; left: 62%;" data-side="right" data-index="3"></div>
-</div>
+      <!-- จุดซ้าย -->
+      <div class="dot" style="top: 24%; left: 39%;" data-side="left" data-index="0"></div>
+      <div class="dot" style="top: 38%; left: 39%;" data-side="left" data-index="1"></div>
+      <div class="dot" style="top: 55%; left: 39%;" data-side="left" data-index="2"></div>
+      <div class="dot" style="top: 70%; left: 39%;" data-side="left" data-index="3"></div>
 
-<script>
-const canvas = document.getElementById("lineCanvas");
-const bgImage = document.getElementById("bgImage");
-const ctx = canvas.getContext("2d");
+      <!-- จุดขวา -->
+      <div class="dot" style="top: 24%; left: 62%;" data-side="right" data-index="0"></div>
+      <div class="dot" style="top: 38%; left: 62%;" data-side="right" data-index="1"></div>
+      <div class="dot" style="top: 55%; left: 62%;" data-side="right" data-index="2"></div>
+      <div class="dot" style="top: 70%; left: 62%;" data-side="right" data-index="3"></div>
+    </div>
+  </div>
 
-let leftDot = null;
-let connections = [];
-const correct = [ [0,2], [1,3], [2,0], [3,1] ]; // คู่ที่ถูกต้อง
+  <script>
+    const canvas = document.getElementById("lineCanvas");
+    const ctx = canvas.getContext("2d");
+    let leftDot = null;
+    let connections = [];
+    const correct = [[0, 2], [1, 3], [2, 0], [3, 1]];
 
-// วาดเส้นใหม่เมื่อมีการเชื่อมโยง
-function drawLines() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.strokeStyle = "#FF0000";
-  ctx.lineWidth = 3;
-
-  connections.forEach(([l, r]) => {
-    const rect1 = l.element.getBoundingClientRect();
-    const rect2 = r.element.getBoundingClientRect();
-    const x1 = rect1.left + rect1.width / 2;
-    const y1 = rect1.top + rect1.height / 2;
-    const x2 = rect2.left + rect2.width / 2;
-    const y2 = rect2.top + rect2.height / 2;
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
-  });
-}
-
-// ตรวจคำตอบ
-function checkAnswers() {
-  let correctCount = 0;
-  connections.forEach(([l, r]) => {
-    const pair = [l.index, r.index];
-    if (correct.some(c => c[0] === pair[0] && c[1] === pair[1])) {
-      correctCount++;
+    function resizeCanvas() {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
     }
-  });
 
-  const popup = document.getElementById("popup");
-  popup.style.display = "block";
+    window.addEventListener("resize", resizeCanvas);
 
-  if (correctCount === 4) {
-    popup.innerHTML = "ยินดีด้วย! คุณจับคู่ได้ถูกต้องทั้งหมด 🎉";
-    startFireworks();
-    document.getElementById("correctSound").play();
-    localStorage.setItem("mission2Complete", "true");
-    setTimeout(() => window.location.href = "index.html#map", 4000);
-  } else {
-    popup.innerHTML = `คุณจับคู่ถูก ${correctCount} คู่ ลองใหม่อีกครั้ง`;
-    setTimeout(() => {
-      popup.style.display = "none";
-      connections = [];
-      drawLines();
-    }, 2500);
-  }
-}
-
-// ดอกไม้ไฟ
-function startFireworks() {
-  const fwCanvas = document.getElementById("fireworks");
-  fwCanvas.width = canvas.width;
-  fwCanvas.height = canvas.height;
-  const fwCtx = fwCanvas.getContext("2d");
-
-  let particles = [];
-  for (let i = 0; i < 50; i++) {
-    particles.push({
-      x: canvas.width / 2,
-      y: canvas.height / 2,
-      vx: Math.random() * 6 - 3,
-      vy: Math.random() * 6 - 3,
-      life: 100,
-      color: `hsl(${Math.random() * 360}, 100%, 50%)`
-    });
-  }
-
-  const interval = setInterval(() => {
-    fwCtx.clearRect(0, 0, fwCanvas.width, fwCanvas.height);
-    particles.forEach(p => {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.life -= 2;
-      fwCtx.beginPath();
-      fwCtx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-      fwCtx.fillStyle = p.color;
-      fwCtx.fill();
-    });
-    particles = particles.filter(p => p.life > 0);
-    if (particles.length === 0) clearInterval(interval);
-  }, 30);
-}
-
-// ตั้งค่า canvas ให้ขนาดเท่ากับภาพพื้นหลัง
-function resizeCanvas() {
-  canvas.width = bgImage.clientWidth;
-  canvas.height = bgImage.clientHeight;
-  drawLines();
-}
-
-window.addEventListener("resize", resizeCanvas);
-bgImage.onload = resizeCanvas;
-
-// จัดการคลิกจุด
-document.querySelectorAll(".dot").forEach(dot => {
-  dot.addEventListener("click", () => {
-    const side = dot.dataset.side;
-    const index = parseInt(dot.dataset.index);
-    if (side === "left") {
-      leftDot = { element: dot, index };
-    } else if (leftDot) {
-      const rightDot = { element: dot, index };
-      connections.push([leftDot, rightDot]);
-      drawLines();
-      leftDot = null;
-      if (connections.length === 4) checkAnswers();
+    function startMission() {
+      document.getElementById("startBtn").style.display = "none";
+      document.getElementById("game").style.display = "block";
+      resizeCanvas();
+      document.getElementById("bgMusic").volume = 0.4;
+      document.getElementById("bgMusic").play().catch(() => {});
     }
-  });
-});
 
-document.getElementById("startBtn").addEventListener("click", () => {
-  document.getElementById("mainPage").style.display = "none";
-  document.getElementById("game").style.display = "block";
-  resizeCanvas();
-
-  // เล่นเพลงพื้นหลัง
-  const music = document.getElementById("bgMusic");
-  Music.volume = 0.4;
-  music.play().catch(() => {
-    document.addEventListener("click", () => music.play(), { once: true });
-  });
-});
-
-
-// เล่นเสียงเริ่มต้นถ้ามี
-window.onload = () => {
-  if (localStorage.getItem("playVoice") === "true") {
-    setTimeout(() => {
-      const voice = document.getElementById("voice");
-      voice.play().catch(() => {
-        document.addEventListener("click", () => voice.play(), { once: true });
+    document.querySelectorAll(".dot").forEach(dot => {
+      dot.addEventListener("click", () => {
+        const side = dot.dataset.side;
+        const index = parseInt(dot.dataset.index);
+        if (side === "left") {
+          leftDot = { element: dot, index };
+        } else if (leftDot) {
+          connections.push([leftDot, { element: dot, index }]);
+          leftDot = null;
+          drawLines();
+          if (connections.length === 4) checkAnswers();
+        }
       });
-    }, 1500);
-    localStorage.removeItem("playVoice");
-  }
-};
-</script>
+    });
+
+    function drawLines() {
+      resizeCanvas();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = "#FF0000";
+      ctx.lineWidth = 3;
+
+      connections.forEach(([l, r]) => {
+        const rect1 = l.element.getBoundingClientRect();
+        const rect2 = r.element.getBoundingClientRect();
+        const x1 = rect1.left + rect1.width / 2;
+        const y1 = rect1.top + rect1.height / 2;
+        const x2 = rect2.left + rect2.width / 2;
+        const y2 = rect2.top + rect2.height / 2;
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+      });
+    }
+
+    function checkAnswers() {
+      let correctCount = 0;
+      connections.forEach(([l, r]) => {
+        const pair = [l.index, r.index];
+        if (correct.some(c => c[0] === pair[0] && c[1] === pair[1])) {
+          correctCount++;
+        }
+      });
+
+      const popup = document.getElementById("popup");
+      popup.style.display = "block";
+
+      if (correctCount === 4) {
+        popup.innerHTML = "ยินดีด้วย! คุณจับคู่ได้ถูกต้องทั้งหมด 🎉";
+        document.getElementById("successSound").play();
+        startFireworks();
+        localStorage.setItem("mission2Complete", "true");
+        setTimeout(() => window.location.href = "index.html#map", 4000);
+      } else {
+        document.getElementById("failSound").play();
+        popup.innerHTML = `คุณจับคู่ถูก ${correctCount} คู่ ลองใหม่อีกครั้ง`;
+        setTimeout(() => {
+          popup.style.display = "none";
+          connections = [];
+          drawLines();
+        }, 3000);
+      }
+    }
+
+    function startFireworks() {
+      const canvas = document.getElementById("fireworks");
+      const ctx = canvas.getContext("2d");
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+      let particles = [];
+
+      function createFirework() {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height / 2;
+        const color = `hsl(${Math.random() * 360}, 100%, 60%)`;
+
+        for (let i = 0; i < 100; i++) {
+          particles.push({
+            x, y,
+            radius: Math.random() * 2 + 1,
+            dx: (Math.random() - 0.5) * 5,
+            dy: (Math.random() - 0.5) * 5,
+            alpha: 1,
+            color
+          });
+        }
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach((p, i) => {
+          p.x += p.dx;
+          p.y += p.dy;
+          p.alpha -= 0.01;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${hexToRgb(p.color)}, ${p.alpha})`;
+          ctx.fill();
+          if (p.alpha <= 0) particles.splice(i, 1);
+        });
+        if (particles.length > 0) requestAnimationFrame(animate);
+      }
+
+      function hexToRgb(h) {
+        const temp = document.createElement("div");
+        temp.style.color = h;
+        document.body.appendChild(temp);
+        const rgb = window.getComputedStyle(temp).color;
+        document.body.removeChild(temp);
+        return rgb.match(/\d+,\s*\d+,\s*\d+/)[0];
+      }
+
+      createFirework();
+      createFirework();
+      createFirework();
+      animate();
+    }
+
+    // เล่นเสียงแนะนำเมื่อผู้ใช้คลิกครั้งแรก
+    window.addEventListener('DOMContentLoaded', () => {
+      function playVoiceOnce() {
+        const voice = document.getElementById("voice");
+        voice.play().catch(() => {});
+        window.removeEventListener('click', playVoiceOnce);
+        window.removeEventListener('touchstart', playVoiceOnce);
+      }
+      window.addEventListener('click', playVoiceOnce);
+      window.addEventListener('touchstart', playVoiceOnce);
+    });
+  </script>
 </body>
 </html>

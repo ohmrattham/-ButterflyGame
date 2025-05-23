@@ -136,6 +136,10 @@
 </head>
 
 <body>
+
+    <audio id="successSound" src="success.mp3" preload="auto"></audio>
+    <audio id="failSound" src="fail.mp3" preload="auto"></audio>
+
     <!-- Welcome Screen -->
     <div id="welcomeScreen">
         <h1>ยินดีต้อนรับ!</h1>
@@ -201,11 +205,11 @@
             const userCode = document.getElementById("codeInput").value.trim();
             if (userCode === correctCode) {
                 localStorage.setItem("mission6Complete", "true");
-                document.getElementById("correctSound").play();
+                document.getElementById("successSound").play();
                 alert("✅ ผ่านด่านเรียบร้อย!");
                 window.location.href = "index.html#map";
             } else {
-                document.getElementById("wrongSound").play();
+                document.getElementById("failSound").play();
                 alert("❌ รหัสไม่ถูกต้อง กรุณาลองใหม่");
             }
         });

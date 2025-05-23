@@ -8,9 +8,9 @@
   <style>
     body {
       margin: 0;
-     
+
       font-family: sans-serif;
-       background: #f5f5dc;
+      background: #f5f5dc;
     }
 
     .page {
@@ -26,7 +26,7 @@
       text-align: center;
       padding: 20px;
     }
-    
+
     button {
       font-family: inherit;
       font-size: 16px;
@@ -133,6 +133,8 @@
 
   <audio id="bgMusic" src="bgmusic.mp3" loop></audio>
 
+  <audio id="successSound" src="success.mp3" preload="auto"></audio>
+  <audio id="failSound" src="fail.mp3" preload="auto"></audio>
 
   <div id="mainPage" class="page" style="background-image: url('4.png');">
     <audio id="voice" src="intro1.mp3"></audio>
@@ -244,11 +246,14 @@
 
       if (correct === 3) {
         launchFireworks();
+       
+        document.getElementById("successSound").play(); // ✅ เสียงยินดี
         localStorage.setItem("mission1Complete", "true");
         setTimeout(() => {
           window.location.href = "index.html";
         }, 3000);
       } else {
+        document.getElementById("failSound").play();   // ❌ เสียงผิดหวัง
         setTimeout(() => {
           popup.style.display = "none";
           current = 0;
