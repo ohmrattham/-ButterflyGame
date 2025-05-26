@@ -145,7 +145,7 @@
 <audio id="voice" src="voice.mp3"></audio>
 
 <!-- แสดงคะแนนรวมสะสมบนหน้าหลัก -->
-<div id="scoreDisplayMain">คะแนนรวม: 0</div>
+
 
 <div id="mainPage">
   <div id="imageWrapperMain">
@@ -160,10 +160,25 @@
     <canvas id="lineCanvas"></canvas>
   </div>
   <div id="popup"></div>
-  <div id="scoreDisplay">คะแนน: <span id="score">0</span></div>
+ <div id="scoreDisplay" style="display:none">คะแนน: <span id="score">0</span></div>
+
   <button id="checkBtn">ตรวจคำตอบ</button>
 </div>
-
+<div id="countdownTimer" style="
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background: rgba(0,0,0,0.75);
+    color: #fff;
+    font-size: 20px;
+    padding: 10px 18px;
+    border-radius: 14px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    z-index: 9999;
+    box-shadow: 0 0 10px rgba(255,255,255,0.3);
+    user-select: none;
+  ">
+    เวลาเหลือ: <span id="timeRemaining">20:00</span>
 <script>
 const canvas = document.getElementById("lineCanvas");
 const ctx = canvas.getContext("2d");
@@ -173,8 +188,8 @@ let score = 0;
 
 function updateScoreDisplay() {
   // แสดงคะแนนด่าน 2 จาก localStorage
-  const mission2Score = parseInt(localStorage.getItem("mission2Score") || "0", 10);
-  document.getElementById("score").innerText = mission2Score;
+  //const mission2Score = parseInt(localStorage.getItem("mission2Score") || "0", 10);
+ // document.getElementById("score").innerText = mission2Score;
   // อัพเดตบนหน้าหลักด้วย (คะแนนรวม)
   const totalScore = parseInt(localStorage.getItem("totalScore") || "0", 10);
   const mainScoreDisplay = document.getElementById("scoreDisplayMain");
@@ -308,7 +323,7 @@ function checkAnswers() {
 
   updateScoreDisplay();
 
-  popup.innerHTML = `คุณจับคู่ถูก ${correctCount} คู่<br>คะแนนด่านนี้: ${mission2Score}<br>คะแนนรวม: ${totalScore}`;
+  popup.innerHTML = `คุณได้ทำภารกิจนที่ 2 เสร็จแล้ว!`;
 
   if (correctCount === 4) {
     document.getElementById("correctSound").play();
@@ -343,6 +358,47 @@ window.addEventListener("resize", () => {
 window.onload = () => {
   updateScoreDisplay();
 };
+
+      const MAX_PLAY_TIME = 20 * 60 * 1000; // 20 นาที (ms)
+  let countdownInterval;
+
+  function startCountdown() {
+    const timerEl = document.getElementById("countdownTimer");
+    const timeRemainingEl = document.getElementById("timeRemaining");
+
+    let startTime = localStorage.getItem("gameStartTime");
+    if (!startTime) {
+      // ถ้าไม่มีเวลาเริ่ม ให้เริ่มนับจากตอนนี้
+      startTime = Date.now();
+      localStorage.setItem("gameStartTime", startTime);
+    }
+
+    function updateTimer() {
+      const elapsed = Date.now() - startTime;
+      const remaining = MAX_PLAY_TIME - elapsed;
+
+      if (remaining <= 0) {
+        clearInterval(countdownInterval);
+        timeRemainingEl.textContent = "00:00";
+        alert("หมดเวลาในการเล่นเกมแล้ว!");
+        window.location.href = "score.html"; // หรือหน้าอื่นที่คุณต้องการ
+        return;
+      }
+
+      const minutes = Math.floor(remaining / 60000);
+      const seconds = Math.floor((remaining % 60000) / 1000);
+
+      timeRemainingEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2,'0')}`;
+    }
+
+    updateTimer();
+    countdownInterval = setInterval(updateTimer, 1000);
+  }
+
+  window.onload = () => {
+    startCountdown();
+  };
+
 </script>
 
 </body>

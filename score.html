@@ -118,6 +118,8 @@
 
   <button class="back-button" onclick="goHome()">กลับหน้าแรก</button>
 
+<button class="back-button" onclick="endMission()">จบภารกิจ</button>
+
   <script>
     function getScore(n) {
       return parseInt(localStorage.getItem(`mission${n}Score`)) || 0;
@@ -166,6 +168,19 @@
     function goHome() {
       window.location.href = "index.html";
     }
+      function goHome() {
+    window.location.href = "index.html";
+  }
+
+  function endMission() {
+    if (confirm("คุณต้องการจบภารกิจนี้หรือไม่? คะแนนของคุณจะถูกล้าง")) {
+      for (let i = 1; i <= 6; i++) {
+        localStorage.removeItem(`mission${i}Score`);
+      }
+      alert("จบภารกิจแล้ว! คะแนนทั้งหมดถูกล้างเรียบร้อย");
+      window.location.href = "index.html"; // หรือลิงก์ไปหน้าอื่น
+    }
+  }
   </script>
 
 </body>

@@ -297,12 +297,15 @@
             updateScoreDisplay();
 
             // กลับหน้าแผนที่หรือหน้าหลัก (แก้ตามต้องการ)
-            window.location.href = "index.html#map";
+            setTimeout(() => {
+  window.location.href = "index.html#map";
+}, 300); // รอ 300ms เพื่อให้ localStorage ทำงานก่อน
+
           } else {
             document.getElementById("wrongSound").play();
 
             let currentScore = parseInt(localStorage.getItem("playerScore") || "0");
-            currentScore = Math.max(0, currentScore - 5);
+            currentScore = Math.max(0, currentScore - 0);
             localStorage.setItem("playerScore", currentScore);
             localStorage.setItem("mission6Score", 0);
             localStorage.setItem("mission6Complete", "true");

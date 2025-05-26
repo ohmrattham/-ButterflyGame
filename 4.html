@@ -172,7 +172,21 @@
     </div>
     <div class="buttonContainer"><button id="checkBtn3">ตรวจคำตอบ</button></div>
   </div>
-
+<div id="countdownTimer" style="
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background: rgba(0,0,0,0.75);
+    color: #fff;
+    font-size: 20px;
+    padding: 10px 18px;
+    border-radius: 14px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    z-index: 9999;
+    box-shadow: 0 0 10px rgba(255,255,255,0.3);
+    user-select: none;
+  ">
+    เวลาเหลือ: <span id="timeRemaining">20:00</span>
   <script>
     let score = 0;
     document.getElementById("startBtn").addEventListener("click", () => {
@@ -258,7 +272,7 @@
         const child = zone.querySelector("img");
         if (child && child.dataset.name === zone.dataset.answer) correct++;
       });
-      score += correct * 3;
+      score += correct * 2;
       document.getElementById("game").style.display = "none";
       document.getElementById("section2").style.display = "block";
       setupSelectEvents("#section2 .select-image");
@@ -280,7 +294,7 @@
     document.getElementById("checkBtn2").addEventListener("click", () => {
       const selected = document.querySelectorAll("#section2 .select-image.selected");
       selected.forEach(img => {
-        if (img.dataset.name === "protected") score += 2;
+        if (img.dataset.name === "protected") score += 3;
       });
       document.getElementById("section2").style.display = "none";
       document.getElementById("section3").style.display = "block";
@@ -290,14 +304,53 @@
     document.getElementById("checkBtn3").addEventListener("click", () => {
       const selected = document.querySelectorAll("#section3 .select-image.selected");
       selected.forEach(img => {
-        if (img.dataset.name === "protected") score += 2;
+        if (img.dataset.name === "protected") score += 3;
       });
       localStorage.setItem("mission4Score", score);
-      showPopup("คุณได้คะแนน: " + score + "/20");
+      showPopup("คุณได้ทำภารกิจที่ 4 เสร็จแล้ว!");
       setTimeout(() => {
         window.location.href = "index.html";
       }, 3000);
     });
+       const MAX_PLAY_TIME = 20 * 60 * 1000; // 20 นาที (ms)
+  let countdownInterval;
+
+  function startCountdown() {
+    const timerEl = document.getElementById("countdownTimer");
+    const timeRemainingEl = document.getElementById("timeRemaining");
+
+    let startTime = localStorage.getItem("gameStartTime");
+    if (!startTime) {
+      // ถ้าไม่มีเวลาเริ่ม ให้เริ่มนับจากตอนนี้
+      startTime = Date.now();
+      localStorage.setItem("gameStartTime", startTime);
+    }
+
+    function updateTimer() {
+      const elapsed = Date.now() - startTime;
+      const remaining = MAX_PLAY_TIME - elapsed;
+
+      if (remaining <= 0) {
+        clearInterval(countdownInterval);
+        timeRemainingEl.textContent = "00:00";
+        alert("หมดเวลาในการเล่นเกมแล้ว!");
+        window.location.href = "score.html"; // หรือหน้าอื่นที่คุณต้องการ
+        return;
+      }
+
+      const minutes = Math.floor(remaining / 60000);
+      const seconds = Math.floor((remaining % 60000) / 1000);
+
+      timeRemainingEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2,'0')}`;
+    }
+
+    updateTimer();
+    countdownInterval = setInterval(updateTimer, 1000);
+  }
+
+  window.onload = () => {
+    startCountdown();
+  };
   </script>
 </body>
 </html>
