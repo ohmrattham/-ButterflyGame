@@ -324,9 +324,7 @@
     <div class="checkmark" id="check5"></div>
     <div class="checkmark" id="check6"></div>
 
-    <div id="totalScoreBox" style="font-size: 20px; font-weight: bold; color: #8B4513; margin: 16px;">
-      คะแนนรวม: <span id="totalScore">0</span> คะแนน
-    </div>
+    
 
     <div id="missionCompletePopup" class="popup">
       <div class="popup-content">
@@ -661,18 +659,22 @@
   }
 
   // ⏱ เริ่มต้นหน้า index
-  window.onload = () => {
-    const shouldReset = localStorage.getItem("resetOnLoad") === "true";
-    if (shouldReset) {
-      localStorage.clear();
-      resetCountdown();
-    }
+ window.onload = () => {
+  const shouldReset = localStorage.getItem("resetOnLoad") === "true";
 
-    hideAllPages();
-    const homePage = document.getElementById("homePage");
-    if (homePage) homePage.style.display = "flex";
+  if (shouldReset) {
+    // รีเซ็ตสถานะทั้งหมด
+    localStorage.clear();
+    resetCountdown();
+    voicePlayed = false; // ถ้ามีตัวแปรนี้
 
-    // ล้าง flag รีเซ็ตหลังจากใช้แล้ว
+    // ลบ flag หลังรีเซ็ตแล้ว
     localStorage.removeItem("resetOnLoad");
-  };
+  }
+
+  hideAllPages();
+  const homePage = document.getElementById("homePage");
+  if (homePage) homePage.style.display = "flex";
+};
+
 </script>
