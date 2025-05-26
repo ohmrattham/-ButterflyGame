@@ -96,7 +96,7 @@
     }
 
     #popup {
-      position: absolute;
+      position: fixed;
       top: 30%;
       left: 50%;
       transform: translate(-50%, -50%);
@@ -225,222 +225,205 @@
     </select>
     <button id="game2CheckBtn" onclick="checkAllGame2Answers()">ตรวจคำตอบ</button>
   </div>
-  
-   <div id="countdownTimer" style="
-    position: fixed;
-    top: 16px;
-    right: 16px;
-    background: rgba(0,0,0,0.75);
-    color: #fff;
-    font-size: 20px;
-    padding: 10px 18px;
-    border-radius: 14px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    z-index: 9999;
-    box-shadow: 0 0 10px rgba(255,255,255,0.3);
-    user-select: none;
-  ">
-    เวลาเหลือ: <span id="timeRemaining">20:00</span>
 
+    <div id="popup"></div>
 
-  <div id="popup"></div>
+    <script>
+      // คำตอบเกม 1
+      const correctAnswers = {
+        1: "หนวด", 2: "ปีก", 3: "หัว", 4: "ลำตัว", 5: "ท้อง"
+      };
+      // คำตอบเกม 2
+      const game2CorrectAnswers = {
+        1: "ผีเสื้อจรกาหนอนยี่โถ่", 2: "ผีเสื้อหนอนมะนาว", 3: "ผีเสื้อหนอนกระทกรก", 4: "ผีเสื้อถุงทอง"
+      };
 
-  <script>
-    // คำตอบเกม 1
-    const correctAnswers = {
-      1: "หนวด", 2: "ปีก", 3: "หัว", 4: "ลำตัว", 5: "ท้อง"
-    };
-    // คำตอบเกม 2
-    const game2CorrectAnswers = {
-      1: "ผีเสื้อจรกาหนอนยี่โถ่", 2: "ผีเสื้อหนอนมะนาว", 3: "ผีเสื้อหนอนกระทกรก", 4: "ผีเสื้อถุงทอง"
-    };
+      const dropZonesData = [
+        { top: 30, left: 15, answer: "1" },
+        { top: 32, left: 55, answer: "2" },
+        { top: 59, left: 9, answer: "3" },
+        { top: 71.5, left: 17, answer: "4" },
+        { top: 71.5, left: 56, answer: "5" },
+      ];
+      const dragOptionsData = [
+        { top: 12, left: 40, index: "1", text: "ลำตัว" },
+        { top: 12, left: 65, index: "2", text: "หนวด" },
+        { top: 20, left: 15, index: "3", text: "หัว" },
+        { top: 20, left: 40, index: "4", text: "ปีก" },
+        { top: 20, left: 65, index: "5", text: "ท้อง" },
+      ];
 
-    const dropZonesData = [
-      { top: 30, left: 15, answer: "1" },
-      { top: 32, left: 55, answer: "2" },
-      { top: 59, left: 9, answer: "3" },
-      { top: 71.5, left: 17, answer: "4" },
-      { top: 71.5, left: 56, answer: "5" },
-    ];
-    const dragOptionsData = [
-      { top: 12, left: 40, index: "1", text: "ลำตัว" },
-      { top: 12, left: 65, index: "2", text: "หนวด" },
-      { top: 20, left: 15, index: "3", text: "หัว" },
-      { top: 20, left: 40, index: "4", text: "ปีก" },
-      { top: 20, left: 65, index: "5", text: "ท้อง" },
-    ];
+      let game2Answers = {};
+      let selectedText = null;
 
-    let game2Answers = {};
-    let selectedText = null;
-
-    function createElements() {
-      const container = document.getElementById("overlayContainer");
-      container.innerHTML = "";
-      dropZonesData.forEach(zone => {
-        const div = document.createElement("div");
-        div.className = "drop-zone";
-        div.style.top = `${zone.top}%`;
-        div.style.left = `${zone.left}%`;
-        div.dataset.answer = zone.answer;
-        div.onclick = () => {
-          if (selectedText) {
-            div.innerText = selectedText.innerText;
-            div.dataset.index = selectedText.dataset.index;
-            selectedText.style.display = "none";
-            selectedText.classList.remove("selected");
-            selectedText = null;
-          }
-        };
-        container.appendChild(div);
-      });
-      dragOptionsData.forEach(opt => {
-        const div = document.createElement("div");
-        div.className = "drag-option";
-        div.style.top = `${opt.top}%`;
-        div.style.left = `${opt.left}%`;
-        div.dataset.index = opt.index;
-        div.innerText = opt.text;
-        div.onclick = () => {
-          document.querySelectorAll(".drag-option").forEach(el => el.classList.remove("selected"));
-          selectedText = div;
-          div.classList.add("selected");
-        };
-        container.appendChild(div);
-      });
-    }
-
-    // ส่วนโค้ดที่เหลือไม่เปลี่ยนแปลง
-    document.getElementById("startBtn").onclick = () => {
-      document.getElementById("startScreen").style.display = "none";
-      document.getElementById("game").style.display = "flex";
-      createElements();
-      document.getElementById("bgm").play();
-    };
-
-    document.getElementById("resetBtn").onclick = () => {
-      document.querySelectorAll(".drop-zone").forEach(zone => {
-        zone.innerText = "";
-        delete zone.dataset.index;
-      });
-      document.querySelectorAll(".drag-option").forEach(opt => {
-        opt.style.display = "flex";
-        opt.classList.remove("selected");
-      });
-      selectedText = null;
-      document.getElementById("toGame2Btn").style.display = "none";
-      localStorage.removeItem("score1");
-      localStorage.removeItem("game1Done");
-    };
-
-    document.getElementById("checkBtn").onclick = () => {
-      let correct = 0;
-      document.querySelectorAll(".drop-zone").forEach(zone => {
-        const expected = correctAnswers[zone.dataset.answer];
-        if (zone.innerText === expected) correct++;
-      });
-      const game1Score = (correct / 5) * 10;
-      localStorage.setItem("score1", game1Score.toFixed(1));
-
-      if (correct > 0) {
-        localStorage.setItem("game1Done", "true");
-        document.getElementById("toGame2Btn").style.display = "block";
-        document.getElementById("correctSound").play();
-      } else {
-        document.getElementById("wrongSound").play();
+      function createElements() {
+        const container = document.getElementById("overlayContainer");
+        container.innerHTML = "";
+        dropZonesData.forEach(zone => {
+          const div = document.createElement("div");
+          div.className = "drop-zone";
+          div.style.top = `${zone.top}%`;
+          div.style.left = `${zone.left}%`;
+          div.dataset.answer = zone.answer;
+          div.onclick = () => {
+            if (selectedText) {
+              div.innerText = selectedText.innerText;
+              div.dataset.index = selectedText.dataset.index;
+              selectedText.style.display = "none";
+              selectedText.classList.remove("selected");
+              selectedText = null;
+            }
+          };
+          container.appendChild(div);
+        });
+        dragOptionsData.forEach(opt => {
+          const div = document.createElement("div");
+          div.className = "drag-option";
+          div.style.top = `${opt.top}%`;
+          div.style.left = `${opt.left}%`;
+          div.dataset.index = opt.index;
+          div.innerText = opt.text;
+          div.onclick = () => {
+            document.querySelectorAll(".drag-option").forEach(el => el.classList.remove("selected"));
+            selectedText = div;
+            div.classList.add("selected");
+          };
+          container.appendChild(div);
+        });
       }
-    };
 
-    document.getElementById("toGame2Btn").onclick = () => {
-      document.getElementById("game").style.display = "none";
-      document.getElementById("game2").style.display = "flex";
-      document.getElementById("toGame2Btn").style.display = "none";
-      document.getElementById("game2CheckBtn").style.display = "none";
-      document.querySelectorAll("#game2 select").forEach(sel => sel.value = "");
-      game2Answers = {};
-    };
+      // ส่วนโค้ดที่เหลือไม่เปลี่ยนแปลง
+      document.getElementById("startBtn").onclick = () => {
+        document.getElementById("startScreen").style.display = "none";
+        document.getElementById("game").style.display = "flex";
+        createElements();
+        document.getElementById("bgm").play();
+      };
 
-    function checkGame2Answer(selectElem, qNum) {
-      game2Answers[qNum] = selectElem.value;
-      if (Object.keys(game2Answers).length === 4 && Object.values(game2Answers).every(v => v !== "")) {
-        document.getElementById("game2CheckBtn").style.display = "inline-block";
-      } else {
+      document.getElementById("resetBtn").onclick = () => {
+        document.querySelectorAll(".drop-zone").forEach(zone => {
+          zone.innerText = "";
+          delete zone.dataset.index;
+        });
+        document.querySelectorAll(".drag-option").forEach(opt => {
+          opt.style.display = "flex";
+          opt.classList.remove("selected");
+        });
+        selectedText = null;
+        document.getElementById("toGame2Btn").style.display = "none";
+        localStorage.removeItem("score1");
+        localStorage.removeItem("game1Done");
+      };
+
+      document.getElementById("checkBtn").onclick = () => {
+        let correct = 0;
+        document.querySelectorAll(".drop-zone").forEach(zone => {
+          const expected = correctAnswers[zone.dataset.answer];
+          if (zone.innerText === expected) correct++;
+        });
+        const game1Score = (correct / 5) * 10;
+        localStorage.setItem("score1", game1Score.toFixed(1));
+
+        if (correct > 0) {
+          localStorage.setItem("game1Done", "true");
+          document.getElementById("toGame2Btn").style.display = "block";
+          document.getElementById("correctSound").play();
+        } else {
+          document.getElementById("wrongSound").play();
+        }
+      };
+
+      document.getElementById("toGame2Btn").onclick = () => {
+        document.getElementById("game").style.display = "none";
+        document.getElementById("game2").style.display = "flex";
+        document.getElementById("toGame2Btn").style.display = "none";
+        document.getElementById("game2CheckBtn").style.display = "none";
+        document.querySelectorAll("#game2 select").forEach(sel => sel.value = "");
+        game2Answers = {};
+      };
+
+      function checkGame2Answer(selectElem, qNum) {
+        game2Answers[qNum] = selectElem.value;
+        if (Object.keys(game2Answers).length === 4 && Object.values(game2Answers).every(v => v !== "")) {
+          document.getElementById("game2CheckBtn").style.display = "inline-block";
+        } else {
+          document.getElementById("game2CheckBtn").style.display = "none";
+        }
+      }
+
+      function checkAllGame2Answers() {
+        let correctCount = 0;
+        for (let i = 1; i <= 4; i++) {
+          if (game2Answers[i] === game2CorrectAnswers[i]) correctCount++;
+        }
+        const score2 = correctCount * 2.5;
+        localStorage.setItem("score2", score2.toFixed(1));
+
+        const score1 = parseFloat(localStorage.getItem("score1")) || 0;
+        const totalScore = (score1 + score2).toFixed(1);
+
+        const popup = document.getElementById("popup");
+        popup.innerText = "🎉 ยินดีด้วย! คุณผ่านด่านที่ 3 แล้ว!";
+        popup.style.display = "block";
+
+        if (totalScore >= 20) {
+          document.getElementById("correctSound").play();
+        } else {
+          document.getElementById("wrongSound").play();
+        }
+
+        localStorage.setItem("totalScore", totalScore);
+        localStorage.setItem("mission3Score", totalScore);
+
+        setTimeout(() => {
+          popup.style.display = "none";
+          window.location.href = "index.html#map";
+        }, 3000);
+
         document.getElementById("game2CheckBtn").style.display = "none";
       }
-    }
 
-    function checkAllGame2Answers() {
-      let correctCount = 0;
-      for (let i = 1; i <= 4; i++) {
-        if (game2Answers[i] === game2CorrectAnswers[i]) correctCount++;
-      }
-      const score2 = correctCount * 2.5;
-      localStorage.setItem("score2", score2.toFixed(1));
 
-      const score1 = parseFloat(localStorage.getItem("score1")) || 0;
-      const totalScore = (score1 + score2).toFixed(1);
-
-      const popup = document.getElementById("popup");
-      popup.innerText = "🎉 ยินดีด้วย! คุณผ่านด่านที่ 3 แล้ว!";
-      popup.style.display = "block";
-
-      if (totalScore >= 20) {
-        document.getElementById("correctSound").play();
-      } else {
-        document.getElementById("wrongSound").play();
-      }
-
-      localStorage.setItem("totalScore", totalScore);
-      localStorage.setItem("mission3Score", totalScore);
-
-      setTimeout(() => {
-        popup.style.display = "none";
-        window.location.href = "index.html#map";
-      }, 3000);
-
-      document.getElementById("game2CheckBtn").style.display = "none";
-    }
-   
-      
       const MAX_PLAY_TIME = 20 * 60 * 1000; // 20 นาที (ms)
-  let countdownInterval;
+      let countdownInterval;
 
-  function startCountdown() {
-    const timerEl = document.getElementById("countdownTimer");
-    const timeRemainingEl = document.getElementById("timeRemaining");
+      function startCountdown() {
+        const timerEl = document.getElementById("countdownTimer");
+        const timeRemainingEl = document.getElementById("timeRemaining");
 
-    let startTime = localStorage.getItem("gameStartTime");
-    if (!startTime) {
-      // ถ้าไม่มีเวลาเริ่ม ให้เริ่มนับจากตอนนี้
-      startTime = Date.now();
-      localStorage.setItem("gameStartTime", startTime);
-    }
+        let startTime = localStorage.getItem("gameStartTime");
+        if (!startTime) {
+          // ถ้าไม่มีเวลาเริ่ม ให้เริ่มนับจากตอนนี้
+          startTime = Date.now();
+          localStorage.setItem("gameStartTime", startTime);
+        }
 
-    function updateTimer() {
-      const elapsed = Date.now() - startTime;
-      const remaining = MAX_PLAY_TIME - elapsed;
+        function updateTimer() {
+          const elapsed = Date.now() - startTime;
+          const remaining = MAX_PLAY_TIME - elapsed;
 
-      if (remaining <= 0) {
-        clearInterval(countdownInterval);
-        timeRemainingEl.textContent = "00:00";
-        alert("หมดเวลาในการเล่นเกมแล้ว!");
-        window.location.href = "score.html"; // หรือหน้าอื่นที่คุณต้องการ
-        return;
+          if (remaining <= 0) {
+            clearInterval(countdownInterval);
+            timeRemainingEl.textContent = "00:00";
+            alert("หมดเวลาในการเล่นเกมแล้ว!");
+            window.location.href = "score.html"; // หรือหน้าอื่นที่คุณต้องการ
+            return;
+          }
+
+          const minutes = Math.floor(remaining / 60000);
+          const seconds = Math.floor((remaining % 60000) / 1000);
+
+          timeRemainingEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        updateTimer();
+        countdownInterval = setInterval(updateTimer, 1000);
       }
 
-      const minutes = Math.floor(remaining / 60000);
-      const seconds = Math.floor((remaining % 60000) / 1000);
-
-      timeRemainingEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2,'0')}`;
-    }
-
-    updateTimer();
-    countdownInterval = setInterval(updateTimer, 1000);
-  }
-
-  window.onload = () => {
-    startCountdown();
-  };
-  </script>
+      window.onload = () => {
+        startCountdown();
+      };
+    </script>
 </body>
 
 </html>
