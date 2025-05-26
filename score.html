@@ -174,6 +174,57 @@
       font-size: 1.1em;
     }
 
+    /* ส่วนแสดงข้อความรางวัล */
+    .reward-message {
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 15px;
+      font-size: 1.4em;
+      font-weight: 600;
+      text-align: center;
+      animation: reward-glow 2s ease-in-out infinite alternate;
+    }
+
+    .reward-winner {
+      background: linear-gradient(45deg, #ffd700, #ffed4e);
+      color: #333;
+      border: 3px solid #ffa500;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    }
+
+    .reward-encourage {
+      background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+      color: white;
+      border: 3px solid #ff4757;
+      box-shadow: 0 0 20px rgba(255, 107, 107, 0.4);
+    }
+
+    @keyframes reward-glow {
+      0% { 
+        transform: scale(1);
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+      }
+      100% { 
+        transform: scale(1.02);
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+      }
+    }
+
+    .reward-encourage {
+      animation: encourage-pulse 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes encourage-pulse {
+      0% { 
+        transform: scale(1);
+        box-shadow: 0 0 20px rgba(255, 107, 107, 0.4);
+      }
+      100% { 
+        transform: scale(1.02);
+        box-shadow: 0 0 30px rgba(255, 107, 107, 0.6);
+      }
+    }
+
     .podium-container {
       margin: 50px auto;
       text-align: center;
@@ -395,6 +446,11 @@
     <div class="score-row">⭐ ภารกิจที่ 6: <span id="mission6">0</span> คะแนน</div>
     <hr style="border: 1px solid rgba(102, 126, 234, 0.3); margin: 20px 0;" />
     <div class="score-row">🎯 รวมทั้งหมด: <span id="total" class="highlight">0</span> คะแนน</div>
+    
+    <!-- ข้อความรางวัล -->
+    <div id="rewardMessage" class="reward-message" style="display: none;">
+      <div id="rewardText"></div>
+    </div>
   </div>
 
   <div class="podium-container">
@@ -563,6 +619,36 @@
       setTimeout(createSparkle, i * 200);
     }
 
+    // ฟังก์ชันแสดงข้อความรางวัล
+    function showRewardMessage(totalScore) {
+      const rewardMessage = document.getElementById('rewardMessage');
+      const rewardText = document.getElementById('rewardText');
+      
+      if (totalScore >= 90) {
+        rewardMessage.className = 'reward-message reward-winner';
+        rewardText.innerHTML = `
+          🎉 ยินดีด้วย! คุณทำได้เยี่ยมมาก! 🎉<br>
+          🏆 คะแนน ${totalScore} คะแนน ผ่านเกณฑ์แล้ว! 🏆<br>
+          🎁 สามารถมารับรางวัลที่ Office Butterfly ได้เลย! 🦋✨
+        `;
+        // สร้างพลุพิเศษสำหรับผู้ชนะ
+        for (let i = 0; i < 5; i++) {
+          setTimeout(() => {
+            createFirework(Math.random() * window.innerWidth, Math.random() * (window.innerHeight / 2));
+          }, i * 500);
+        }
+      } else {
+        rewardMessage.className = 'reward-message reward-encourage';
+        rewardText.innerHTML = `
+          💪 สู้ๆ นะ! ยังได้รางวัลอยู่! 💪<br>
+          📊 คะแนนปัจจุบัน: ${totalScore} คะแนน<br>
+          🎯 ต้องการอีก ${90 - totalScore} คะแนน เพื่อรับรางวัล! 🌟
+        `;
+      }
+      
+      rewardMessage.style.display = 'block';
+    }
+
     // ฟังก์ชันเดิม
     function getScore(n) {
       return parseInt(localStorage.getItem(`mission${n}Score`)) || 0;
@@ -581,6 +667,9 @@
       document.getElementById(`mission${i}`).textContent = score;
     }
     document.getElementById("total").textContent = total;
+
+    // แสดงข้อความรางวัล
+    showRewardMessage(total);
 
     function sendScore() {
       const data = {
