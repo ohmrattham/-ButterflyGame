@@ -199,7 +199,7 @@
       <option value="">-- เลือกชื่อ ข้อ 1 --</option>
       <option value="ผีเสื้อหางติ่ง">ผีเสื้อหางติ่ง</option>
       <option value="ผีเสื้อหนอนใบรัก">ผีเสื้อหนอนใบรัก</option>
-      <option value="ผีเสื้อกะลาสี">ผีเสื้อกะลาสี</option>
+      <option value="ผีเสื้อกะลาสี">ผีเสื้อจรกาหนอนยี่โถ่</option>
       <option value="ผีเสื้อฟ้า">ผีเสื้อฟ้า</option>
     </select>
     <select class="game2-select select2" onchange="checkGame2Answer(this, 2)">
@@ -207,30 +207,54 @@
       <option value="ผีเสื้อหางติ่ง">ผีเสื้อหางติ่ง</option>
       <option value="ผีเสื้อหนอนใบรัก">ผีเสื้อหนอนใบรัก</option>
       <option value="ผีเสื้อกะลาสี">ผีเสื้อกะลาสี</option>
-      <option value="ผีเสื้อฟ้า">ผีเสื้อฟ้า</option>
+      <option value="ผีเสื้อฟ้า">ผีเสื้อหนอนมะนาว</option>
     </select>
     <select class="game2-select select3" onchange="checkGame2Answer(this, 3)">
       <option value="">-- เลือกชื่อ ข้อ 3 --</option>
-      <option value="ผีเสื้อหางติ่ง">ผีเสื้อหางติ่ง</option>
+      <option value="ผีเสื้อหางติ่ง">ผีเสื้อหนอนกระทกรก</option>
       <option value="ผีเสื้อหนอนใบรัก">ผีเสื้อหนอนใบรัก</option>
       <option value="ผีเสื้อกะลาสี">ผีเสื้อกะลาสี</option>
-      <option value="ผีเสื้อฟ้า">ผีเสื้อฟ้า</option>
+      <option value="ผีเสื้อฟ้า">ผีเสื้อหนอนคูณ</option>
     </select>
     <select class="game2-select select4" onchange="checkGame2Answer(this, 4)">
       <option value="">-- เลือกชื่อ ข้อ 4 --</option>
       <option value="ผีเสื้อหางติ่ง">ผีเสื้อหางติ่ง</option>
       <option value="ผีเสื้อหนอนใบรัก">ผีเสื้อหนอนใบรัก</option>
       <option value="ผีเสื้อกะลาสี">ผีเสื้อกะลาสี</option>
-      <option value="ผีเสื้อฟ้า">ผีเสื้อฟ้า</option>
+      <option value="ผีเสื้อฟ้า">ผีเสื้อถุงทอง</option>
     </select>
     <button id="game2CheckBtn" onclick="checkAllGame2Answers()">ตรวจคำตอบ</button>
   </div>
+  
+   <div id="countdownTimer" style="
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background: rgba(0,0,0,0.75);
+    color: #fff;
+    font-size: 20px;
+    padding: 10px 18px;
+    border-radius: 14px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    z-index: 9999;
+    box-shadow: 0 0 10px rgba(255,255,255,0.3);
+    user-select: none;
+  ">
+    เวลาเหลือ: <span id="timeRemaining">20:00</span>
+
 
   <div id="popup"></div>
 
   <script>
-    const correctAnswers = { 1: "หนวด", 2: "ปีก", 3: "หัว", 4: "ลำตัว", 5: "ท้อง" };
-    const game2CorrectAnswers = { 1: "ผีเสื้อกะลาสี", 2: "ผีเสื้อฟ้า", 3: "ผีเสื้อหางติ่ง", 4: "ผีเสื้อหนอนใบรัก" };
+    // คำตอบเกม 1
+    const correctAnswers = {
+      1: "หนวด", 2: "ปีก", 3: "หัว", 4: "ลำตัว", 5: "ท้อง"
+    };
+    // คำตอบเกม 2
+    const game2CorrectAnswers = {
+      1: "ผีเสื้อจรกาหนอนยี่โถ่", 2: "ผีเสื้อหนอนมะนาว", 3: "ผีเสื้อหนอนกระทกรก", 4: "ผีเสื้อถุงทอง"
+    };
+
     const dropZonesData = [
       { top: 30, left: 15, answer: "1" },
       { top: 32, left: 55, answer: "2" },
@@ -375,6 +399,47 @@
 
       document.getElementById("game2CheckBtn").style.display = "none";
     }
+   
+      
+      const MAX_PLAY_TIME = 20 * 60 * 1000; // 20 นาที (ms)
+  let countdownInterval;
+
+  function startCountdown() {
+    const timerEl = document.getElementById("countdownTimer");
+    const timeRemainingEl = document.getElementById("timeRemaining");
+
+    let startTime = localStorage.getItem("gameStartTime");
+    if (!startTime) {
+      // ถ้าไม่มีเวลาเริ่ม ให้เริ่มนับจากตอนนี้
+      startTime = Date.now();
+      localStorage.setItem("gameStartTime", startTime);
+    }
+
+    function updateTimer() {
+      const elapsed = Date.now() - startTime;
+      const remaining = MAX_PLAY_TIME - elapsed;
+
+      if (remaining <= 0) {
+        clearInterval(countdownInterval);
+        timeRemainingEl.textContent = "00:00";
+        alert("หมดเวลาในการเล่นเกมแล้ว!");
+        window.location.href = "score.html"; // หรือหน้าอื่นที่คุณต้องการ
+        return;
+      }
+
+      const minutes = Math.floor(remaining / 60000);
+      const seconds = Math.floor((remaining % 60000) / 1000);
+
+      timeRemainingEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2,'0')}`;
+    }
+
+    updateTimer();
+    countdownInterval = setInterval(updateTimer, 1000);
+  }
+
+  window.onload = () => {
+    startCountdown();
+  };
   </script>
 </body>
 
