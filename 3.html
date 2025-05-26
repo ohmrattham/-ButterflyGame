@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,7 +11,8 @@
       font-family: sans-serif;
       background-image: url('bgb.png');
     }
-     .page {
+
+    .page {
       width: 100%;
       max-width: 600px;
       margin: auto;
@@ -20,6 +22,7 @@
       background-position: center;
       display: none;
     }
+
     #startScreen {
       background-image: url('3.0.png');
       height: 100vh;
@@ -27,6 +30,7 @@
       justify-content: center;
       align-items: center;
     }
+
     #startBtn {
       font-size: 18px;
       font-weight: bold;
@@ -37,26 +41,35 @@
       color: white;
       padding: 14px 28px;
     }
-    #game, #game2 {
+
+    #game,
+    #game2 {
       height: 100vh;
       position: relative;
       justify-content: center;
       align-items: center;
     }
+
     #game {
       background-image: url('3.png');
     }
+
     #game2 {
       background-image: url('3.2.png');
       flex-direction: column;
       padding: 20px;
     }
+
     #overlayContainer {
       position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
     }
-    .drop-zone, .drag-option {
+
+    .drop-zone,
+    .drag-option {
       position: absolute;
       width: 18%;
       height: 5%;
@@ -67,14 +80,17 @@
       align-items: center;
       justify-content: center;
     }
+
     .drop-zone {
       border: 2px dashed #333;
-      background-color: rgba(255,255,255,0.7);
+      background-color: rgba(255, 255, 255, 0.7);
     }
+
     .drag-option {
       background-color: #ffcc66;
       cursor: grab;
     }
+
     #popup {
       position: absolute;
       top: 30%;
@@ -88,8 +104,9 @@
       display: none;
       z-index: 20;
       text-align: center;
-      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
     }
+
     button {
       position: absolute;
       bottom: 5vh;
@@ -100,16 +117,19 @@
       cursor: pointer;
       z-index: 10;
     }
+
     #checkBtn {
       left: 35%;
       background-color: #28a745;
       color: white;
     }
+
     #resetBtn {
       left: 70%;
       background-color: #dc3545;
       color: white;
     }
+
     #toGame2Btn {
       left: 50%;
       background-color: #007bff;
@@ -118,6 +138,7 @@
       position: fixed;
       display: none;
     }
+
     select {
       font-size: 1em;
       padding: 6px;
@@ -125,6 +146,7 @@
       border-radius: 6px;
       border: 1px solid #ccc;
     }
+
     #game2Result {
       font-weight: bold;
       font-size: 1.3em;
@@ -134,6 +156,7 @@
       left: 50%;
       transform: translateX(-50%);
     }
+
     #game2CheckBtn {
       top: 80%;
       left: 50%;
@@ -146,11 +169,40 @@
       box-shadow: 0 0.3vh 0.6vh rgba(0, 0, 0, 0.2);
       cursor: pointer;
     }
+
     #game2CheckBtn:hover {
       background-color: #76a07f;
     }
+
+    .game2-select {
+      position: absolute;
+      width: 50%;
+      /* หรือปรับตามต้องการ */
+      font-size: 1.2em;
+    }
+
+    .select1 {
+      top: 65%;
+      left: 20%;
+    }
+
+    .select2 {
+      top: 65%;
+      left: 50%;
+    }
+
+    .select3 {
+      top: 85%;
+      left: 20%;
+    }
+
+    .select4 {
+      top: 90%;
+      left: 60%;
+    }
   </style>
 </head>
+
 <body>
   <!-- หน้าเริ่มเกม -->
   <div id="startScreen" class="page" style="display:flex;">
@@ -170,28 +222,28 @@
 
   <!-- เกม 2 -->
   <div id="game2" class="page">
-    <select onchange="checkGame2Answer(this, 1)">
+    <select class = "game2-select select1" conchange="checkGame2Answer(this, 1)">
       <option value="">-- เลือกชื่อ ข้อ 1 --</option>
       <option value="ผีเสื้อหางติ่ง">ผีเสื้อหางติ่ง</option>
       <option value="ผีเสื้อหนอนใบรัก">ผีเสื้อหนอนใบรัก</option>
       <option value="ผีเสื้อกะลาสี">ผีเสื้อกะลาสี</option>
       <option value="ผีเสื้อฟ้า">ผีเสื้อฟ้า</option>
     </select>
-    <select onchange="checkGame2Answer(this, 2)">
+    <select class="game2-select select2" onchange="checkGame2Answer(this, 2)">
       <option value="">-- เลือกชื่อ ข้อ 2 --</option>
       <option value="ผีเสื้อหางติ่ง">ผีเสื้อหางติ่ง</option>
       <option value="ผีเสื้อหนอนใบรัก">ผีเสื้อหนอนใบรัก</option>
       <option value="ผีเสื้อกะลาสี">ผีเสื้อกะลาสี</option>
       <option value="ผีเสื้อฟ้า">ผีเสื้อฟ้า</option>
     </select>
-    <select onchange="checkGame2Answer(this, 3)">
+    <select class="game2-select select3" onchange="checkGame2Answer(this, 3)">
       <option value="">-- เลือกชื่อ ข้อ 3 --</option>
       <option value="ผีเสื้อหางติ่ง">ผีเสื้อหางติ่ง</option>
       <option value="ผีเสื้อหนอนใบรัก">ผีเสื้อหนอนใบรัก</option>
       <option value="ผีเสื้อกะลาสี">ผีเสื้อกะลาสี</option>
       <option value="ผีเสื้อฟ้า">ผีเสื้อฟ้า</option>
     </select>
-    <select onchange="checkGame2Answer(this, 4)">
+    <select class="game2-select select4" onchange="checkGame2Answer(this, 4)">
       <option value="">-- เลือกชื่อ ข้อ 4 --</option>
       <option value="ผีเสื้อหางติ่ง">ผีเสื้อหางติ่ง</option>
       <option value="ผีเสื้อหนอนใบรัก">ผีเสื้อหนอนใบรัก</option>
@@ -204,177 +256,178 @@
   <!-- ป็อปอัพแสดงคะแนนรวม -->
   <div id="popup"></div>
 
-<script>
-  // คำตอบเกม 1
-  const correctAnswers = {
-    1: "หนวด", 2: "ปีก", 3: "หัว", 4: "ลำตัว", 5: "ท้อง"
-  };
-  // คำตอบเกม 2
-  const game2CorrectAnswers = {
-    1: "ผีเสื้อกะลาสี", 2: "ผีเสื้อฟ้า", 3: "ผีเสื้อหางติ่ง", 4: "ผีเสื้อหนอนใบรัก"
-  };
-  // ข้อมูลตำแหน่ง Drop Zone และตัวเลือกลาก
-  const dropZonesData = [
-    { top: 30, left: 15, answer: "1" },
-    { top: 32, left: 55, answer: "2" },
-    { top: 59, left: 9, answer: "3" },
-    { top: 71.5, left: 17, answer: "4" },
-    { top: 71.5, left: 56, answer: "5" },
-  ];
-  const dragOptionsData = [
-    { top: 12, left: 40, index: "1", text: "ลำตัว" },
-    { top: 12, left: 65, index: "2", text: "หนวด" },
-    { top: 20, left: 15, index: "3", text: "หัว" },
-    { top: 20, left: 40, index: "4", text: "ปีก" },
-    { top: 20, left: 65, index: "5", text: "ท้อง" },
-  ];
+  <script>
+    // คำตอบเกม 1
+    const correctAnswers = {
+      1: "หนวด", 2: "ปีก", 3: "หัว", 4: "ลำตัว", 5: "ท้อง"
+    };
+    // คำตอบเกม 2
+    const game2CorrectAnswers = {
+      1: "ผีเสื้อกะลาสี", 2: "ผีเสื้อฟ้า", 3: "ผีเสื้อหางติ่ง", 4: "ผีเสื้อหนอนใบรัก"
+    };
+    // ข้อมูลตำแหน่ง Drop Zone และตัวเลือกลาก
+    const dropZonesData = [
+      { top: 30, left: 15, answer: "1" },
+      { top: 32, left: 55, answer: "2" },
+      { top: 59, left: 9, answer: "3" },
+      { top: 71.5, left: 17, answer: "4" },
+      { top: 71.5, left: 56, answer: "5" },
+    ];
+    const dragOptionsData = [
+      { top: 12, left: 40, index: "1", text: "ลำตัว" },
+      { top: 12, left: 65, index: "2", text: "หนวด" },
+      { top: 20, left: 15, index: "3", text: "หัว" },
+      { top: 20, left: 40, index: "4", text: "ปีก" },
+      { top: 20, left: 65, index: "5", text: "ท้อง" },
+    ];
 
-  let game2Answers = {};
+    let game2Answers = {};
 
-  function createElements() {
-    const container = document.getElementById("overlayContainer");
-    container.innerHTML = "";
-    dropZonesData.forEach(zone => {
-      const div = document.createElement("div");
-      div.className = "drop-zone";
-      div.style.top = `${zone.top}%`;
-      div.style.left = `${zone.left}%`;
-      div.dataset.answer = zone.answer;
-      container.appendChild(div);
-    });
-    dragOptionsData.forEach(opt => {
-      const div = document.createElement("div");
-      div.className = "drag-option";
-      div.setAttribute("draggable", true);
-      div.style.top = `${opt.top}%`;
-      div.style.left = `${opt.left}%`;
-      div.dataset.index = opt.index;
-      div.innerText = opt.text;
-      div.style.display = "flex";
-      container.appendChild(div);
-    });
-  }
-
-  function setupDragDrop() {
-    document.querySelectorAll(".drag-option").forEach(opt => {
-      opt.addEventListener("dragstart", e => {
-        e.dataTransfer.setData("text/plain", opt.dataset.index);
+    function createElements() {
+      const container = document.getElementById("overlayContainer");
+      container.innerHTML = "";
+      dropZonesData.forEach(zone => {
+        const div = document.createElement("div");
+        div.className = "drop-zone";
+        div.style.top = `${zone.top}%`;
+        div.style.left = `${zone.left}%`;
+        div.dataset.answer = zone.answer;
+        container.appendChild(div);
       });
-    });
-    document.querySelectorAll(".drop-zone").forEach(zone => {
-      zone.addEventListener("dragover", e => e.preventDefault());
-      zone.addEventListener("drop", e => {
-        e.preventDefault();
-        const index = e.dataTransfer.getData("text/plain");
-        const dropped = document.querySelector(`.drag-option[data-index='${index}']`);
-        if (!zone.innerText) {
-          zone.innerText = dropped.innerText;
-          zone.dataset.index = index;
-          dropped.style.display = "none";
-        }
+      dragOptionsData.forEach(opt => {
+        const div = document.createElement("div");
+        div.className = "drag-option";
+        div.setAttribute("draggable", true);
+        div.style.top = `${opt.top}%`;
+        div.style.left = `${opt.left}%`;
+        div.dataset.index = opt.index;
+        div.innerText = opt.text;
+        div.style.display = "flex";
+        container.appendChild(div);
       });
-    });
-  }
-
-  // เริ่มเกม
-  document.getElementById("startBtn").onclick = () => {
-    document.getElementById("startScreen").style.display = "none";
-    document.getElementById("game").style.display = "flex";
-    createElements();
-    setupDragDrop();
-    document.getElementById("bgm").play();
-  };
-
-  // รีเซ็ตเกม 1
-  document.getElementById("resetBtn").onclick = () => {
-    document.querySelectorAll(".drop-zone").forEach(zone => {
-      zone.innerText = "";
-      delete zone.dataset.index;
-    });
-    document.querySelectorAll(".drag-option").forEach(opt => {
-      opt.style.display = "flex";
-    });
-    document.getElementById("toGame2Btn").style.display = "none";
-    localStorage.removeItem("score1");
-    localStorage.removeItem("game1Done");
-  };
-
-  // ตรวจคำตอบเกม 1 (ไม่มีป็อปอัพ)
-  document.getElementById("checkBtn").onclick = () => {
-    let correct = 0;
-    document.querySelectorAll(".drop-zone").forEach(zone => {
-      const expected = correctAnswers[zone.dataset.answer];
-      if (zone.innerText === expected) correct++;
-    });
-    const game1Score = (correct / 5) * 10;
-    localStorage.setItem("score1", game1Score.toFixed(1));
-
-    if (correct > 0) {
-      localStorage.setItem("game1Done", "true");
-      document.getElementById("toGame2Btn").style.display = "block";
-      document.getElementById("correctSound").play();
-    } else {
-      document.getElementById("wrongSound").play();
     }
-  };
 
-  // ไปเกม 2
-  document.getElementById("toGame2Btn").onclick = () => {
-    document.getElementById("game").style.display = "none";
-    document.getElementById("game2").style.display = "flex";
-    document.getElementById("toGame2Btn").style.display = "none";
-    document.getElementById("game2CheckBtn").style.display = "none";
-    document.querySelectorAll("#game2 select").forEach(sel => sel.value = "");
-    game2Answers = {};
-  };
+    function setupDragDrop() {
+      document.querySelectorAll(".drag-option").forEach(opt => {
+        opt.addEventListener("dragstart", e => {
+          e.dataTransfer.setData("text/plain", opt.dataset.index);
+        });
+      });
+      document.querySelectorAll(".drop-zone").forEach(zone => {
+        zone.addEventListener("dragover", e => e.preventDefault());
+        zone.addEventListener("drop", e => {
+          e.preventDefault();
+          const index = e.dataTransfer.getData("text/plain");
+          const dropped = document.querySelector(`.drag-option[data-index='${index}']`);
+          if (!zone.innerText) {
+            zone.innerText = dropped.innerText;
+            zone.dataset.index = index;
+            dropped.style.display = "none";
+          }
+        });
+      });
+    }
 
-  // เก็บคำตอบเกม 2 และตรวจสอบการเลือกครบ
-  function checkGame2Answer(selectElem, qNum) {
-    game2Answers[qNum] = selectElem.value;
-    if (Object.keys(game2Answers).length === 4 && Object.values(game2Answers).every(v => v !== "")) {
-      document.getElementById("game2CheckBtn").style.display = "inline-block";
-    } else {
+    // เริ่มเกม
+    document.getElementById("startBtn").onclick = () => {
+      document.getElementById("startScreen").style.display = "none";
+      document.getElementById("game").style.display = "flex";
+      createElements();
+      setupDragDrop();
+      document.getElementById("bgm").play();
+    };
+
+    // รีเซ็ตเกม 1
+    document.getElementById("resetBtn").onclick = () => {
+      document.querySelectorAll(".drop-zone").forEach(zone => {
+        zone.innerText = "";
+        delete zone.dataset.index;
+      });
+      document.querySelectorAll(".drag-option").forEach(opt => {
+        opt.style.display = "flex";
+      });
+      document.getElementById("toGame2Btn").style.display = "none";
+      localStorage.removeItem("score1");
+      localStorage.removeItem("game1Done");
+    };
+
+    // ตรวจคำตอบเกม 1 (ไม่มีป็อปอัพ)
+    document.getElementById("checkBtn").onclick = () => {
+      let correct = 0;
+      document.querySelectorAll(".drop-zone").forEach(zone => {
+        const expected = correctAnswers[zone.dataset.answer];
+        if (zone.innerText === expected) correct++;
+      });
+      const game1Score = (correct / 5) * 10;
+      localStorage.setItem("score1", game1Score.toFixed(1));
+
+      if (correct > 0) {
+        localStorage.setItem("game1Done", "true");
+        document.getElementById("toGame2Btn").style.display = "block";
+        document.getElementById("correctSound").play();
+      } else {
+        document.getElementById("wrongSound").play();
+      }
+    };
+
+    // ไปเกม 2
+    document.getElementById("toGame2Btn").onclick = () => {
+      document.getElementById("game").style.display = "none";
+      document.getElementById("game2").style.display = "flex";
+      document.getElementById("toGame2Btn").style.display = "none";
       document.getElementById("game2CheckBtn").style.display = "none";
-    }
-  }
+      document.querySelectorAll("#game2 select").forEach(sel => sel.value = "");
+      game2Answers = {};
+    };
 
-  // ตรวจคำตอบเกม 2 และแสดงป็อปอัพคะแนนรวม พร้อมเก็บและกลับหน้า index.html
-  function checkAllGame2Answers() {
-    let correctCount = 0;
-    for (let i = 1; i <= 4; i++) {
-      if (game2Answers[i] === game2CorrectAnswers[i]) correctCount++;
-    }
-    const score2 = correctCount * 2.5; // เต็ม 10
-    localStorage.setItem("score2", score2.toFixed(1));
-
-    const score1 = parseFloat(localStorage.getItem("score1")) || 0;
-    const totalScore = (score1 + score2).toFixed(1);
-
-    // แสดงป็อปอัพคะแนนรวม
-    const popup = document.getElementById("popup");
-    popup.innerText = `คะแนนเกมที่ 1: ${score1} / 10\nคะแนนเกมที่ 2: ${score2.toFixed(1)} / 10\n\nคะแนนรวม: ${totalScore} / 20`;
-    popup.style.display = "block";
-
-    // เล่นเสียงตามผลรวม (ถ้าได้เต็ม 20 ใช้ correctSound)
-    if (totalScore >= 20) {
-      document.getElementById("correctSound").play();
-    } else {
-      document.getElementById("wrongSound").play();
+    // เก็บคำตอบเกม 2 และตรวจสอบการเลือกครบ
+    function checkGame2Answer(selectElem, qNum) {
+      game2Answers[qNum] = selectElem.value;
+      if (Object.keys(game2Answers).length === 4 && Object.values(game2Answers).every(v => v !== "")) {
+        document.getElementById("game2CheckBtn").style.display = "inline-block";
+      } else {
+        document.getElementById("game2CheckBtn").style.display = "none";
+      }
     }
 
-    // เก็บคะแนนรวม
-    localStorage.setItem("totalScore", totalScore);
-    localStorage.setItem("mission3Score", totalScore);
+    // ตรวจคำตอบเกม 2 และแสดงป็อปอัพคะแนนรวม พร้อมเก็บและกลับหน้า index.html
+    function checkAllGame2Answers() {
+      let correctCount = 0;
+      for (let i = 1; i <= 4; i++) {
+        if (game2Answers[i] === game2CorrectAnswers[i]) correctCount++;
+      }
+      const score2 = correctCount * 2.5; // เต็ม 10
+      localStorage.setItem("score2", score2.toFixed(1));
 
-    // รอ 3 วินาที แล้วกลับหน้า index.html
-    setTimeout(() => {
-      popup.style.display = "none";
-      window.location.href = "index.html";
-    }, 3000);
+      const score1 = parseFloat(localStorage.getItem("score1")) || 0;
+      const totalScore = (score1 + score2).toFixed(1);
 
-    // ซ่อนปุ่มตรวจคำตอบเกม 2 หลังตรวจเสร็จ
-    document.getElementById("game2CheckBtn").style.display = "none";
+      // แสดงป็อปอัพคะแนนรวม
+      const popup = document.getElementById("popup");
+      popup.innerText = `คะแนนเกมที่ 1: ${score1} / 10\nคะแนนเกมที่ 2: ${score2.toFixed(1)} / 10\n\nคะแนนรวม: ${totalScore} / 20`;
+      popup.style.display = "block";
+
+      // เล่นเสียงตามผลรวม (ถ้าได้เต็ม 20 ใช้ correctSound)
+      if (totalScore >= 20) {
+        document.getElementById("correctSound").play();
+      } else {
+        document.getElementById("wrongSound").play();
+      }
+
+      // เก็บคะแนนรวม
+      localStorage.setItem("totalScore", totalScore);
+      localStorage.setItem("mission3Score", totalScore);
+
+      // รอ 3 วินาที แล้วกลับหน้า index.html
+      setTimeout(() => {
+        popup.style.display = "none";
+        window.location.href = "index.html";
+      }, 3000);
+
+      // ซ่อนปุ่มตรวจคำตอบเกม 2 หลังตรวจเสร็จ
+      document.getElementById("game2CheckBtn").style.display = "none";
     }
   </script>
 </body>
+
 </html>
