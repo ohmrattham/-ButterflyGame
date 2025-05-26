@@ -173,14 +173,29 @@
   }
 
   function endMission() {
-    if (confirm("คุณต้องการจบภารกิจนี้หรือไม่? คะแนนของคุณจะถูกล้าง")) {
-      for (let i = 1; i <= 6; i++) {
-        localStorage.removeItem(`mission${i}Score`);
-      }
-      alert("จบภารกิจแล้ว! คะแนนทั้งหมดถูกล้างเรียบร้อย");
-      window.location.href = "index.html"; // หรือลิงก์ไปหน้าอื่น
+  if (confirm("คุณต้องการจบภารกิจนี้หรือไม่? คะแนนและสถานะของคุณจะถูกล้าง")) {
+    // ล้างคะแนนภารกิจ
+    for (let i = 1; i <= 6; i++) {
+      localStorage.removeItem(`mission${i}Score`);
     }
+    // ล้างสถานะภารกิจ
+    localStorage.removeItem("missionStatus");
+
+    // ล้างข้อมูลชื่อและโรงเรียน
+    localStorage.removeItem("nickname");
+    localStorage.removeItem("playerName");
+    localStorage.removeItem("school");
+
+    // ตั้ง flag ให้หน้า index รีเซ็ตเมื่อโหลดใหม่
+    localStorage.setItem("resetOnLoad", "true");
+
+    alert("จบภารกิจแล้ว! ข้อมูลทั้งหมดถูกล้างเรียบร้อย");
+
+    // ไปหน้า index เพื่อเริ่มเกมใหม่
+    window.location.href = "index.html";
   }
+}
+
   </script>
 
 </body>

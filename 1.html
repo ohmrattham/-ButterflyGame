@@ -183,10 +183,11 @@
   </div>
   <script>
     const bgImages = ["5.png", "6.png", "7.png"];
-    const correctAnswers = [3, 1, 1]; // ✅ ใส่คำตอบที่ถูกต้องของแต่ละข้อ
-    const scorePerCorrect = [5, 5, 10];
+    const correctAnswers = [3, 3, 3]; // ✅ ใส่คำตอบที่ถูกต้องของแต่ละข้อ
+    const scorePerCorrect = [5, 10, 5];
     let userAnswers = [null, null, null];
     let current = 0;
+    let totalScore = 0;
 
     function startMission() {
       document.getElementById("startBtn").style.display = "none";
@@ -249,30 +250,31 @@
       }
     }
 
-    function checkAnswers() {
-      let score = 0;
-      for (let i = 0; i < correctAnswers.length; i++) {
-        if (userAnswers[i] === correctAnswers[i]) {
-          score += scorePerCorrect;
-        }
-      }
-
-      const popup = document.getElementById("resultPopup");
-      const resultText = document.getElementById("resultText");
-      const sound = document.getElementById("correctSound");
-
-      resultText.textContent = `คุณได้ทำภารกิจที่ 1 เสร็จแล้ว`;
-      popup.style.display = "flex";
-      sound.play().catch(() => { });
-
-      localStorage.setItem("mission1Score", score);
-      localStorage.setItem("mission1Complete", "true");
-
-      // ✅ กลับไปหน้าแผนที่
-      setTimeout(() => {
-        window.location.href = "index.html#mapPage";
-      }, 3000);
+   function checkAnswers() {
+  let score = 0;
+  for (let i = 0; i < correctAnswers.length; i++) {
+    if (userAnswers[i] === correctAnswers[i]) {
+      score += scorePerCorrect[i]; // ✅ เข้าถึงคะแนนตามข้อ
     }
+  }
+
+  const popup = document.getElementById("resultPopup");
+  const resultText = document.getElementById("resultText");
+  const sound = document.getElementById("correctSound");
+
+  resultText.textContent = `คุณได้ทำภารกิจที่ 1 เสร็จแล้ว`;
+  popup.style.display = "flex";
+  sound.play().catch(() => { });
+
+  localStorage.setItem("mission1Score", score);
+  localStorage.setItem("mission1Complete", "true");
+
+  // ✅ กลับไปหน้าแผนที่
+  setTimeout(() => {
+    window.location.href = "index.html#mapPage";
+  }, 3000);
+}
+
 
     window.addEventListener('DOMContentLoaded', () => {
       function playVoiceOnce() {
