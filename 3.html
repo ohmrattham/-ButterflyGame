@@ -158,14 +158,10 @@
     }
 
     #game2CheckBtn {
-      top: 80%;
-      left: 50%;
-      transform: translateX(-50%);
+      left: 35%;
       background-color: #28a745;
-      color: black;
-      padding: 1.5vh 3vh;
-      font-size: 1.8vh;
-      border-radius: 12px;
+      color: white;
+      border-radius: 8px;
       box-shadow: 0 0.3vh 0.6vh rgba(0, 0, 0, 0.2);
       cursor: pointer;
     }
@@ -176,29 +172,29 @@
 
     .game2-select {
       position: absolute;
-      width: 50%;
+      width: 35%;
       /* หรือปรับตามต้องการ */
-      font-size: 1.2em;
+      font-size: 1em;
     }
 
     .select1 {
-      top: 65%;
-      left: 20%;
+      top: 50%;
+      left: 10%;
     }
 
     .select2 {
-      top: 65%;
+      top: 50%;
       left: 50%;
     }
 
     .select3 {
-      top: 85%;
-      left: 20%;
+      top: 75%;
+      left: 10%;
     }
 
     .select4 {
-      top: 90%;
-      left: 60%;
+      top: 75%;
+      left: 50%;
     }
   </style>
 </head>
@@ -222,7 +218,7 @@
 
   <!-- เกม 2 -->
   <div id="game2" class="page">
-    <select class = "game2-select select1" conchange="checkGame2Answer(this, 1)">
+    <select class="game2-select select1" onchange="checkGame2Answer(this, 1)">
       <option value="">-- เลือกชื่อ ข้อ 1 --</option>
       <option value="ผีเสื้อหางติ่ง">ผีเสื้อหางติ่ง</option>
       <option value="ผีเสื้อหนอนใบรัก">ผีเสื้อหนอนใบรัก</option>
@@ -403,9 +399,11 @@
       const totalScore = (score1 + score2).toFixed(1);
 
       // แสดงป็อปอัพคะแนนรวม
+      // แสดงข้อความยินดีเมื่อผ่านด่านที่ 4
       const popup = document.getElementById("popup");
-      popup.innerText = `คะแนนเกมที่ 1: ${score1} / 10\nคะแนนเกมที่ 2: ${score2.toFixed(1)} / 10\n\nคะแนนรวม: ${totalScore} / 20`;
+      popup.innerText = "🎉 ยินดีด้วย! คุณผ่านด่านที่ 4 แล้ว!";
       popup.style.display = "block";
+
 
       // เล่นเสียงตามผลรวม (ถ้าได้เต็ม 20 ใช้ correctSound)
       if (totalScore >= 20) {
@@ -421,7 +419,7 @@
       // รอ 3 วินาที แล้วกลับหน้า index.html
       setTimeout(() => {
         popup.style.display = "none";
-        window.location.href = "index.html";
+        window.location.href = "index.html#map";
       }, 3000);
 
       // ซ่อนปุ่มตรวจคำตอบเกม 2 หลังตรวจเสร็จ

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>สรุปคะแนน</title>
   <style>
     body {
@@ -24,7 +25,7 @@
       border-radius: 12px;
       width: 90%;
       max-width: 600px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     .score-row {
@@ -51,7 +52,8 @@
       margin-top: 12px;
     }
 
-    th, td {
+    th,
+    td {
       padding: 10px;
       border: 1px solid #ddd;
       text-align: center;
@@ -82,20 +84,22 @@
     }
   </style>
 </head>
+
 <body>
 
   <h1>🎉 สรุปคะแนนของคุณ</h1>
   <div class="summary-box">
     <div class="score-row">ชื่อเล่น: <span id="nickname" class="highlight">-</span></div>
     <div class="score-row">โรงเรียน: <span id="school" class="highlight">-</span></div>
-    <hr>
+    <div class="score-row">อันดับ: <span id="rank" class="highlight">-</span></div>
+    <hr />
     <div class="score-row">ภารกิจที่ 1: <span id="mission1">0</span> คะแนน</div>
     <div class="score-row">ภารกิจที่ 2: <span id="mission2">0</span> คะแนน</div>
     <div class="score-row">ภารกิจที่ 3: <span id="mission3">0</span> คะแนน</div>
     <div class="score-row">ภารกิจที่ 4: <span id="mission4">0</span> คะแนน</div>
     <div class="score-row">ภารกิจที่ 5: <span id="mission5">0</span> คะแนน</div>
     <div class="score-row">ภารกิจที่ 6: <span id="mission6">0</span> คะแนน</div>
-    <hr>
+    <hr />
     <div class="score-row">รวมทั้งหมด: <span id="total" class="highlight">0</span> คะแนน</div>
   </div>
 
@@ -111,16 +115,18 @@
         </tr>
       </thead>
       <tbody id="leaderboardBody">
-        <tr><td colspan="4">กำลังโหลด...</td></tr>
+        <tr>
+          <td colspan="4">กำลังโหลด...</td>
+        </tr>
       </tbody>
     </table>
   </div>
 
   <button class="back-button" onclick="goHome()">กลับหน้าแรก</button>
-
-<button class="back-button" onclick="endMission()">จบภารกิจ</button>
+  <button class="back-button" onclick="endMission()">จบภารกิจ</button>
 
   <script>
+    // ฟังก์ชันอ่านคะแนนแต่ละภารกิจจาก localStorage
     function getScore(n) {
       return parseInt(localStorage.getItem(`mission${n}Score`)) || 0;
     }
@@ -137,66 +143,122 @@
       total += score;
       document.getElementById(`mission${i}`).textContent = score;
     }
-
     document.getElementById("total").textContent = total;
 
+    // ฟังก์ชันส่งคะแนนของเราเข้า Google Sheets
+    function sendScore() {
+      const data = {
+        timestamp: new Date().toISOString(),
+        nickname,
+        school,
+        mission1: getScore(1),
+        mission2: getScore(2),
+        mission3: getScore(3),
+        mission4: getScore(4),
+        mission5: getScore(5),
+        mission6: getScore(6),
+        totalScore: total,
+      };
 
-    // โหลดอันดับจาก Google Sheets
-    fetch("https://script.google.com/macros/s/AKfycbyqUyTBY35A-T2LlOHPXZzLqI0MkcNfQ7eoxABulEBCJvrE_jZmnx9EckG9yDM3Sj4AJg/exec")
-      .then(res => res.json())
-      .then(data => {
-        const sorted = data.sort((a, b) => b.totalScore - a.totalScore).slice(0, 5);
-        const tbody = document.getElementById("leaderboardBody");
-        tbody.innerHTML = "";
+      return fetch(
+        "https://script.google.com/macros/s/AKfycbyi40b0fA0BsHWgwDV4vjdR_pptsnmRzvGLEy2dm6xVfz2mB9DlBeDUA_gMFrFAqaKTtw/exec",
+        {
+          method: "POST",
+          body: JSON.stringify(data),
+        }
+      ).then((res) => res.json());
+    }
 
-        sorted.forEach((player, index) => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${player.nickname}</td>
-            <td>${player.school}</td>
-            <td>${player.totalScore}</td>
-          `;
-          tbody.appendChild(row);
+    // ฟังก์ชันโหลดข้อมูล leaderboard จาก Google Sheets แล้วแสดงผล
+    function loadLeaderboard() {
+      fetch("https://script.google.com/macros/s/AKfycbyZOZSgmmTnS1FcHnM3VyYWlAV9lyiERv0T16KQ_YtsYUMit7KGJ_OWMTTBzbLQqHmPGw/exec")
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("ข้อมูลที่ได้จาก API:", data);
+
+          if (!Array.isArray(data)) {
+            throw new Error("ข้อมูลที่ได้ไม่ใช่ array");
+          }
+
+          const sorted = data.sort((a, b) => b.totalScore - a.totalScore);
+
+          const top5 = sorted.slice(0, 5);
+          const tbody = document.getElementById("leaderboardBody");
+          tbody.innerHTML = "";
+
+          top5.forEach((player, index) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${player.nickname}</td>
+          <td>${player.school}</td>
+          <td>${player.totalScore}</td>
+        `;
+            tbody.appendChild(row);
+          });
+
+          const myIndex = sorted.findIndex(
+            (p) =>
+              p.nickname === nickname &&
+              p.school === school &&
+              p.totalScore === total
+          );
+
+          const myRank = myIndex >= 0 ? myIndex + 1 : "-";
+          document.getElementById("rank").textContent = myRank;
+        })
+        .catch((err) => {
+          console.error("โหลด leaderboard ล้มเหลว:", err);
+          document.getElementById("leaderboardBody").innerHTML =
+            `<tr><td colspan="4">ไม่สามารถโหลดอันดับได้</td></tr>`;
+          document.getElementById("rank").textContent = "-";
         });
-      })
-      .catch(err => {
-        console.error("โหลด leaderboard ล้มเหลว:", err);
-        document.getElementById("leaderboardBody").innerHTML = `<tr><td colspan="4">ไม่สามารถโหลดอันดับได้</td></tr>`;
-      });
+    }
+
+
+
+    // เรียกใช้ส่งคะแนนก่อน แล้วค่อยโหลด leaderboard
+    // ส่งคะแนนแค่ครั้งเดียวต่อคน โดยเช็กจาก localStorage
+    if (!localStorage.getItem("scoreSent")) {
+      sendScore()
+        .then((result) => {
+          console.log("ส่งคะแนนสำเร็จ", result);
+          localStorage.setItem("scoreSent", "true"); // บันทึกว่าเคยส่งแล้ว
+          loadLeaderboard();
+        })
+        .catch((error) => {
+          console.error("ส่งคะแนนล้มเหลว", error);
+          alert("เกิดข้อผิดพลาดในการส่งคะแนน กรุณาลองใหม่");
+        });
+    } else {
+      console.log("เคยส่งคะแนนแล้ว ข้ามการส่ง");
+      loadLeaderboard();
+    }
+
 
     function goHome() {
       window.location.href = "index.html";
     }
-      function goHome() {
-    window.location.href = "index.html";
-  }
 
-  function endMission() {
-  if (confirm("คุณต้องการจบภารกิจนี้หรือไม่? คะแนนและสถานะของคุณจะถูกล้าง")) {
-    // ล้างคะแนนภารกิจ
-    for (let i = 1; i <= 6; i++) {
-      localStorage.removeItem(`mission${i}Score`);
+    function endMission() {
+      if (confirm("คุณต้องการจบภารกิจนี้หรือไม่? คะแนนและสถานะของคุณจะถูกล้าง")) {
+        // ล้างข้อมูลใน localStorage
+        for (let i = 1; i <= 6; i++) {
+          localStorage.removeItem(`mission${i}Score`);
+        }
+        localStorage.removeItem("missionStatus");
+        localStorage.removeItem("nickname");
+        localStorage.removeItem("playerName");
+        localStorage.removeItem("school");
+        localStorage.removeItem("scoreSent");
+        localStorage.setItem("resetOnLoad", "true");
+
+
+        alert("จบภารกิจแล้ว! ข้อมูลถูกล้างเรียบร้อย");
+        window.location.href = "index.html";
+      }
     }
-    // ล้างสถานะภารกิจ
-    localStorage.removeItem("missionStatus");
-
-    // ล้างข้อมูลชื่อและโรงเรียน
-    localStorage.removeItem("nickname");
-    localStorage.removeItem("playerName");
-    localStorage.removeItem("school");
-
-    // ตั้ง flag ให้หน้า index รีเซ็ตเมื่อโหลดใหม่
-    localStorage.setItem("resetOnLoad", "true");
-
-    alert("จบภารกิจแล้ว! ข้อมูลทั้งหมดถูกล้างเรียบร้อย");
-
-    // ไปหน้า index เพื่อเริ่มเกมใหม่
-    window.location.href = "index.html";
-  }
-}
-
   </script>
-
 </body>
+
 </html>
