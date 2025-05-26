@@ -15,20 +15,20 @@
 
     #intro, #game, #section2, #section3 {
       position: relative;
-  width: 100%;
-  max-width: 600px;
-  height: 100vh; /* เพิ่มบรรทัดนี้ */
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  padding-bottom: 20px;
-  display: none;
-  margin: auto;
+      width: 100%;
+      max-width: 600px;
+      height: 100vh;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      padding-bottom: 20px;
+      display: none;
+      margin: auto;
     }
 
     #intro {
       background-image: url('intro4.png');
-     width: 100%;
+      width: 100%;
       height: 100vh;
       overflow: hidden;
       display: flex;
@@ -54,13 +54,23 @@
       border: 2px dashed #888;
       border-radius: 12px;
       z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .drag-image {
       position: absolute;
       width: 18%;
-      cursor: grab;
       z-index: 3;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .drag-image.selected {
+      transform: scale(1.1);
+      border: 3px solid yellow;
+      border-radius: 10px;
     }
 
     #popup {
@@ -137,7 +147,6 @@
 <body>
   <div id="intro"><button id="startBtn">เริ่มทำภารกิจ</button></div>
   <div id="popup"></div>
-
   <audio id="backgroundSound" src="bgmusic.mp3" preload="auto" loop></audio>
   <audio id="clickSound" src="click.mp3" preload="auto"></audio>
   <audio id="soundSuccess" src="success.mp3" preload="auto"></audio>
@@ -172,23 +181,15 @@
     </div>
     <div class="buttonContainer"><button id="checkBtn3">ตรวจคำตอบ</button></div>
   </div>
-<div id="countdownTimer" style="
-    position: fixed;
-    top: 16px;
-    right: 16px;
-    background: rgba(0,0,0,0.75);
-    color: #fff;
-    font-size: 20px;
-    padding: 10px 18px;
-    border-radius: 14px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    z-index: 9999;
-    box-shadow: 0 0 10px rgba(255,255,255,0.3);
-    user-select: none;
-  ">
+
+  <div id="countdownTimer" style="position: fixed; top: 16px; right: 16px; background: rgba(0,0,0,0.75); color: #fff; font-size: 20px; padding: 10px 18px; border-radius: 14px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; z-index: 9999; box-shadow: 0 0 10px rgba(255,255,255,0.3); user-select: none;">
     เวลาเหลือ: <span id="timeRemaining">20:00</span>
+  </div>
+
   <script>
     let score = 0;
+    let selectedImage = null;
+
     document.getElementById("startBtn").addEventListener("click", () => {
       document.getElementById("intro").style.display = "none";
       document.getElementById("game").style.display = "block";
@@ -220,6 +221,20 @@
         div.style.top = zone.top + "%";
         div.style.left = zone.left + "%";
         div.dataset.answer = zone.answer;
+        div.addEventListener("click", () => {
+          if (selectedImage) {
+            div.innerHTML = "";
+            const clone = selectedImage.cloneNode(true);
+            clone.classList.remove("selected");
+            clone.style.position = "relative";
+            clone.style.top = "0";
+            clone.style.left = "0";
+            clone.style.width = "100%";
+            div.appendChild(clone);
+            selectedImage.classList.remove("selected");
+            selectedImage = null;
+          }
+        });
         container.appendChild(div);
       });
 
@@ -229,30 +244,13 @@
         image.className = "drag-image";
         image.style.top = img.top + "%";
         image.style.left = img.left + "%";
-        image.setAttribute("draggable", true);
         image.dataset.name = img.name;
-        container.appendChild(image);
-      });
-
-      setupDragEvents();
-    }
-
-    function setupDragEvents() {
-      let draggedItem = null;
-      document.querySelectorAll(".drag-image").forEach(img => {
-        img.addEventListener("dragstart", () => draggedItem = img);
-      });
-
-      document.querySelectorAll(".drop-zone").forEach(zone => {
-        zone.addEventListener("dragover", e => e.preventDefault());
-        zone.addEventListener("drop", e => {
-          e.preventDefault();
-          if (draggedItem) {
-            zone.innerHTML = "";
-            zone.appendChild(draggedItem);
-            draggedItem.style = "position: relative; width: 100%; top: 0; left: 0; z-index:1;";
-          }
+        image.addEventListener("click", () => {
+          document.querySelectorAll(".drag-image").forEach(el => el.classList.remove("selected"));
+          image.classList.add("selected");
+          selectedImage = image;
         });
+        container.appendChild(image);
       });
     }
 
@@ -307,50 +305,50 @@
         if (img.dataset.name === "protected") score += 3;
       });
       localStorage.setItem("mission4Score", score);
-      showPopup("คุณได้ทำภารกิจที่ 4 เสร็จแล้ว!");
+      showPopup("🎉 ยินดีด้วย! คุณผ่านด่านที่ 4 แล้ว!");
       setTimeout(() => {
         window.location.href = "index.html";
       }, 3000);
     });
-       const MAX_PLAY_TIME = 20 * 60 * 1000; // 20 นาที (ms)
-  let countdownInterval;
 
-  function startCountdown() {
-    const timerEl = document.getElementById("countdownTimer");
-    const timeRemainingEl = document.getElementById("timeRemaining");
+    const MAX_PLAY_TIME = 20 * 60 * 1000;
+    let countdownInterval;
 
-    let startTime = localStorage.getItem("gameStartTime");
-    if (!startTime) {
-      // ถ้าไม่มีเวลาเริ่ม ให้เริ่มนับจากตอนนี้
-      startTime = Date.now();
-      localStorage.setItem("gameStartTime", startTime);
-    }
+    function startCountdown() {
+      const timerEl = document.getElementById("countdownTimer");
+      const timeRemainingEl = document.getElementById("timeRemaining");
 
-    function updateTimer() {
-      const elapsed = Date.now() - startTime;
-      const remaining = MAX_PLAY_TIME - elapsed;
-
-      if (remaining <= 0) {
-        clearInterval(countdownInterval);
-        timeRemainingEl.textContent = "00:00";
-        alert("หมดเวลาในการเล่นเกมแล้ว!");
-        window.location.href = "score.html"; // หรือหน้าอื่นที่คุณต้องการ
-        return;
+      let startTime = localStorage.getItem("gameStartTime");
+      if (!startTime) {
+        startTime = Date.now();
+        localStorage.setItem("gameStartTime", startTime);
       }
 
-      const minutes = Math.floor(remaining / 60000);
-      const seconds = Math.floor((remaining % 60000) / 1000);
+      function updateTimer() {
+        const elapsed = Date.now() - startTime;
+        const remaining = MAX_PLAY_TIME - elapsed;
 
-      timeRemainingEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2,'0')}`;
+        if (remaining <= 0) {
+          clearInterval(countdownInterval);
+          timeRemainingEl.textContent = "00:00";
+          alert("หมดเวลาในการเล่นเกมแล้ว!");
+          window.location.href = "score.html";
+          return;
+        }
+
+        const minutes = Math.floor(remaining / 60000);
+        const seconds = Math.floor((remaining % 60000) / 1000);
+
+        timeRemainingEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      }
+
+      updateTimer();
+      countdownInterval = setInterval(updateTimer, 1000);
     }
 
-    updateTimer();
-    countdownInterval = setInterval(updateTimer, 1000);
-  }
-
-  window.onload = () => {
-    startCountdown();
-  };
+    window.onload = () => {
+      startCountdown();
+    };
   </script>
 </body>
 </html>
