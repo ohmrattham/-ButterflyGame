@@ -349,12 +349,12 @@
 
   <!-- นาฬิกานับถอยหลังมุมขวาบน -->
   <div id="countdownTimer" style="
-    position: fixed;
-    top: 16px;
-    right: 16px;
-    background: rgba(0,0,0,0.75);
-    color: #fff;
-    font-size: 20px;
+    position: absolute;
+    top: 1%;
+    left: 65%;
+    background: rgba(0,0,0,0.6);
+    color: #ffffff;
+    font-size: 15px;
     padding: 10px 18px;
     border-radius: 14px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -454,8 +454,6 @@
         nextButton.style.display = "block";
       }
     }
-
-    startCountdown();
   }
 
   function goToNamePage() {
@@ -534,6 +532,8 @@
     renderCheckmarks();
     checkCompletedMissions();
     showTotalScore();
+
+    startCountdown(); // ⏱ เริ่มนับเวลาถอยหลังที่นี่
 
     const school = localStorage.getItem("school") || "";
 
