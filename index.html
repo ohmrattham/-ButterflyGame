@@ -107,9 +107,17 @@
       transform: translateX(-50%);
     }
 
+     .scorebt-button {
+      background-color: #f1c40f;
+      color: #222;
+      position: absolute;
+      bottom: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
     .input-name {
       position: absolute;
-      top: 25%;
+      top: 17%;
       left: 50%;
       transform: translateX(-50%);
       padding: 1em;
@@ -309,7 +317,7 @@
   <!-- หน้าใส่ชื่อ -->
   <div id="namePage" class="page">
     <input id="nickname" class="input-name" type="text" placeholder="กรุณากรอกชื่อเล่น" />
-    <input id="schoolname" class="input-name" type="text" placeholder="กรุณากรอกชื่อโรงเรียน" style="top: 40%;" />
+    <input id="schoolname" class="input-name" type="text" placeholder="กรุณากรอกชื่อโรงเรียน" style="top: 26%;" />
     <button class="submit-button" style="display:none" onclick="submitName()">ตกลง</button>
     <audio id="nameVoice" src="ชื่อ.mp3"></audio>
   </div>
@@ -328,10 +336,9 @@
 
     <div id="missionCompletePopup" class="popup">
       <div class="popup-content">
-        <h2>🎉 ยินดีด้วย!</h2>
+          <p style="margin-top: 10;">🎉 ยินดีด้วย! </h2> 
         <p id="popupMessage"></p>
-        <button onclick="goToScorePage()">ดูคะแนน</button>
-        <button onclick="closePopup()">ตกลง</button>
+        <button  class="scorebt-button " onclick="goToScorePage()">ดูคะแนน</button>
       </div>
     </div>
 
