@@ -277,28 +277,31 @@
     }
 
 .popup-content {
-  position: absolute;
-  background-image: url('cr.png');
-  background-size: cover;       /* ขยายภาพให้เต็มกล่อง */
-  background-position: center;  /* จัดภาพให้อยู่กึ่งกลาง */
-  background-repeat: no-repeat; /* ไม่ให้ภาพซ้ำ */
-  padding: 100px;
-  border-radius: 100px;
-  font-size: 1.1em;
+  position: fixed; /* ให้อยู่ตรงกลางจอเสมอ */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* จัดให้อยู่กึ่งกลางแท้จริง */
+  background-color: #ffffff; /* สีพื้นหลังเรียบง่าย */
+  padding: 2rem;
+  border-radius: 12px;
+  font-size: 1rem;
   text-align: center;
-  width: 100vw;     /* กำหนดขนาดกล่องชัดเจน */
-  max-width: 650px; /* หรือขนาดตามต้องการ */
-  height: auto;    /* หรือกำหนดความสูงถ้าต้องการ */
-  box-sizing: border-box; /* ให้ padding นับรวมในขนาดกล่อง */
-  color: rgb(0, 0, 0); /* ปรับสีข้อความถ้าจำเป็น */
-  filter: drop-shadow(0 0 10px #666604) drop-shadow(0 0 20px #ffff00);
-  animation: glowPulse 1.5s infinite;
+  width: 90vw;
+  max-width: 400px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* เงาเบาๆ */
+  color: #333333; /* สีข้อความ */
+  z-index: 1000; /* ให้ลอยอยู่หน้าสุด */
 }
- @keyframes glowPulse {
-      0% { filter: drop-shadow(0 0 5px #ffff00) drop-shadow(0 0 10px #ffff00); }
-      50% { filter: drop-shadow(0 0 20px #ffff00) drop-shadow(0 0 30px #ffff00); }
-      100% { filter: drop-shadow(0 0 5px #ffff00) drop-shadow(0 0 10px #ffff00); }
-    }
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.4); /* พื้นหลังดำโปร่ง */
+  z-index: 999;
+}
+
   </style>
 </head>
 
@@ -335,8 +338,9 @@
     
 
     <div id="missionCompletePopup" class="popup">
+      <div class="popup-overlay"></div>
       <div class="popup-content">
-          <p style="margin-top: 10;">🎉 ยินดีด้วย! </h2> 
+          <p >🎉 ยินดีด้วย! </h2> 
         <p id="popupMessage"></p>
         <button  class="scorebt-button " onclick="goToScorePage()">ดูคะแนน</button>
       </div>
