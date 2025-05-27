@@ -640,7 +640,7 @@
       } else {
         rewardMessage.className = 'reward-message reward-encourage';
         rewardText.innerHTML = `
-          💪 สู้ๆ นะ! ยังได้รางวัลอยู่! 💪<br>
+          💪 สู้ๆ นะ! คุณยังไม่ได้รางวัล ! 💪<br>
           📊 คะแนนปัจจุบัน: ${totalScore} คะแนน<br>
           🎯 ต้องการอีก ${90 - totalScore} คะแนน เพื่อรับรางวัล! 🌟
         `;
@@ -715,17 +715,17 @@
 
           // แสดงบนแท่นรางวัล
           if (top5[0]) {
-            document.getElementById("rank1-name").textContent = top5[0].nickname;
-            document.getElementById("rank1-score").textContent = `${top5[0].totalScore} คะแนน`;
-          }
-          if (top5[1]) {
-            document.getElementById("rank2-name").textContent = top5[1].nickname;
-            document.getElementById("rank2-score").textContent = `${top5[1].totalScore} คะแนน`;
-          }
-          if (top5[2]) {
-            document.getElementById("rank3-name").textContent = top5[2].nickname;
-            document.getElementById("rank3-score").textContent = `${top5[2].totalScore} คะแนน`;
-          }
+  document.getElementById("rank1-name").innerHTML = `${top5[0].nickname}<br><small>${top5[0].school}</small>`;
+  document.getElementById("rank1-score").textContent = `${top5[0].totalScore} คะแนน`;
+}
+if (top5[1]) {
+  document.getElementById("rank2-name").innerHTML = `${top5[1].nickname}<br><small>${top5[1].school}</small>`;
+  document.getElementById("rank2-score").textContent = `${top5[1].totalScore} คะแนน`;
+}
+if (top5[2]) {
+  document.getElementById("rank3-name").innerHTML = `${top5[2].nickname}<br><small>${top5[2].school}</small>`;
+  document.getElementById("rank3-score").textContent = `${top5[2].totalScore} คะแนน`;
+}
 
           const myIndex = sorted.findIndex(p => p.nickname === nickname && p.school === school && p.totalScore === total);
           document.getElementById("rank").textContent = myIndex >= 0 ? myIndex + 1 : "-";
