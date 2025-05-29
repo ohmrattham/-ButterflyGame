@@ -34,15 +34,20 @@
       z-index: 0;
     }
 
-    #startButton {
-      padding: 16px 40px;
-      font-size: 24px;
-      background-color: #ffcc00;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      z-index: 2;
-    }
+   #startButton {
+  position: absolute;
+  top: 25%; /* เดิมคือ 90% */
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 16px 40px;
+  font-size: 24px;
+  background-color: #ffcc00;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  z-index: 2;
+}
+
 
     .butterfly {
       position: absolute;
@@ -154,11 +159,11 @@
       position: absolute;
       top: 5%;
       right: 5%;
-      font-size: 22px;
+      font-size: 0px;
       background: #ffffcc;
       padding: 10px 20px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      box-shadow: 0 0 10px rgba(0,0,0,0);
       z-index: 4;
     }
 
