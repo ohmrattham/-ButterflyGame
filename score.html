@@ -446,7 +446,8 @@
     <div class="score-row">⭐ ภารกิจที่ 6: <span id="mission6">0</span> คะแนน</div>
     <hr style="border: 1px solid rgba(102, 126, 234, 0.3); margin: 20px 0;" />
     <div class="score-row">🎯 รวมทั้งหมด: <span id="total" class="highlight">0</span> คะแนน</div>
-    
+   <div class="score-row">⏱ เวลาที่ใช้ไป: <span id="timeUsed" class="highlight">-</span></div>
+
     <!-- ข้อความรางวัล -->
     <div id="rewardMessage" class="reward-message" style="display: none;">
       <div id="rewardText"></div>
@@ -683,6 +684,7 @@
         mission5: getScore(5),
         mission6: getScore(6),
         totalScore: total,
+        timeUsed: timeUsed
       };
 
       return fetch("https://script.google.com/macros/s/AKfycbyi40b0fA0BsHWgwDV4vjdR_pptsnmRzvGLEy2dm6xVfz2mB9DlBeDUA_gMFrFAqaKTtw/exec", {
@@ -692,53 +694,62 @@
     }
 
     function loadLeaderboard() {
-      fetch("https://script.google.com/macros/s/AKfycbyZOZSgmmTnS1FcHnM3VyYWlAV9lyiERv0T16KQ_YtsYUMit7KGJ_OWMTTBzbLQqHmPGw/exec")
-        .then((res) => res.json())
-        .then((data) => {
-          const sorted = data.sort((a, b) => b.totalScore - a.totalScore);
-          const top5 = sorted.slice(0, 5);
+  fetch("https://script.google.com/macros/s/AKfycbyZOZSgmmTnS1FcHnM3VyYWlAV9lyiERv0T16KQ_YtsYUMit7KGJ_OWMTTBzbLQqHmPGw/exec")
+    .then((res) => res.json())
+    .then((data) => {
+      const sorted = data.sort((a, b) => {
+  if (b.totalScore !== a.totalScore) {
+    return b.totalScore - a.totalScore;  // เรียงคะแนนจากมากไปน้อย
+  } else {
+    return a.timeUsed - b.timeUsed;      // คะแนนเท่ากัน เรียงเวลาจากน้อยไปมาก
+  }
+});
 
-          const tbody = document.getElementById("leaderboardBody");
-          tbody.innerHTML = "";
+      const top5 = sorted.slice(0, 5); // ✅ แสดงแค่ 5 อันดับแรก
 
-          top5.forEach((player, index) => {
-            const row = document.createElement("tr");
-            const rankEmoji = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : "🏅";
-            row.innerHTML = `
-              <td>${rankEmoji} ${index + 1}</td>
-              <td>${player.nickname}</td>
-              <td>${player.school}</td>
-              <td>⭐ ${player.totalScore}</td>
-            `;
-            tbody.appendChild(row);
-          });
+      const tbody = document.getElementById("leaderboardBody");
+      tbody.innerHTML = "";
 
-          // แสดงบนแท่นรางวัล
-          if (top5[0]) {
-  document.getElementById("rank1-name").innerHTML = `${top5[0].nickname}<br><small>${top5[0].school}</small>`;
-  document.getElementById("rank1-score").textContent = `${top5[0].totalScore} คะแนน`;
+      top5.forEach((player, index) => {
+        const row = document.createElement("tr");
+        const rankEmoji = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : "🏅";
+        row.innerHTML = `
+          <td>${rankEmoji} ${index + 1}</td>
+          <td>${player.nickname}</td>
+          <td>${player.school}</td>
+          <td>⭐ ${player.totalScore}</td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      // แสดงบนแท่นรางวัล
+      if (top5[0]) {
+        document.getElementById("rank1-name").innerHTML = `${top5[0].nickname}<br><small>${top5[0].school}</small>`;
+        document.getElementById("rank1-score").textContent = `${top5[0].totalScore} คะแนน`;
+      }
+      if (top5[1]) {
+        document.getElementById("rank2-name").innerHTML = `${top5[1].nickname}<br><small>${top5[1].school}</small>`;
+        document.getElementById("rank2-score").textContent = `${top5[1].totalScore} คะแนน`;
+      }
+      if (top5[2]) {
+        document.getElementById("rank3-name").innerHTML = `${top5[2].nickname}<br><small>${top5[2].school}</small>`;
+        document.getElementById("rank3-score").textContent = `${top5[2].totalScore} คะแนน`;
+      }
+
+      // หาตำแหน่งของผู้เล่นปัจจุบัน
+      const myIndex = sorted.findIndex(p => p.nickname === nickname && p.school === school && p.totalScore === total);
+      document.getElementById("rank").textContent = myIndex >= 0 ? myIndex + 1 : "-";
+
+      // แสดงพลุเมื่อโหลดเสร็จ
+      createFirework(window.innerWidth / 2, window.innerHeight / 4);
+    })
+    .catch((err) => {
+      console.error("โหลด leaderboard ล้มเหลว:", err);
+      document.getElementById("leaderboardBody").innerHTML = `<tr><td colspan="4">❌ ไม่สามารถโหลดอันดับได้</td></tr>`;
+      document.getElementById("rank").textContent = "-";
+    });
 }
-if (top5[1]) {
-  document.getElementById("rank2-name").innerHTML = `${top5[1].nickname}<br><small>${top5[1].school}</small>`;
-  document.getElementById("rank2-score").textContent = `${top5[1].totalScore} คะแนน`;
-}
-if (top5[2]) {
-  document.getElementById("rank3-name").innerHTML = `${top5[2].nickname}<br><small>${top5[2].school}</small>`;
-  document.getElementById("rank3-score").textContent = `${top5[2].totalScore} คะแนน`;
-}
 
-          const myIndex = sorted.findIndex(p => p.nickname === nickname && p.school === school && p.totalScore === total);
-          document.getElementById("rank").textContent = myIndex >= 0 ? myIndex + 1 : "-";
-          
-          // สร้างพลุเมื่อโหลดเสร็จ
-          createFirework(window.innerWidth / 2, window.innerHeight / 4);
-        })
-        .catch((err) => {
-          console.error("โหลด leaderboard ล้มเหลว:", err);
-          document.getElementById("leaderboardBody").innerHTML = `<tr><td colspan="4">❌ ไม่สามารถโหลดอันดับได้</td></tr>`;
-          document.getElementById("rank").textContent = "-";
-        });
-    }
 
     if (!localStorage.getItem("scoreSent")) {
       sendScore().then(() => {
@@ -786,6 +797,21 @@ if (top5[2]) {
         createSparkle();
       });
     });
+    window.onload = function () {
+  const timeUsedMs = parseInt(localStorage.getItem("missionTimeUsed") || "0", 10);
+
+  if (timeUsedMs && timeUsedMs > 0) {
+    const minutes = Math.floor(timeUsedMs / 60000);
+    const seconds = Math.floor((timeUsedMs % 60000) / 1000);
+    const formattedTime = `${minutes} นาที ${seconds} วินาที`;
+
+    const timeUsedEl = document.getElementById("timeUsed");
+    if (timeUsedEl) {
+      timeUsedEl.textContent = formattedTime;
+    }
+  }
+};
+
   </script>
 </body>
 

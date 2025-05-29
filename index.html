@@ -625,20 +625,53 @@
     }
   }
 
-  function checkCompletedMissions() {
-    const missionStatus = JSON.parse(localStorage.getItem("missionStatus") || "{}");
-    let completedCount = Object.values(missionStatus).filter(v => v).length;
-    if (completedCount === 6) showMissionCompletePopup();
+ function checkCompletedMissions() {
+  const missionStatus = JSON.parse(localStorage.getItem("missionStatus") || "{}");
+  let completedCount = Object.values(missionStatus).filter(v => v).length;
+
+  if (completedCount === 6) {
+    // ✅ ถ้ายังไม่เคยบันทึก finish time
+    if (!localStorage.getItem("missionFinishTime")) {
+      const startTime = parseInt(localStorage.getItem("gameStartTime") || "0", 10);
+      const finishTime = Date.now();
+      const timeUsedMs = finishTime - startTime;
+
+      localStorage.setItem("missionFinishTime", finishTime.toString());
+      localStorage.setItem("missionTimeUsed", timeUsedMs.toString());
+    }
+
+    showMissionCompletePopup();
   }
+}
+
 
   function showMissionCompletePopup() {
-    const playerName = localStorage.getItem("playerName") || "";
-    const popup = document.getElementById("missionCompletePopup");
-    const popupMessage = document.getElementById("popupMessage");
+  const playerName = localStorage.getItem("playerName") || "";
+  const popup = document.getElementById("missionCompletePopup");
+  const popupMessage = document.getElementById("popupMessage");
 
-    if (popupMessage) popupMessage.innerText = `คุณ ${playerName} ทำครบทุกด่านแล้ว!`;
-    if (popup) popup.style.display = "flex";
+  const timeUsed = parseInt(localStorage.getItem("missionTimeUsed") || "0", 10);
+  const minutes = Math.floor(timeUsed / 60000);
+  const seconds = Math.floor((timeUsed % 60000) / 1000);
+  const formattedTime = `${minutes} นาที ${seconds} วินาที`;
+
+  if (popupMessage) {
+    popupMessage.innerText = `คุณ ${playerName} ทำครบทุกด่านแล้ว!\nใช้เวลา: ${formattedTime}`;
   }
+  if (popup) popup.style.display = "flex";
+}
+
+function calculateTotalScore() {
+  const missionScores = { mission1: 3, mission2: 3, mission3: 3, mission4: 3, mission5: 4, mission6: 4 };
+  const missionStatus = JSON.parse(localStorage.getItem("missionStatus") || "{}");
+
+  let total = 0;
+  for (const mission in missionScores) {
+    if (missionStatus[mission]) total += missionScores[mission];
+  }
+  return total;
+}
+
 
   function closePopup() {
     const popup = document.getElementById("missionCompletePopup");
