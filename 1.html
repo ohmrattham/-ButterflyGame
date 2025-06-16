@@ -10,7 +10,6 @@
       font-family: sans-serif;
       background-image: url('bgb.png');
     }
-
     .page {
       position: relative;
       width: 100%;
@@ -33,7 +32,6 @@
       justify-content: center;
       align-items: center;
     }
-
     button {
       font-family: inherit;
       font-size: 16px;
@@ -42,7 +40,6 @@
       border-radius: 10px;
       cursor: pointer;
     }
-
     #startBtn {
       background-color: #8B4513;
       color: white;
@@ -52,7 +49,6 @@
       left: 50%;
       transform: translate(-50%, -50%);
     }
-
     .choice {
       position: absolute;
       top: 50%;
@@ -61,7 +57,6 @@
       display: flex;
       gap: 12px;
     }
-
     .choice button {
       background-color: rgba(255, 255, 255, 0.6);
       color: #8B4513;
@@ -69,12 +64,10 @@
       padding: 22px 20px;
       transition: all 0.2s;
     }
-
     .choice button.selected {
       background-color: #8B4513;
       color: white;
     }
-
     .nav {
       position: absolute;
       top: 65%;
@@ -83,13 +76,11 @@
       display: flex;
       gap: 10px;
     }
-
     .nav button {
       background-color: #8B4513;
       color: white;
       padding: 20px 24px;
     }
-
     #status {
       position: absolute;
       top: 10%;
@@ -101,7 +92,6 @@
       font-weight: bold;
       display: none;
     }
-
     #resultPopup {
       position: fixed;
       top: 0;
@@ -114,7 +104,6 @@
       align-items: center;
       z-index: 999;
     }
-
     #resultBox {
       background: white;
       padding: 30px;
@@ -123,7 +112,6 @@
       color: #8B4513;
       font-weight: bold;
     }
-
     #fireworksCanvas {
       position: fixed;
       top: 0;
@@ -165,7 +153,8 @@
       <span id="resultText">คุณได้ 0 คะแนน</span>
     </div>
   </div>
- <div id="countdownTimer" style="
+
+  <div id="countdownTimer" style="
     position: fixed;
     top: 16px;
     right: 16px;
@@ -181,13 +170,15 @@
   ">
     เวลาเหลือ: <span id="timeRemaining">20:00</span>
   </div>
+
   <script>
-    const bgImages = ["5.png", "6.png", "7.png"];
-    const correctAnswers = [3, 1, 1]; // ✅ ใส่คำตอบที่ถูกต้องของแต่ละข้อ
-    const scorePerCorrect = [5, 5, 10];
-    let userAnswers = [null, null, null];
+    const bgImages = ["1.1.png", "1.2.png", "1.3.png", "1.4.png"];
+    const correctAnswers = [3, 1, 2, 1];
+    const scorePerCorrect = [5, 5, 5, 5];
+    let userAnswers = [null, null, null, null];
     let current = 0;
     let totalScore = 0;
+    let isAnswered = false;
 
     function startMission() {
       document.getElementById("startBtn").style.display = "none";
@@ -235,7 +226,7 @@
         return;
       }
 
-      if (current < 2) {
+      if (current < 3) {
         current++;
         updateQuestion();
       } else {
@@ -250,31 +241,32 @@
       }
     }
 
-   function checkAnswers() {
-  let score = 0;
-  for (let i = 0; i < correctAnswers.length; i++) {
-    if (userAnswers[i] === correctAnswers[i]) {
-      score += scorePerCorrect[i]; // ✅ เข้าถึงคะแนนตามข้อ
+    function checkAnswers() {
+      if (isAnswered) return;
+      isAnswered = true;
+
+      let score = 0;
+      for (let i = 0; i < correctAnswers.length; i++) {
+        if (userAnswers[i] === correctAnswers[i]) {
+          score += scorePerCorrect[i];
+        }
+      }
+
+      const popup = document.getElementById("resultPopup");
+      const resultText = document.getElementById("resultText");
+      const sound = document.getElementById("correctSound");
+
+      resultText.textContent = `คุณได้ทำภารกิจที่ 1 เสร็จแล้ว `;
+      popup.style.display = "flex";
+      sound.play().catch(() => { });
+
+      localStorage.setItem("mission1Score", score);
+      localStorage.setItem("mission1Complete", "true");
+
+      setTimeout(() => {
+        window.location.href = "index.html#mapPage";
+      }, 3000);
     }
-  }
-
-  const popup = document.getElementById("resultPopup");
-  const resultText = document.getElementById("resultText");
-  const sound = document.getElementById("correctSound");
-
-  resultText.textContent = `คุณได้ทำภารกิจที่ 1 เสร็จแล้ว`;
-  popup.style.display = "flex";
-  sound.play().catch(() => { });
-
-  localStorage.setItem("mission1Score", score);
-  localStorage.setItem("mission1Complete", "true");
-
-  // ✅ กลับไปหน้าแผนที่
-  setTimeout(() => {
-    window.location.href = "index.html#mapPage";
-  }, 3000);
-}
-
 
     window.addEventListener('DOMContentLoaded', () => {
       function playVoiceOnce() {
@@ -287,45 +279,48 @@
       window.addEventListener('touchstart', playVoiceOnce);
     });
 
-      const MAX_PLAY_TIME = 20 * 60 * 1000; // 20 นาที (ms)
-  let countdownInterval;
+    const MAX_PLAY_TIME = 20 * 60 * 1000;
+    let countdownInterval;
 
-  function startCountdown() {
-    const timerEl = document.getElementById("countdownTimer");
-    const timeRemainingEl = document.getElementById("timeRemaining");
+    function startCountdown() {
+      const timerEl = document.getElementById("countdownTimer");
+      const timeRemainingEl = document.getElementById("timeRemaining");
 
-    let startTime = localStorage.getItem("gameStartTime");
-    if (!startTime) {
-      // ถ้าไม่มีเวลาเริ่ม ให้เริ่มนับจากตอนนี้
-      startTime = Date.now();
-      localStorage.setItem("gameStartTime", startTime);
-    }
-
-    function updateTimer() {
-      const elapsed = Date.now() - startTime;
-      const remaining = MAX_PLAY_TIME - elapsed;
-
-      if (remaining <= 0) {
-        clearInterval(countdownInterval);
-        timeRemainingEl.textContent = "00:00";
-        alert("หมดเวลาในการเล่นเกมแล้ว!");
-        window.location.href = "score.html"; // หรือหน้าอื่นที่คุณต้องการ
-        return;
+      let startTime = localStorage.getItem("gameStartTime");
+      if (!startTime) {
+        startTime = Date.now();
+        localStorage.setItem("gameStartTime", startTime);
       }
 
-      const minutes = Math.floor(remaining / 60000);
-      const seconds = Math.floor((remaining % 60000) / 1000);
+      function updateTimer() {
+        const elapsed = Date.now() - startTime;
+        const remaining = MAX_PLAY_TIME - elapsed;
 
-      timeRemainingEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2,'0')}`;
+        if (remaining <= 0) {
+          clearInterval(countdownInterval);
+          timeRemainingEl.textContent = "00:00";
+          alert("หมดเวลาในการเล่นเกมแล้ว!");
+          window.location.href = "score.html";
+          return;
+        }
+
+        const minutes = Math.floor(remaining / 60000);
+        const seconds = Math.floor((remaining % 60000) / 1000);
+
+        timeRemainingEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2,'0')}`;
+      }
+
+      updateTimer();
+      countdownInterval = setInterval(updateTimer, 1000);
     }
 
-    updateTimer();
-    countdownInterval = setInterval(updateTimer, 1000);
-  }
-
-  window.onload = () => {
-    startCountdown();
-  };
+    window.onload = () => {
+      if (localStorage.getItem("mission1Complete") === "true") {
+        window.location.href = "index.html#mapPage";
+        return;
+      }
+      startCountdown();
+    };
   </script>
 </body>
 </html>
