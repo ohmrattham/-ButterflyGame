@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ภารกิจผีเสื้อ - ด่านที่ 1</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Kanit', sans-serif;
+      background: linear-gradient(135deg, #8B6F47 0%, #3A5D3A 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .page {
+      width: 100%;
+      height: 100vh;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+    }
+
+    .page::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 1;
+    }
+
+    .page > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    #homePage {
+      background-image: url('4.png');
+      background-blend-mode: overlay;
+    }
+
+    #gamePage {
+      display: none;
+      background-image: url('bgb.png');
+      background-blend-mode: overlay;
+    }
+
+    /* Home Page Styling */
+    .home-content {
+      background: rgba(139, 111, 71, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 25px;
+      padding: 50px 40px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+      border: 2px solid rgba(218, 165, 32, 0.3);
+      max-width: 500px;
+      width: 100%;
+      animation: slideUp 1s ease-out;
+    }
+
+    .game-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #DAA520 0%, #F4A460 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 15px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .game-subtitle {
+      font-size: 1.2rem;
+      color: #F5DEB3;
+      margin-bottom: 30px;
+      font-weight: 400;
+    }
+
+    #startButton {
+      font-size: 1.2rem;
+      font-weight: 600;
+      padding: 18px 40px;
+      border: none;
+      border-radius: 50px;
+      background: linear-gradient(135deg, #A0522D 0%, #8B4513 100%);
+      color: #F5DEB3;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 25px rgba(139, 69, 19, 0.4);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border: 2px solid #DAA520;
+    }
+
+    #startButton:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 35px rgba(139, 69, 19, 0.5);
+      background: linear-gradient(135deg, #8B4513 0%, #654321 100%);
+    }
+
+    #startButton:active {
+      transform: translateY(-1px);
+    }
+
+    /* Game Page Styling */
+    .game-container {
+      background: rgba(139, 111, 71, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 25px;
+      padding: 40px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+      border: 2px solid rgba(218, 165, 32, 0.3);
+      max-width: 800px;
+      width: 100%;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .progress-bar-container {
+      background: #654321;
+      border-radius: 15px;
+      height: 8px;
+      margin-bottom: 30px;
+      overflow: hidden;
+      border: 1px solid #DAA520;
+    }
+
+    .progress-bar {
+      background: linear-gradient(90deg, #DAA520 0%, #F4A460 100%);
+      height: 100%;
+      border-radius: 15px;
+      transition: width 0.5s ease;
+      width: 10%;
+    }
+
+    .question-counter {
+      text-align: right;
+      color: #F5DEB3;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    #questionText {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 30px;
+      color: #F5DEB3;
+      line-height: 1.4;
+      padding: 20px;
+      background: linear-gradient(135deg, #654321 0%, #8B4513 100%);
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      border: 2px solid #DAA520;
+    }
+
+    .choice {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .choice-container {
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .choice-container:hover {
+      transform: translateY(-5px);
+    }
+
+    .choice-img {
+      width: 100%;
+      height: 150px;
+      border: 4px solid #8B4513;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      object-fit: cover;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      background: #F5DEB3;
+      padding: 10px;
+    }
+
+    .choice-img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+      border-color: #DAA520;
+    }
+
+    .choice-img.selected {
+      border-color: #DAA520;
+      box-shadow: 0 15px 35px rgba(218, 165, 32, 0.5);
+      transform: scale(1.02);
+      background: #FFEAA7;
+    }
+
+    .choice-label {
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #8B4513;
+      color: #F5DEB3;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      transition: all 0.3s ease;
+      border: 1px solid #DAA520;
+    }
+
+    .choice-container:hover .choice-label {
+      opacity: 1;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .nav button {
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      min-width: 120px;
+    }
+
+    .nav button:first-child {
+      background: linear-gradient(135deg, #8B4513 0%, #654321 100%);
+      color: #F5DEB3;
+      box-shadow: 0 8px 25px rgba(139, 69, 19, 0.4);
+      border: 2px solid #DAA520;
+    }
+
+    .nav button:last-child {
+      background: linear-gradient(135deg, #3A5D3A 0%, #2F4F2F 100%);
+      color: #F5DEB3;
+      box-shadow: 0 8px 25px rgba(58, 93, 58, 0.4);
+      border: 2px solid #DAA520;
+    }
+
+    .nav button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Result Popup */
+    #resultPopup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      backdrop-filter: blur(10px);
+    }
+
+    #resultBox {
+      background: linear-gradient(135deg, #8B4513 0%, #654321 100%);
+      color: #F5DEB3;
+      padding: 50px;
+      border-radius: 25px;
+      text-align: center;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+      border: 3px solid #DAA520;
+      max-width: 500px;
+      width: 90%;
+      animation: popUp 0.5s ease-out;
+    }
+
+    .result-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+    }
+
+    #resultText {
+      font-size: 1.8rem;
+      color: #F5DEB3;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .result-description {
+      font-size: 1rem;
+      color: #DEB887;
+      margin-bottom: 20px;
+    }
+
+    .score-breakdown {
+      background: rgba(101, 67, 33, 0.7);
+      border-radius: 15px;
+      padding: 20px;
+      margin: 20px 0;
+      border: 1px solid #DAA520;
+    }
+
+    .score-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-weight: 500;
+      color: #F5DEB3;
+    }
+
+    /* Floating Elements */
+    .floating-element {
+      position: absolute;
+      opacity: 0.1;
+      animation: float 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .floating-element:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+    .floating-element:nth-child(2) { top: 20%; right: 15%; animation-delay: 2s; }
+    .floating-element:nth-child(3) { bottom: 20%; left: 20%; animation-delay: 4s; }
+
+    /* Animations */
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes popUp {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(10deg); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .game-title {
+        font-size: 2rem;
+      }
+      
+      .game-container {
+        padding: 25px;
+        margin: 10px;
+      }
+      
+      #questionText {
+        font-size: 1.2rem;
+      }
+      
+      .choice {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+      
+      .choice-img {
+        height: 120px;
+      }
+      
+      .nav {
+        flex-direction: column;
+      }
+      
+      #resultBox {
+        padding: 30px 20px;
+      }
+    }
+
+    /* Loading Animation */
+    .loading {
+      animation: pulse 2s infinite;
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating Elements -->
+  <div class="floating-element">🍜</div>
+  <div class="floating-element">🍛</div>
+  <div class="floating-element">🥘</div>
+
+  <!-- หน้าเริ่มเกม -->
+  <div class="page" id="homePage">
+    <div class="home-content">
+      <h1 class="game-title">ไทยนิทัศ</h1>
+      <p class="game-subtitle">ด่านที่ 1: ทายอาหารประจำชาติ ASEAN</p>
+      <button id="startButton" onclick="startGame()">
+        🚀 เริ่มการผจญภัย
+      </button>
+    </div>
+  </div>
+
+  <!-- หน้าคำถาม -->
+  <div class="page" id="gamePage">
+    <div class="game-container">
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      
+      <div class="question-counter" id="questionCounter">
+        คำถามที่ 1 จาก 10
+      </div>
+      
+      <div id="questionText">คำถาม</div>
+
+      <div id="choiceButtons" class="choice">
+        <div class="choice-container" onclick="selectAnswer(0)">
+          <img id="choice0" class="choice-img">
+          <div class="choice-label">ตัวเลือก A</div>
+        </div>
+        <div class="choice-container" onclick="selectAnswer(1)">
+          <img id="choice1" class="choice-img">
+          <div class="choice-label">ตัวเลือก B</div>
+        </div>
+        <div class="choice-container" onclick="selectAnswer(2)">
+          <img id="choice2" class="choice-img">
+          <div class="choice-label">ตัวเลือก C</div>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button onclick="prevQuestion()" id="prevBtn">
+          ← ย้อนกลับ
+        </button>
+        <button onclick="nextQuestion()" id="nextBtn">
+          ถัดไป →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- กล่องแสดงคะแนน -->
+  <div id="resultPopup">
+    <div id="resultBox">
+      <div class="result-icon" id="resultIcon">🎉</div>
+      <div id="resultText">คุณได้ 0 คะแนน</div>
+      <div class="result-description" id="resultDescription">
+        ยอดเยี่ยม! คุณผ่านด่านนี้แล้ว
+      </div>
+      <div class="score-breakdown" id="scoreBreakdown">
+        <div class="score-item">
+          <span>คำตอบที่ถูก:</span>
+          <span id="correctCount">0/10</span>
+        </div>
+        <div class="score-item">
+          <span>คะแนนรวม:</span>
+          <span id="totalScore">0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "อาหารประจำชาติไทยคือข้อใด?",
+        choices: ["FoodNoBG/thai.png", "FoodNoBG/laos.png", "FoodNoBG/vietnam.png"],
+        correct: 0,
+        labels: ["ผัดไทย", "ลาบ", "โฟ"]
+      },
+      {
+        question: "อาหารประจำชาติลาวคือข้อใด?",
+        choices: ["FoodNoBG/philippines.png", "FoodNoBG/laos.png", "FoodNoBG/cambodia.png"],
+        correct: 1,
+        labels: ["อาโดโบ", "ลาบ", "อาม็อค"]
+      },
+      {
+        question: "อาหารประจำชาติเวียดนามคือข้อใด?",
+        choices: ["FoodNoBG/vietnam.png", "FoodNoBG/indonesia.png", "FoodNoBG/brunei.png"],
+        correct: 0,
+        labels: ["โฟ", "นาซิโกเร็ง", "อัมบูยัต"]
+      },
+      {
+        question: "อาหารประจำชาติมาเลเซียคือข้อใด?",
+        choices: ["FoodNoBG/myanmar.png", "FoodNoBG/malaysia.png", "FoodNoBG/singapore.png"],
+        correct: 1,
+        labels: ["โมฮิงงา", "นาซิเลอมัก", "ไฮนานีสไรซ์"]
+      },
+      {
+        question: "อาหารประจำชาติฟิลิปปินส์คือข้อใด?",
+        choices: ["FoodNoBG/philippines.png", "FoodNoBG/vietnam.png", "FoodNoBG/thai.png"],
+        correct: 0,
+        labels: ["อาโดโบ", "โฟ", "ผัดไทย"]
+      },
+      {
+        question: "อาหารประจำชาติบรูไนคือข้อใด?",
+        choices: ["FoodNoBG/cambodia.png", "FoodNoBG/brunei.png", "FoodNoBG/indonesia.png"],
+        correct: 1,
+        labels: ["อาม็อค", "อัมบูยัต", "นาซิโกเร็ง"]
+      },
+      {
+        question: "อาหารประจำชาติเมียนมาร์คือข้อใด?",
+        choices: ["FoodNoBG/myanmar.png", "FoodNoBG/malaysia.png", "FoodNoBG/laos.png"],
+        correct: 0,
+        labels: ["โมฮิงงา", "นาซิเลอมัก", "ลาบ"]
+      },
+      {
+        question: "อาหารประจำชาติสิงคโปร์คือข้อใด?",
+        choices: ["FoodNoBG/singapore.png", "FoodNoBG/thai.png", "FoodNoBG/indonesia.png"],
+        correct: 0,
+        labels: ["ไฮนานีสไรซ์", "ผัดไทย", "นาซิโกเร็ง"]
+      },
+      {
+        question: "อาหารประจำชาติอินโดนีเซียคือข้อใด?",
+        choices: ["FoodNoBG/vietnam.png", "FoodNoBG/indonesia.png", "FoodNoBG/brunei.png"],
+        correct: 1,
+        labels: ["โฟ", "นาซิโกเร็ง", "อัมบูยัต"]
+      },
+      {
+        question: "อาหารประจำชาติกัมพูชาคือข้อใด?",
+        choices: ["FoodNoBG/laos.png", "FoodNoBG/cambodia.png", "FoodNoBG/malaysia.png"],
+        correct: 1,
+        labels: ["ลาบ", "อาม็อค", "นาซิเลอมัก"]
+      },
+    ];
+
+    let current = 0;
+    let userAnswers = Array(questions.length).fill(null);
+
+    function startGame() {
+      document.getElementById("homePage").style.display = "none";
+      document.getElementById("gamePage").style.display = "flex";
+      updateQuestion();
+      updateProgress();
+    }
+
+    function updateQuestion() {
+      const q = questions[current];
+      document.getElementById("questionText").textContent = q.question;
+      document.getElementById("questionCounter").textContent = `คำถามที่ ${current + 1} จาก ${questions.length}`;
+      
+      for (let i = 0; i < 3; i++) {
+        const img = document.getElementById("choice" + i);
+        const container = img.parentElement;
+        const label = container.querySelector('.choice-label');
+        
+        img.src = q.choices[i];
+        img.classList.toggle("selected", userAnswers[current] === i);
+        label.textContent = q.labels[i];
+        
+        // Add loading animation
+        img.classList.add('loading');
+        img.onload = () => img.classList.remove('loading');
+      }
+      
+      // Update navigation buttons
+      document.getElementById("prevBtn").disabled = current === 0;
+      document.getElementById("nextBtn").textContent = current === questions.length - 1 ? "ดูผลลัพธ์ 🎯" : "ถัดไป →";
+    }
+
+    function updateProgress() {
+      const progress = ((current + 1) / questions.length) * 100;
+      document.getElementById("progressBar").style.width = progress + "%";
+    }
+
+    function selectAnswer(index) {
+      userAnswers[current] = index;
+      updateSelectionUI();
+      
+      // Add selection animation
+      const selectedImg = document.getElementById("choice" + index);
+      selectedImg.style.animation = "pulse 0.3s ease";
+      setTimeout(() => {
+        selectedImg.style.animation = "";
+      }, 300);
+    }
+
+    function updateSelectionUI() {
+      for (let i = 0; i < 3; i++) {
+        const img = document.getElementById("choice" + i);
+        img.classList.toggle("selected", userAnswers[current] === i);
+      }
+    }
+
+    function nextQuestion() {
+      if (userAnswers[current] === null) {
+        alert("🤔 กรุณาเลือกคำตอบก่อนนะ!");
+        return;
+      }
+      if (current < questions.length - 1) {
+        current++;
+        updateQuestion();
+        updateProgress();
+      } else {
+        checkAnswers();
+      }
+    }
+
+    function prevQuestion() {
+      if (current > 0) {
+        current--;
+        updateQuestion();
+        updateProgress();
+      }
+    }
+
+    function checkAnswers() {
+      let score = 0;
+      let correctCount = 0;
+      
+      for (let i = 0; i < questions.length; i++) {
+        if (userAnswers[i] === questions[i].correct) {
+          score += 10;
+          correctCount++;
+        }
+      }
+      
+      // Determine result message and icon
+      let resultIcon = "🎉";
+      let resultDescription = "";
+      
+      if (score >= 80) {
+        resultIcon = "🏆";
+        resultDescription = "เยี่ยมมาก! คุณเป็นผู้เชี่ยวชาญด้านอาหาร ASEAN";
+      } else if (score >= 60) {
+        resultIcon = "🎯";
+        resultDescription = "ดีมาก! คุณมีความรู้เรื่องอาหาร ASEAN ดี";
+      } else if (score >= 40) {
+        resultIcon = "👏";
+        resultDescription = "ไม่เลว! ลองศึกษาเพิ่มเติมนะ";
+      } else {
+        resultIcon = "💪";
+        resultDescription = "ไม่เป็นไร ลองใหม่อีกครั้ง!";
+      }
+      
+      document.getElementById("resultIcon").textContent = resultIcon;
+      document.getElementById("resultText").textContent = `คุณได้ ${score} คะแนน`;
+      document.getElementById("resultDescription").textContent = resultDescription;
+      document.getElementById("correctCount").textContent = `${correctCount}/${questions.length}`;
+      document.getElementById("totalScore").textContent = score;
+      document.getElementById("resultPopup").style.display = "flex";
+
+      setTimeout(() => {
+        if (typeof window !== 'undefined' && window.location) {
+          window.location.href = "index.html#mapPage";
+        }
+      }, 5000);
+    }
+
+    // Add keyboard navigation
+    document.addEventListener('keydown', function(event) {
+      if (document.getElementById('gamePage').style.display !== 'none') {
+        switch(event.key) {
+          case '1':
+            selectAnswer(0);
+            break;
+          case '2':
+            selectAnswer(1);
+            break;
+          case '3':
+            selectAnswer(2);
+            break;
+          case 'ArrowLeft':
+            prevQuestion();
+            break;
+          case 'ArrowRight':
+          case 'Enter':
+            nextQuestion();
+            break;
+        }
+      }
+    });
+
+    window.onload = () => {
+      // Add entrance animation
+      setTimeout(() => {
+        document.querySelector('.home-content').style.animation = "slideUp 1s ease-out";
+      }, 100);
+    };
+  </script>
+</body>
+</html>

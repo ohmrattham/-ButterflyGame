@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎮 เกมจับคู่ผ้าไทย</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap');
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Kanit', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+    
+    /* พื้นหลังแอนิเมชั่น */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.1;
+    }
+    
+    .floating-shape {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    .floating-shape:nth-child(1) {
+      width: 80px;
+      height: 80px;
+      top: 20%;
+      left: 10%;
+      animation-delay: 0s;
+    }
+    
+    .floating-shape:nth-child(2) {
+      width: 120px;
+      height: 120px;
+      top: 60%;
+      right: 15%;
+      animation-delay: 2s;
+    }
+    
+    .floating-shape:nth-child(3) {
+      width: 60px;
+      height: 60px;
+      bottom: 20%;
+      left: 20%;
+      animation-delay: 4s;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
+    }
+    
+    .header {
+      text-align: center;
+      padding: 30px 20px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .header h1 {
+      color: white;
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      margin-bottom: 10px;
+      background: linear-gradient(45deg, #FFD700, #FFA500);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .header p {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.1rem;
+      font-weight: 300;
+    }
+    
+    .game-info {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    
+    .info-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 15px 25px;
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+      gap: 60px;
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+    }
+    
+    .column {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+    
+    .item, .image-container {
+      width: 280px;
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .item::before, .image-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.6s;
+    }
+    
+    .item:hover::before, .image-container:hover::before {
+      left: 100%;
+    }
+    
+    .item:hover, .image-container:hover {
+      transform: translateY(-8px) scale(1.05);
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 215, 0, 0.8);
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2);
+    }
+    
+    .item {
+      color: white;
+      font-size: 1.3rem;
+      font-weight: 600;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+    
+    .selected {
+      border: 3px solid #FFD700 !important;
+      background: rgba(255, 215, 0, 0.3) !important;
+      transform: scale(1.08);
+      box-shadow: 0 0 30px rgba(255, 215, 0, 0.5), 0 15px 45px rgba(0, 0, 0, 0.2);
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.5), 0 15px 45px rgba(0, 0, 0, 0.2); }
+      50% { box-shadow: 0 0 50px rgba(255, 215, 0, 0.8), 0 15px 45px rgba(0, 0, 0, 0.2); }
+    }
+    
+    .matched {
+      background: rgba(76, 175, 80, 0.3) !important;
+      border-color: #4CAF50 !important;
+      pointer-events: none;
+    }
+    
+    .image {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 12px;
+      transition: transform 0.3s ease;
+      filter: brightness(0.9);
+    }
+    
+    .image-container:hover .image {
+      transform: scale(1.1);
+      filter: brightness(1.1);
+    }
+    
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+    
+    .result-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+    }
+    
+    .result-content {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 25px;
+      padding: 40px;
+      text-align: center;
+      color: white;
+      max-width: 500px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      animation: modalSlide 0.5s ease-out;
+    }
+    
+    @keyframes modalSlide {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    .result-content h2 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      background: linear-gradient(45deg, #FFD700, #FFA500);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .result-content p {
+      font-size: 1.3rem;
+      margin-bottom: 30px;
+      font-weight: 300;
+    }
+    
+    .btn {
+      background: linear-gradient(45deg, #FFD700, #FFA500);
+      color: white;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 25px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      font-family: 'Kanit', sans-serif;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+    
+    .reset-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Kanit', sans-serif;
+      font-weight: 500;
+    }
+    
+    .reset-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        gap: 40px;
+      }
+      
+      .item, .image-container {
+        width: 250px;
+        height: 100px;
+      }
+      
+      .header h1 {
+        font-size: 2rem;
+      }
+      
+      .game-info {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-animation">
+  <div class="floating-shape"></div>
+  <div class="floating-shape"></div>
+  <div class="floating-shape"></div>
+</div>
+
+<canvas id="lineCanvas"></canvas>
+
+<div class="header">
+  <h1>🎮 เกมจับคู่ผ้าไทย</h1>
+  <p>จับคู่ชื่อผ้าไทยกับภาพให้ถูกต้อง</p>
+  
+  <div class="game-info">
+    <div class="info-card">
+      <strong>คะแนน:</strong> <span id="score">0/4</span>
+    </div>
+    <div class="info-card">
+      <strong>สถานะ:</strong> <span id="status">เลือกผ้าไทยที่ต้องการจับคู่</span>
+    </div>
+  </div>
+</div>
+
+<button class="reset-btn" onclick="resetGame()">🔄 เริ่มใหม่</button>
+
+<div class="container">
+  <div class="column" id="leftCol">
+    <div class="item" data-key="silk">🧵 ผ้าไหม</div>
+    <div class="item" data-key="cotton">🌾 ผ้าฝ้าย</div>
+    <div class="item" data-key="weave">🧺 เครื่องจักสาน</div>
+    <div class="item" data-key="batik">🎨 ผ้าบาติก</div>
+  </div>
+
+  <div class="column" id="rightCol">
+    <div class="image-container" data-key="silk">
+      <div style="background: linear-gradient(45deg, #ffeaa7, #fdcb6e); width: 90%; height: 90%; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 3rem; position: relative;">
+        <div style="font-size: 2.5rem;">🧵</div>
+        <div style="position: absolute; bottom: 5px; font-size: 0.8rem; color: #333; font-weight: bold;">ไหม</div>
+      </div>
+    </div>
+    <div class="image-container" data-key="cotton">
+      <div style="background: linear-gradient(45deg, #e8f5e8, #c8e6c9); width: 90%; height: 90%; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 3rem; position: relative;">
+        <div style="font-size: 2.5rem;">🌱</div>
+        <div style="position: absolute; bottom: 5px; font-size: 0.8rem; color: #333; font-weight: bold;">ฝ้าย</div>
+      </div>
+    </div>
+    <div class="image-container" data-key="weave">
+      <div style="background: linear-gradient(45deg, #f3e5ab, #d4c5a9); width: 90%; height: 90%; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 3rem; position: relative;">
+        <div style="font-size: 2.5rem;">🧺</div>
+        <div style="position: absolute; bottom: 5px; font-size: 0.8rem; color: #333; font-weight: bold;">จักสาน</div>
+      </div>
+    </div>
+    <div class="image-container" data-key="batik">
+      <div style="background: linear-gradient(45deg, #fab1a0, #e17055); width: 90%; height: 90%; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 3rem; position: relative;">
+        <div style="font-size: 2.5rem;">🎨</div>
+        <div style="position: absolute; bottom: 5px; font-size: 0.8rem; color: #333; font-weight: bold;">บาติก</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="result-modal" id="resultModal">
+  <div class="result-content">
+    <h2 id="resultTitle">🎉 ยินดีด้วย!</h2>
+    <p id="resultText">คุณจับคู่ถูกต้องทั้งหมด!</p>
+    <button class="btn" onclick="resetGame()">🎮 เล่นอีกครั้ง</button>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById("lineCanvas");
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  drawLines();
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+const leftItems = document.querySelectorAll("#leftCol .item");
+const rightItems = document.querySelectorAll("#rightCol .image-container");
+const scoreElement = document.getElementById("score");
+const statusElement = document.getElementById("status");
+const resultModal = document.getElementById("resultModal");
+
+let selectedLeft = null;
+let matched = [];
+let gameState = 'selecting'; // selecting, completed
+
+function updateStatus() {
+  scoreElement.textContent = `${matched.length}/4`;
+  
+  if (gameState === 'selecting') {
+    if (selectedLeft) {
+      statusElement.textContent = "เลือกภาพที่ตรงกัน";
+    } else {
+      statusElement.textContent = "เลือกผ้าไทยที่ต้องการจับคู่";
+    }
+  } else if (gameState === 'completed') {
+    statusElement.textContent = "เกมจบแล้ว!";
+  }
+}
+
+function drawLines() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  matched.forEach((match, index) => {
+    const leftBox = match.left.getBoundingClientRect();
+    const rightBox = match.right.getBoundingClientRect();
+    
+    const x1 = leftBox.right;
+    const y1 = leftBox.top + leftBox.height / 2;
+    const x2 = rightBox.left;
+    const y2 = rightBox.top + rightBox.height / 2;
+
+    // วาดเส้นที่สวยงาม
+    const gradient = ctx.createLinearGradient(x1, y1, x2, y2);
+    gradient.addColorStop(0, '#FFD700');
+    gradient.addColorStop(1, '#FFA500');
+    
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.strokeStyle = gradient;
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'round';
+    ctx.shadowColor = 'rgba(255, 215, 0, 0.5)';
+    ctx.shadowBlur = 10;
+    ctx.stroke();
+    
+    // รีเซ็ต shadow
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+  });
+}
+
+leftItems.forEach(item => {
+  item.addEventListener("click", () => {
+    if (gameState !== 'selecting') return;
+    
+    // ถ้าเลือกไอเทมเดิม ให้ยกเลิกการเลือก
+    if (selectedLeft === item) {
+      item.classList.remove("selected");
+      selectedLeft = null;
+      updateStatus();
+      return;
+    }
+    
+    // ตรวจสอบว่าไอเทมนี้จับคู่แล้วหรือยัง
+    const alreadyMatched = matched.find(m => m.left === item);
+    if (alreadyMatched) return;
+    
+    leftItems.forEach(i => i.classList.remove("selected"));
+    selectedLeft = item;
+    item.classList.add("selected");
+    updateStatus();
+  });
+});
+
+rightItems.forEach(img => {
+  img.addEventListener("click", () => {
+    if (gameState !== 'selecting' || !selectedLeft) return;
+    
+    // ตรวจสอบว่าภาพนี้จับคู่แล้วหรือยัง
+    const alreadyMatched = matched.find(m => m.right === img);
+    if (alreadyMatched) return;
+
+    selectedLeft.classList.remove("selected");
+    
+    // เพิ่มคลาส matched
+    selectedLeft.classList.add("matched");
+    img.classList.add("matched");
+    
+    matched.push({ left: selectedLeft, right: img });
+    selectedLeft = null;
+    
+    updateStatus();
+    drawLines();
+
+    if (matched.length === 4) {
+      gameState = 'completed';
+      setTimeout(() => {
+        checkAnswers();
+      }, 800);
+    }
+  });
+});
+
+function checkAnswers() {
+  let correct = 0;
+  const results = [];
+  
+  matched.forEach(pair => {
+    const isCorrect = pair.left.dataset.key === pair.right.dataset.key;
+    if (isCorrect) {
+      correct++;
+      // เพิ่มเอฟเฟกต์สำหรับคำตอบที่ถูก
+      pair.left.style.background = "rgba(76, 175, 80, 0.4)";
+      pair.right.style.background = "rgba(76, 175, 80, 0.2)";
+      pair.left.style.borderColor = "#4CAF50";
+      pair.right.style.borderColor = "#4CAF50";
+    } else {
+      // เพิ่มเอฟเฟกต์สำหรับคำตอบที่ผิด
+      pair.left.style.background = "rgba(244, 67, 54, 0.4)";
+      pair.right.style.background = "rgba(244, 67, 54, 0.2)";
+      pair.left.style.borderColor = "#f44336";
+      pair.right.style.borderColor = "#f44336";
+    }
+    results.push({
+      left: pair.left.textContent.replace('🧵 ', '').replace('🌾 ', '').replace('🧺 ', '').replace('🎨 ', ''),
+      right: pair.right.dataset.key,
+      correct: isCorrect
+    });
+  });
+  
+  console.log('การจับคู่:', results); // สำหรับ debug
+  
+  const resultTitle = document.getElementById("resultTitle");
+  const resultText = document.getElementById("resultText");
+  
+  if (correct === 4) {
+    resultTitle.textContent = "🎉 ยอดเยี่ยม!";
+    resultText.textContent = "คุณจับคู่ถูกต้องทั้งหมด! คุณเป็นผู้เชี่ยวชาญด้านผ้าไทย";
+  } else if (correct >= 3) {
+    resultTitle.textContent = "👏 เก่งมาก!";
+    resultText.textContent = `คุณจับคู่ถูก ${correct} ใน 4 ข้อ เก่งมากเลย!`;
+  } else if (correct >= 2) {
+    resultTitle.textContent = "😊 ดีแล้ว!";
+    resultText.textContent = `คุณจับคう่ถูก ${correct} ใน 4 ข้อ ลองใหม่อีกครั้งนะ`;
+  } else {
+    resultTitle.textContent = "💪 พยายามต่อไป!";
+    resultText.textContent = `คุณจับคู่ถูก ${correct} ใน 4 ข้อ อย่าท้อ ลองใหม่อีกครั้ง!`;
+  }
+  
+  resultModal.style.display = "flex";
+  updateStatus();
+}
+
+function resetGame() {
+  // รีเซ็ตตัวแปร
+  selectedLeft = null;
+  matched = [];
+  gameState = 'selecting';
+  
+  // ลบคลาสและรีเซ็ตสีทั้งหมด
+  leftItems.forEach(item => {
+    item.classList.remove("selected", "matched");
+    item.style.background = "";
+    item.style.borderColor = "";
+  });
+  
+  rightItems.forEach(img => {
+    img.classList.remove("matched");
+    img.style.background = "";
+    img.style.borderColor = "";
+  });
+  
+  // ซ่อน modal
+  resultModal.style.display = "none";
+  
+  // อัพเดทสถานะ
+  updateStatus();
+  
+  // ลบเส้น
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+// ปิด modal เมื่อคลิกนอกเนื้อหา
+resultModal.addEventListener('click', (e) => {
+  if (e.target === resultModal) {
+    resultModal.style.display = 'none';
+  }
+});
+
+// เริ่มต้นเกม
+updateStatus();
+</script>
+
+</body>
+</html>

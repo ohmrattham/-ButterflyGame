@@ -1,0 +1,270 @@
+<!-- <!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ภารกิจผีเสื้อ - ด่านที่ 1</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: sans-serif;
+    }
+
+    .page {
+      width: 100%;
+      height: 100vh;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      text-align: center;
+    }
+
+    #homePage {
+      background-image: url('4.png');
+    }
+
+    #gamePage {
+      display: none;
+      background-image: url('bgb.png');
+    }
+
+    #questionText {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      background-color: rgba(255,255,255,0.8);
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    .choice {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .choice-img {
+      width: 100px;
+      height: 100px;
+      border: 4px solid transparent;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+      object-fit: cover;
+    }
+
+    .choice-img:hover {
+      transform: scale(1.05);
+    }
+
+    .choice-img.selected {
+      border-color: #8B4513;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .nav button, #startButton {
+      font-size: 16px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      background-color: #8B4513;
+      color: white;
+      cursor: pointer;
+    }
+
+    #resultPopup {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    #resultBox {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      font-size: 24px;
+      color: #8B4513;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- หน้าเริ่มเกม -->
+  <div class="page" id="homePage">
+    <button id="startButton" onclick="startGame()">เริ่มเกม</button>
+  </div>
+
+  <!-- หน้าคำถาม -->
+  <div class="page" id="gamePage">
+    <div id="questionText">คำถาม</div>
+
+    <div id="choiceButtons" class="choice">
+      <img id="choice0" class="choice-img" onclick="selectAnswer(0)">
+      <img id="choice1" class="choice-img" onclick="selectAnswer(1)">
+      <img id="choice2" class="choice-img" onclick="selectAnswer(2)">
+    </div>
+
+    <div class="nav">
+      <button onclick="prevQuestion()">ย้อนกลับ</button>
+      <button onclick="nextQuestion()">ถัดไป</button>
+    </div>
+  </div>
+
+  <!-- กล่องแสดงคะแนน -->
+  <div id="resultPopup">
+    <div id="resultBox">
+      <span id="resultText">คุณได้ 0 คะแนน</span>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "อาหารประจำชาติไทยคือข้อใด?",
+        choices: ["FoodNoBG/thai.png", "FoodNoBG/laos.png", "FoodNoBG/vietnam.png"],
+        correct: 0
+      },
+      {
+        question: "อาหารประจำชาติลาวคือข้อใด?",
+        choices: ["FoodNoBG/philippines.png", "FoodNoBG/laos.png", "FoodNoBG/cambodia.png"],
+        correct: 1
+      },
+      {
+        question: "อาหารประจำชาติเวียดนามคือข้อใด?",
+        choices: ["FoodNoBG/vietnam.png", "FoodNoBG/indonesia.png", "FoodNoBG/brunei.png"],
+        correct: 0
+      },
+      {
+        question: "อาหารประจำชาติมาเลเซียคือข้อใด?",
+        choices: ["FoodNoBG/myanmar.png", "FoodNoBG/malaysia.png", "FoodNoBG/singapore.png"],
+        correct: 1
+      },
+      {
+        question: "อาหารประจำชาติฟิลิปปินส์คือข้อใด?",
+        choices: ["FoodNoBG/philippines.png", "FoodNoBG/vietnam.png", "FoodNoBG/thai.png"],
+        correct: 0
+      },
+      {
+        question: "อาหารประจำชาติบรูไนคือข้อใด?",
+        choices: ["FoodNoBG/cambodia.png", "FoodNoBG/brunei.png", "FoodNoBG/indonesia.png"],
+        correct: 1
+      },
+      {
+        question: "อาหารประจำชาติเมียนมาร์คือข้อใด?",
+        choices: ["FoodNoBG/myanmar.png", "FoodNoBG/malaysia.png", "FoodNoBG/laos.png"],
+        correct: 0
+      },
+      {
+        question: "อาหารประจำชาติสิงคโปร์คือข้อใด?",
+        choices: ["FoodNoBG/singapore.png", "FoodNoBG/thai.png", "FoodNoBG/indonesia.png"],
+        correct: 0
+      },
+      {
+        question: "อาหารประจำชาติอินโดนีเซียคือข้อใด?",
+        choices: ["FoodNoBG/vietnam.png", "FoodNoBG/indonesia.png", "FoodNoBG/brunei.png"],
+        correct: 1
+      },
+      {
+        question: "อาหารประจำชาติกัมพูชาคือข้อใด?",
+        choices: ["FoodNoBG/laos.png", "FoodNoBG/cambodia.png", "FoodNoBG/malaysia.png"],
+        correct: 1
+      },
+    ];
+
+    let current = 0;
+    let userAnswers = Array(questions.length).fill(null);
+
+    function startGame() {
+      document.getElementById("homePage").style.display = "none";
+      document.getElementById("gamePage").style.display = "flex";
+      updateQuestion();
+    }
+
+    function updateQuestion() {
+      const q = questions[current];
+      document.getElementById("questionText").textContent = q.question;
+      for (let i = 0; i < 3; i++) {
+        const img = document.getElementById("choice" + i);
+        img.src = q.choices[i];
+        img.classList.toggle("selected", userAnswers[current] === i);
+      }
+    }
+
+    function selectAnswer(index) {
+      userAnswers[current] = index;
+      updateSelectionUI();
+    }
+
+    function updateSelectionUI() {
+      for (let i = 0; i < 3; i++) {
+        const img = document.getElementById("choice" + i);
+        img.classList.toggle("selected", userAnswers[current] === i);
+      }
+    }
+
+    function nextQuestion() {
+      if (userAnswers[current] === null) {
+        alert("กรุณาเลือกคำตอบก่อน");
+        return;
+      }
+      if (current < questions.length - 1) {
+        current++;
+        updateQuestion();
+      } else {
+        checkAnswers();
+      }
+    }
+
+    function prevQuestion() {
+      if (current > 0) {
+        current--;
+        updateQuestion();
+      }
+    }
+
+    function checkAnswers() {
+      let score = 0;
+      for (let i = 0; i < questions.length; i++) {
+        if (userAnswers[i] === questions[i].correct) {
+          score += 10;
+        }
+      }
+      document.getElementById("resultText").textContent = `คุณได้ ${score} คะแนน`;
+      document.getElementById("resultPopup").style.display = "flex";
+
+      localStorage.setItem("mission1Score", score);
+      localStorage.setItem("mission1Complete", "true");
+
+      setTimeout(() => {
+        window.location.href = "index.html#mapPage";
+      }, 3000);
+    }
+
+    window.onload = () => {
+      // ยังไม่เริ่มเกมจนกว่าจะกดปุ่ม
+    };
+  </script>
+</body>
+</html> -->
