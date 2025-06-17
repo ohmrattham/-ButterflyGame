@@ -37,7 +37,7 @@
     }
 
     #homePage {
-      
+
       background-image: url('m1.png');
       position: relative;
       width: 100%;
@@ -107,7 +107,7 @@
       transform: translateX(-50%);
     }
 
-     .scorebt-button {
+    .scorebt-button {
       background-color: #f1c40f;
       color: #222;
       position: absolute;
@@ -115,6 +115,7 @@
       left: 50%;
       transform: translateX(-50%);
     }
+
     .input-name {
       position: absolute;
       top: 17%;
@@ -135,7 +136,7 @@
       font-size: 1.5em;
       font-weight: 600;
       color: rgb(255, 255, 255, 0);
-     
+
       text-shadow: 1px 1px 2px rgba(128, 136, 19, 0);
       z-index: 20;
     }
@@ -146,7 +147,7 @@
       bottom: 10%;
       left: 50%;
       transform: translateX(-50%);
-      
+
       color: white;
       padding: 0.7em 0.8em;
       width: 20%;
@@ -211,11 +212,21 @@
       filter: drop-shadow(0 0 10px #474744) drop-shadow(0 0 20px #41413d);
       animation: glowPulse1 3s infinite;
     }
-     @keyframes glowPulse1 {
-      0% { filter: drop-shadow(0 0 5px #16d666) drop-shadow(0 0 10px  #48df29); }
-      50% { filter: drop-shadow(0 0 20px #76c47c) drop-shadow(0 0 30px #9fca7c); }
-      100% { filter: drop-shadow(0 0 5px #8ace6b) drop-shadow(0 0 10px #88d365); }
+
+    @keyframes glowPulse1 {
+      0% {
+        filter: drop-shadow(0 0 5px #16d666) drop-shadow(0 0 10px #48df29);
+      }
+
+      50% {
+        filter: drop-shadow(0 0 20px #76c47c) drop-shadow(0 0 30px #9fca7c);
+      }
+
+      100% {
+        filter: drop-shadow(0 0 5px #8ace6b) drop-shadow(0 0 10px #88d365);
+      }
     }
+
     #check1 {
       top: 57%;
       left: 78%;
@@ -276,32 +287,39 @@
       z-index: 9999;
     }
 
-.popup-content {
-  position: fixed; /* ให้อยู่ตรงกลางจอเสมอ */
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); /* จัดให้อยู่กึ่งกลางแท้จริง */
-  background-color: #ffffff; /* สีพื้นหลังเรียบง่าย */
-  padding: 2rem;
-  border-radius: 12px;
-  font-size: 1rem;
-  text-align: center;
-  width: 90vw;
-  max-width: 400px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* เงาเบาๆ */
-  color: #333333; /* สีข้อความ */
-  z-index: 1000; /* ให้ลอยอยู่หน้าสุด */
-}
-.popup-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0,0,0,0.4); /* พื้นหลังดำโปร่ง */
-  z-index: 999;
-}
+    .popup-content {
+      position: fixed;
+      /* ให้อยู่ตรงกลางจอเสมอ */
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      /* จัดให้อยู่กึ่งกลางแท้จริง */
+      background-color: #ffffff;
+      /* สีพื้นหลังเรียบง่าย */
+      padding: 2rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      text-align: center;
+      width: 90vw;
+      max-width: 400px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      /* เงาเบาๆ */
+      color: #333333;
+      /* สีข้อความ */
+      z-index: 1000;
+      /* ให้ลอยอยู่หน้าสุด */
+    }
 
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.4);
+      /* พื้นหลังดำโปร่ง */
+      z-index: 999;
+    }
   </style>
 </head>
 
@@ -313,9 +331,10 @@
 
   <!-- หน้าแสดงกติกา -->
   <div id="gamePage" class="page">
-    <audio id="voice" src="วิธีการเล่น.mp3"></audio>
-    <button class="next-button" id="nextButton" style="display:none" onclick="goToNamePage()">ถัดไป</button>
+    <audio id="voice" src="วิธีการเล่น.mp3" autoplay></audio>
+    <button class="next-button" id="nextButton" style="display: block;" onclick="goToNamePage()">ถัดไป</button>
   </div>
+
 
   <!-- หน้าใส่ชื่อ -->
   <div id="namePage" class="page">
@@ -335,14 +354,14 @@
     <div class="checkmark" id="check5"></div>
     <div class="checkmark" id="check6"></div>
 
-    
+
 
     <div id="missionCompletePopup" class="popup">
       <div class="popup-overlay"></div>
       <div class="popup-content">
-          <p >🎉 ยินดีด้วย! </h2> 
+        <p>🎉 ยินดีด้วย! </h2>
         <p id="popupMessage"></p>
-        <button  class="scorebt-button " onclick="goToScorePage()">ดูคะแนน</button>
+        <button class="scorebt-button " onclick="goToScorePage()">ดูคะแนน</button>
       </div>
     </div>
 
@@ -377,348 +396,356 @@
     เวลาเหลือ: <span id="timeRemaining">20:00</span>
   </div>
 
-<script>
-  let html5QrCode;
-  let voicePlayed = false;
-  const MAX_PLAY_TIME = 20 * 60 * 1000; // 20 นาที
-  let countdownInterval;
+  <script>
+    let html5QrCode;
+    let voicePlayed = false;
+    const MAX_PLAY_TIME = 20 * 60 * 1000; // 20 นาที
+    let countdownInterval;
 
-  function hideAllPages() {
-    document.querySelectorAll(".page").forEach(p => {
-      p.style.display = "none";
-    });
-  }
-
-  function startCountdown() {
-    const timerEl = document.getElementById("countdownTimer");
-    const timeRemainingEl = document.getElementById("timeRemaining");
-
-    let startTime = localStorage.getItem("gameStartTime");
-    if (!startTime) {
-      startTime = Date.now();
-      localStorage.setItem("gameStartTime", startTime);
+    function hideAllPages() {
+      document.querySelectorAll(".page").forEach(p => {
+        p.style.display = "none";
+      });
     }
 
-    if (timerEl) timerEl.style.display = "block";
+    function startCountdown() {
+      const timerEl = document.getElementById("countdownTimer");
+      const timeRemainingEl = document.getElementById("timeRemaining");
 
-    function updateTimer() {
-      const elapsed = Date.now() - startTime;
-      const remaining = MAX_PLAY_TIME - elapsed;
+      let startTime = localStorage.getItem("gameStartTime");
+      if (!startTime) {
+        startTime = Date.now();
+        localStorage.setItem("gameStartTime", startTime);
+      }
 
-      if (remaining <= 0) {
-        clearInterval(countdownInterval);
-        if (timeRemainingEl) timeRemainingEl.textContent = "00:00";
+      if (timerEl) timerEl.style.display = "block";
+
+      function updateTimer() {
+        const elapsed = Date.now() - startTime;
+        const remaining = MAX_PLAY_TIME - elapsed;
+
+        if (remaining <= 0) {
+          clearInterval(countdownInterval);
+          if (timeRemainingEl) timeRemainingEl.textContent = "00:00";
+          showTimeUpPopup();
+          return;
+        }
+
+        const minutes = Math.floor(remaining / 60000);
+        const seconds = Math.floor((remaining % 60000) / 1000);
+
+        if (timeRemainingEl) {
+          timeRemainingEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+      }
+
+      updateTimer();
+      countdownInterval = setInterval(updateTimer, 1000);
+    }
+
+    function resetCountdown() {
+      clearInterval(countdownInterval);
+      const timerEl = document.getElementById("countdownTimer");
+      if (timerEl) timerEl.style.display = "none";
+      localStorage.removeItem("gameStartTime");
+    }
+
+    function showTimeUpPopup() {
+      alert("หมดเวลาในการเล่นเกมแล้ว!");
+      goToScorePage();
+    }
+
+    function startGame() {
+      const startTime = localStorage.getItem("gameStartTime");
+      if (startTime && (Date.now() - startTime > MAX_PLAY_TIME)) {
         showTimeUpPopup();
         return;
       }
 
-      const minutes = Math.floor(remaining / 60000);
-      const seconds = Math.floor((remaining % 60000) / 1000);
-
-      if (timeRemainingEl) {
-        timeRemainingEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-      }
-    }
-
-    updateTimer();
-    countdownInterval = setInterval(updateTimer, 1000);
-  }
-
-  function resetCountdown() {
-    clearInterval(countdownInterval);
-    const timerEl = document.getElementById("countdownTimer");
-    if (timerEl) timerEl.style.display = "none";
-    localStorage.removeItem("gameStartTime");
-  }
-
-  function showTimeUpPopup() {
-    alert("หมดเวลาในการเล่นเกมแล้ว!");
-    goToScorePage();
-  }
-
-  function startGame() {
-    const startTime = localStorage.getItem("gameStartTime");
-    if (startTime && (Date.now() - startTime > MAX_PLAY_TIME)) {
-      showTimeUpPopup();
-      return;
-    }
-
-    const name = localStorage.getItem("playerName");
-    if (name) {
-      showMapPage(name);
-    } else {
-      hideAllPages();
-      const gamePage = document.getElementById("gamePage");
-      const nextButton = document.getElementById("nextButton");
-      const voice = document.getElementById("voice");
-
-      if (gamePage) gamePage.style.display = "flex";
-      if (nextButton) nextButton.style.display = "none";
-
-      if (!voicePlayed && voice) {
-        voice.play().catch(() => {});
-        voice.onended = () => {
-          if (nextButton) nextButton.style.display = "block";
-          voicePlayed = true;
-        };
-      } else if (nextButton) {
-        nextButton.style.display = "block";
-      }
-    }
-  }
-
-  function goToNamePage() {
-    hideAllPages();
-    const namePage = document.getElementById("namePage");
-    const nameVoice = document.getElementById("nameVoice");
-
-    if (namePage) namePage.style.display = "flex";
-    if (nameVoice) nameVoice.play().catch(() => {});
-
-    showSubmitButtonOnInput();
-  }
-
-  function showSubmitButtonOnInput() {
-    const nicknameInput = document.getElementById("nickname");
-    const schoolInput = document.getElementById("schoolname");
-    const submitBtn = document.querySelector(".submit-button");
-
-    if (!nicknameInput || !schoolInput || !submitBtn) return;
-
-    submitBtn.style.display = "none";
-    nicknameInput.value = "";
-    schoolInput.value = "";
-
-    // ลบ event listener ก่อนหน้านี้ เพื่อไม่ให้เกิดซ้ำซ้อน
-    nicknameInput.oninput = null;
-    schoolInput.oninput = null;
-
-    function checkInputs() {
-      if (nicknameInput.value.trim() && schoolInput.value.trim()) {
-        submitBtn.style.display = "block";
+      const name = localStorage.getItem("playerName");
+      if (name) {
+        showMapPage(name);
       } else {
-        submitBtn.style.display = "none";
+        hideAllPages();
+        const gamePage = document.getElementById("gamePage");
+        const nextButton = document.getElementById("nextButton");
+        const voice = document.getElementById("voice");
+
+        if (gamePage) gamePage.style.display = "flex";
+        if (nextButton) nextButton.style.display = "none";
+
+        if (gamePage) gamePage.style.display = "flex";
+        if (nextButton) nextButton.style.display = "block"; // แสดงปุ่มทันที
+
+        if (!voicePlayed && voice) {
+          voice.play().catch(() => { });
+          voicePlayed = true;
+        }
+
       }
     }
 
-    nicknameInput.addEventListener("input", checkInputs);
-    schoolInput.addEventListener("input", checkInputs);
-  }
-
-  function submitName() {
-    const nicknameInput = document.getElementById("nickname");
-    const schoolInput = document.getElementById("schoolname");
-
-    if (!nicknameInput || !schoolInput) return;
-
-    const nickname = nicknameInput.value.trim();
-    const school = schoolInput.value.trim();
-
-    localStorage.setItem("nickname", nickname);
-    localStorage.setItem("school", school);
-    localStorage.setItem("playerName", nickname);
-
-    fetch("https://script.google.com/macros/s/AKfycbzKkFE9xzj4dzR3KvM3Yyn7KgjXVw-EFUPbvZ0gAuw-gBr5Bv8QjO6jZXVVPpDK0bHyLA/exec", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nickname, school })
-    }).then(() => {
-      showMapPage(nickname);
-    }).catch(() => {
-      showMapPage(nickname);
-    });
-  }
-
-  function showMapPage(name) {
-    hideAllPages();
-
-    const mapPage = document.getElementById("mapPage");
-    const cameraBtn = document.getElementById("cameraBtn");
-    const nicknameDisplay = document.getElementById("nicknameDisplay");
-
-    if (mapPage) mapPage.style.display = "flex";
-    if (cameraBtn) cameraBtn.style.display = "block";
-    if (nicknameDisplay) nicknameDisplay.textContent = name;
-
-    renderCheckmarks();
-    checkCompletedMissions();
-    showTotalScore();
-
-    startCountdown(); // ⏱ เริ่มนับเวลาถอยหลังที่นี่
-
-    const school = localStorage.getItem("school") || "";
-
-    fetch("https://script.google.com/macros/s/AKfycbzKkFE9xzj4dzR3KvM3Yyn7KgjXVw-EFUPbvZ0gAuw-gBr5Bv8QjO6jZXVVPpDK0bHyLA/exec", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nickname: name, school })
-    }).catch(() => {});
-  }
-
-  function renderCheckmarks() {
-    const missionStatus = JSON.parse(localStorage.getItem("missionStatus") || "{}");
-    for (let i = 1; i <= 6; i++) {
-      const el = document.getElementById("check" + i);
-      if (el) {
-        el.style.display = missionStatus["mission" + i] ? "block" : "none";
+    function goToNamePage() {
+      // หยุดเสียงกติกา
+      const voice = document.getElementById("voice");
+      if (voice) {
+        voice.pause();
+        voice.currentTime = 0;
       }
+
+      hideAllPages();
+
+      const namePage = document.getElementById("namePage");
+      const nameVoice = document.getElementById("nameVoice");
+
+      if (namePage) namePage.style.display = "flex";
+      if (nameVoice) nameVoice.play().catch(() => { });
+
+      showSubmitButtonOnInput();
     }
-  }
 
-  function openScanner() {
-    try { document.getElementById("voice").pause(); } catch {}
-    try { document.getElementById("nameVoice").pause(); } catch {}
 
-    const scannerEl = document.getElementById("scanner");
-    if (scannerEl) scannerEl.style.display = "flex";
+    function showSubmitButtonOnInput() {
+      const nicknameInput = document.getElementById("nickname");
+      const schoolInput = document.getElementById("schoolname");
+      const submitBtn = document.querySelector(".submit-button");
 
-    html5QrCode = new Html5Qrcode("reader");
-    html5QrCode.start(
-      { facingMode: "environment" },
-      { fps: 10, qrbox: 250 },
-      qrSuccess
-    ).catch(() => {
-      alert("ไม่สามารถเปิดกล้องได้");
-      closeScanner();
-    });
-  }
+      if (!nicknameInput || !schoolInput || !submitBtn) return;
 
-  function closeScanner(event) {
-    if (!event || event.target.id === "scanner") stopScanner();
-  }
+      submitBtn.style.display = "none";
+      nicknameInput.value = "";
+      schoolInput.value = "";
 
-  function stopScanner() {
-    if (html5QrCode) {
-      html5QrCode.stop().then(() => {
-        html5QrCode.clear();
-        html5QrCode = null;
-        const scannerEl = document.getElementById("scanner");
-        if (scannerEl) scannerEl.style.display = "none";
+      // ลบ event listener ก่อนหน้านี้ เพื่อไม่ให้เกิดซ้ำซ้อน
+      nicknameInput.oninput = null;
+      schoolInput.oninput = null;
+
+      function checkInputs() {
+        if (nicknameInput.value.trim() && schoolInput.value.trim()) {
+          submitBtn.style.display = "block";
+        } else {
+          submitBtn.style.display = "none";
+        }
+      }
+
+      nicknameInput.addEventListener("input", checkInputs);
+      schoolInput.addEventListener("input", checkInputs);
+    }
+
+    function submitName() {
+      const nicknameInput = document.getElementById("nickname");
+      const schoolInput = document.getElementById("schoolname");
+
+      if (!nicknameInput || !schoolInput) return;
+
+      const nickname = nicknameInput.value.trim();
+      const school = schoolInput.value.trim();
+
+      localStorage.setItem("nickname", nickname);
+      localStorage.setItem("school", school);
+      localStorage.setItem("playerName", nickname);
+
+      fetch("https://script.google.com/macros/s/AKfycbzKkFE9xzj4dzR3KvM3Yyn7KgjXVw-EFUPbvZ0gAuw-gBr5Bv8QjO6jZXVVPpDK0bHyLA/exec", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nickname, school })
+      }).then(() => {
+        showMapPage(nickname);
+      }).catch(() => {
+        showMapPage(nickname);
       });
-    } else {
-      const scannerEl = document.getElementById("scanner");
-      if (scannerEl) scannerEl.style.display = "none";
     }
-  }
 
-  function qrSuccess(decodedText) {
-    stopScanner();
-    const match = decodedText.match(/^mission([1-6])$/);
-    if (match) {
-      const missionId = match[1];
-      const missionKey = "mission" + missionId;
+    function showMapPage(name) {
+      hideAllPages();
 
-      const missionStatus = JSON.parse(localStorage.getItem("missionStatus") || "{}");
-      if (missionStatus[missionKey]) {
-        alert("คุณทำภารกิจนี้ไปแล้ว");
-        return;
-      }
+      const mapPage = document.getElementById("mapPage");
+      const cameraBtn = document.getElementById("cameraBtn");
+      const nicknameDisplay = document.getElementById("nicknameDisplay");
 
-      missionStatus[missionKey] = true;
-      localStorage.setItem("missionStatus", JSON.stringify(missionStatus));
+      if (mapPage) mapPage.style.display = "flex";
+      if (cameraBtn) cameraBtn.style.display = "block";
+      if (nicknameDisplay) nicknameDisplay.textContent = name;
+
       renderCheckmarks();
       checkCompletedMissions();
+      showTotalScore();
 
-      window.location.href = `${missionId}.html`;
-    } else {
-      alert("QR Code นี้ไม่ถูกต้อง");
-    }
-  }
+      startCountdown(); // ⏱ เริ่มนับเวลาถอยหลังที่นี่
 
- function checkCompletedMissions() {
-  const missionStatus = JSON.parse(localStorage.getItem("missionStatus") || "{}");
-  let completedCount = Object.values(missionStatus).filter(v => v).length;
+      const school = localStorage.getItem("school") || "";
 
-  if (completedCount === 6) {
-    // ✅ ถ้ายังไม่เคยบันทึก finish time
-    if (!localStorage.getItem("missionFinishTime")) {
-      const startTime = parseInt(localStorage.getItem("gameStartTime") || "0", 10);
-      const finishTime = Date.now();
-      const timeUsedMs = finishTime - startTime;
-
-      localStorage.setItem("missionFinishTime", finishTime.toString());
-      localStorage.setItem("missionTimeUsed", timeUsedMs.toString());
+      fetch("https://script.google.com/macros/s/AKfycbzKkFE9xzj4dzR3KvM3Yyn7KgjXVw-EFUPbvZ0gAuw-gBr5Bv8QjO6jZXVVPpDK0bHyLA/exec", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nickname: name, school })
+      }).catch(() => { });
     }
 
-    showMissionCompletePopup();
-  }
-}
-
-
-  function showMissionCompletePopup() {
-  const playerName = localStorage.getItem("playerName") || "";
-  const popup = document.getElementById("missionCompletePopup");
-  const popupMessage = document.getElementById("popupMessage");
-
-  const timeUsed = parseInt(localStorage.getItem("missionTimeUsed") || "0", 10);
-  const minutes = Math.floor(timeUsed / 60000);
-  const seconds = Math.floor((timeUsed % 60000) / 1000);
-  const formattedTime = `${minutes} นาที ${seconds} วินาที`;
-
-  if (popupMessage) {
-    popupMessage.innerText = `คุณ ${playerName} ทำครบทุกด่านแล้ว!\nใช้เวลา: ${formattedTime}`;
-  }
-  if (popup) popup.style.display = "flex";
-}
-
-function calculateTotalScore() {
-  const missionScores = { mission1: 3, mission2: 3, mission3: 3, mission4: 3, mission5: 4, mission6: 4 };
-  const missionStatus = JSON.parse(localStorage.getItem("missionStatus") || "{}");
-
-  let total = 0;
-  for (const mission in missionScores) {
-    if (missionStatus[mission]) total += missionScores[mission];
-  }
-  return total;
-}
-
-
-  function closePopup() {
-    const popup = document.getElementById("missionCompletePopup");
-    if (popup) popup.style.display = "none";
-  }
-
-  function resetGame() {
-    if (confirm("ต้องการรีเซ็ตสถานะภารกิจ ชื่อเล่น และคะแนนทั้งหมดหรือไม่?")) {
-      localStorage.clear();
-      resetCountdown();
-      location.reload();
+    function renderCheckmarks() {
+      const missionStatus = JSON.parse(localStorage.getItem("missionStatus") || "{}");
+      for (let i = 1; i <= 6; i++) {
+        const el = document.getElementById("check" + i);
+        if (el) {
+          el.style.display = missionStatus["mission" + i] ? "block" : "none";
+        }
+      }
     }
-  }
 
-  function showTotalScore() {
-    const missionScores = { mission1: 3, mission2: 3, mission3: 3, mission4: 3, mission5: 4, mission6: 4 };
-    const missionStatus = JSON.parse(localStorage.getItem("missionStatus") || "{}");
+    function openScanner() {
+      try { document.getElementById("voice").pause(); } catch { }
+      try { document.getElementById("nameVoice").pause(); } catch { }
 
-    let total = 0;
-    for (const mission in missionScores) {
-      if (missionStatus[mission]) total += missionScores[mission];
+      const scannerEl = document.getElementById("scanner");
+      if (scannerEl) scannerEl.style.display = "flex";
+
+      html5QrCode = new Html5Qrcode("reader");
+      html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        qrSuccess
+      ).catch(() => {
+        alert("ไม่สามารถเปิดกล้องได้");
+        closeScanner();
+      });
     }
-    const totalScoreEl = document.getElementById("totalScore");
-    if (totalScoreEl) totalScoreEl.textContent = total;
-  }
 
-  function goToScorePage() {
-    window.location.href = "score.html";
-  }
+    function closeScanner(event) {
+      if (!event || event.target.id === "scanner") stopScanner();
+    }
 
-  // ⏱ เริ่มต้นหน้า index
- window.onload = () => {
-  const shouldReset = localStorage.getItem("resetOnLoad") === "true";
+    function stopScanner() {
+      if (html5QrCode) {
+        html5QrCode.stop().then(() => {
+          html5QrCode.clear();
+          html5QrCode = null;
+          const scannerEl = document.getElementById("scanner");
+          if (scannerEl) scannerEl.style.display = "none";
+        });
+      } else {
+        const scannerEl = document.getElementById("scanner");
+        if (scannerEl) scannerEl.style.display = "none";
+      }
+    }
 
-  if (shouldReset) {
-    // รีเซ็ตสถานะทั้งหมด
-    localStorage.clear();
-    resetCountdown();
-    voicePlayed = false; // ถ้ามีตัวแปรนี้
+    function qrSuccess(decodedText) {
+      stopScanner();
+      const match = decodedText.match(/^mission([1-6])$/);
+      if (match) {
+        const missionId = match[1];
+        const missionKey = "mission" + missionId;
 
-    // ลบ flag หลังรีเซ็ตแล้ว
-    localStorage.removeItem("resetOnLoad");
-  }
+        const missionStatus = JSON.parse(localStorage.getItem("missionStatus") || "{}");
+        if (missionStatus[missionKey]) {
+          alert("คุณทำภารกิจนี้ไปแล้ว");
+          return;
+        }
 
-  hideAllPages();
-  const homePage = document.getElementById("homePage");
-  if (homePage) homePage.style.display = "flex";
-};
+        missionStatus[missionKey] = true;
+        localStorage.setItem("missionStatus", JSON.stringify(missionStatus));
+        renderCheckmarks();
+        checkCompletedMissions();
 
-</script>
+        window.location.href = `${missionId}.html`;
+      } else {
+        alert("QR Code นี้ไม่ถูกต้อง");
+      }
+    }
+
+    function checkCompletedMissions() {
+      const missionStatus = JSON.parse(localStorage.getItem("missionStatus") || "{}");
+      let completedCount = Object.values(missionStatus).filter(v => v).length;
+
+      if (completedCount === 6) {
+        // ✅ ถ้ายังไม่เคยบันทึก finish time
+        if (!localStorage.getItem("missionFinishTime")) {
+          const startTime = parseInt(localStorage.getItem("gameStartTime") || "0", 10);
+          const finishTime = Date.now();
+          const timeUsedMs = finishTime - startTime;
+
+          localStorage.setItem("missionFinishTime", finishTime.toString());
+          localStorage.setItem("missionTimeUsed", timeUsedMs.toString());
+        }
+
+        showMissionCompletePopup();
+      }
+    }
+
+
+    function showMissionCompletePopup() {
+      const playerName = localStorage.getItem("playerName") || "";
+      const popup = document.getElementById("missionCompletePopup");
+      const popupMessage = document.getElementById("popupMessage");
+
+      const timeUsed = parseInt(localStorage.getItem("missionTimeUsed") || "0", 10);
+      const minutes = Math.floor(timeUsed / 60000);
+      const seconds = Math.floor((timeUsed % 60000) / 1000);
+      const formattedTime = `${minutes} นาที ${seconds} วินาที`;
+
+      if (popupMessage) {
+        popupMessage.innerText = `คุณ ${playerName} ทำครบทุกด่านแล้ว!\nใช้เวลา: ${formattedTime}`;
+      }
+      if (popup) popup.style.display = "flex";
+    }
+
+    function calculateTotalScore() {
+      const missionScores = { mission1: 3, mission2: 3, mission3: 3, mission4: 3, mission5: 4, mission6: 4 };
+      const missionStatus = JSON.parse(localStorage.getItem("missionStatus") || "{}");
+
+      let total = 0;
+      for (const mission in missionScores) {
+        if (missionStatus[mission]) total += missionScores[mission];
+      }
+      return total;
+    }
+
+
+    function closePopup() {
+      const popup = document.getElementById("missionCompletePopup");
+      if (popup) popup.style.display = "none";
+    }
+
+    function resetGame() {
+      if (confirm("ต้องการรีเซ็ตสถานะภารกิจ ชื่อเล่น และคะแนนทั้งหมดหรือไม่?")) {
+        localStorage.clear();
+        resetCountdown();
+        location.reload();
+      }
+    }
+
+    function showTotalScore() {
+      const missionScores = { mission1: 3, mission2: 3, mission3: 3, mission4: 3, mission5: 4, mission6: 4 };
+      const missionStatus = JSON.parse(localStorage.getItem("missionStatus") || "{}");
+
+      let total = 0;
+      for (const mission in missionScores) {
+        if (missionStatus[mission]) total += missionScores[mission];
+      }
+      const totalScoreEl = document.getElementById("totalScore");
+      if (totalScoreEl) totalScoreEl.textContent = total;
+    }
+
+    function goToScorePage() {
+      window.location.href = "score.html";
+    }
+
+    // ⏱ เริ่มต้นหน้า index
+    window.onload = () => {
+      const shouldReset = localStorage.getItem("resetOnLoad") === "true";
+
+      if (shouldReset) {
+        // รีเซ็ตสถานะทั้งหมด
+        localStorage.clear();
+        resetCountdown();
+        voicePlayed = false; // ถ้ามีตัวแปรนี้
+
+        // ลบ flag หลังรีเซ็ตแล้ว
+        localStorage.removeItem("resetOnLoad");
+      }
+
+      hideAllPages();
+      const homePage = document.getElementById("homePage");
+      if (homePage) homePage.style.display = "flex";
+    };
+
+  </script>

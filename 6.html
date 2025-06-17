@@ -39,19 +39,20 @@
       z-index: 0;
     }
 
-   #startButton {
-  position: absolute;
-  top: 25%; /* เดิมคือ 90% */
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 16px 40px;
-  font-size: 24px;
-  background-color: #ffcc00;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  z-index: 2;
-}
+    #startButton {
+      position: absolute;
+      top: 25%;
+      /* เดิมคือ 90% */
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 16px 40px;
+      font-size: 24px;
+      background-color: #ffcc00;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      z-index: 2;
+    }
 
 
     .butterfly {
@@ -353,7 +354,7 @@
       background: #ffffcc;
       padding: 10px 20px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0);
       z-index: 4;
       font-weight: 600;
       border: 2px solid rgba(255, 255, 255, 0.5);
@@ -399,12 +400,12 @@
       <div id="overlayContainer"></div>
       <button id="quizButton">📋 ทำแบบสอบถาม</button>
       <!-- <div id="scoreDisplay">คะแนน: 0</div> -->
-      
+
       <div id="formContainer">
         <div class="form-header">
           <h2>แบบประเมินการเข้าเยี่ยมชม</h2>
         </div>
-        
+
         <div class="form-content">
           <!-- Email Section -->
           <div class="form-section">
@@ -435,7 +436,7 @@
           <form id="surveyForm">
             <div class="form-section">
               <div class="section-title">แบบประเมินความพึงพอใจ</div>
-              
+
               <div class="questions-grid">
                 <div class="question-item">
                   <label for="q1">1. เนื้อหาภายในอาคาร:</label>
@@ -526,10 +527,11 @@
             <!-- Additional Feedback Section -->
             <div class="form-section">
               <div class="section-title">ความคิดเห็นเพิ่มเติม</div>
-              
+
               <div class="form-group">
                 <label for="suggestion">ข้อเสนอแนะเพิ่มเติม:</label>
-                <textarea name="suggestion" id="suggestion" rows="4" placeholder="หากมีข้อเสนอแนะเพิ่มเติม กรุณาระบุ..."></textarea>
+                <textarea name="suggestion" id="suggestion" rows="4"
+                  placeholder="หากมีข้อเสนอแนะเพิ่มเติม กรุณาระบุ..."></textarea>
               </div>
 
               <div class="form-group">
@@ -591,6 +593,21 @@
 
     // ฟังก์ชันส่งข้อมูลไป Google Apps Script
     async function submitForm() {
+      // เก็บข้อมูลคำตอบแบบสอบถาม
+      const form = document.getElementById("surveyForm");
+
+      // คำนวณคะแนนรวม
+      let totalScore = 0;
+      for (let i = 1; i <= 7; i++) {
+        const val = parseInt(form.elements["q" + i].value);
+        totalScore += val;
+      }
+      // ปรับคะแนนรวมจากเต็ม 35 เหลือเต็ม 10
+      const adjustedScore = Math.round((totalScore / 35) * 10);
+      localStorage.setItem("mission6Score", adjustedScore);
+      localStorage.setItem("mission6Complete", "true");
+
+
       // ตรวจสอบอีเมล
       const email = document.getElementById("email").value.trim();
       if (!email) {
@@ -605,8 +622,7 @@
         return;
       }
 
-      // เก็บข้อมูลคำตอบแบบสอบถาม
-      const form = document.getElementById("surveyForm");
+
 
       // ตรวจสอบว่าแบบสอบถามครบทุกข้อ
       for (const elem of form.elements) {
@@ -666,6 +682,12 @@
         alert("เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาตรวจสอบอินเทอร์เน็ตและลองใหม่อีกครั้ง");
         console.error("Fetch error:", error);
       }
+
+      
+
+      setTimeout(() => {
+        window.location.href = "index.html#map";
+      }, 4000);
     }
   </script>
 </body>
