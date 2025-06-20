@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ภารกิจวัฒนธรรมอีสาน - ด่านที่ 2</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background-image: url('bgb.png');
+    }
+
+    .page {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      margin: auto;
+      aspect-ratio: 1080 / 1920;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      overflow: hidden;
+    }
+
+    .question-container {
+      position: absolute;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 85%;
+      background-color: #ffc869;
+      border-radius: 20px;
+      padding: 16px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      color: #000;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .answer-block {
+      font-size: 18px;
+      position: absolute;
+      width: 70%;
+      height: 38px;
+      background-color: #f9d7a5;
+      border-radius: 20px;
+      text-align: center;
+      line-height: 38px;
+      font-weight: bold;
+      border: 2px solid #8B4513;
+      cursor: pointer;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .answer-block.selected {
+      background-color: #8B4513;
+      color: white;
+    }
+
+    #choice1 { top: 150px; }
+    #choice2 { top: 200px; }
+    #choice3 { top: 250px; }
+    #choice4 { top: 300px; }
+
+    .button-confirm,
+    .button-back {
+      position: absolute;
+      width: 120px;
+      height: 40px;
+      border: none;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 18px;
+      cursor: pointer;
+      color: white;
+    }
+
+    .button-confirm {
+      background-color: #009966;
+      left: 25%;
+      top: 390px;
+    }
+
+    .button-back {
+      background-color: #cc3333;
+      right: 25%;
+      top: 390px;
+    }
+
+    #welcomePage {
+      background-image: url('b1.png');
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    #welcomePage h1 {
+      color: white;
+      text-shadow: 2px 2px 4px #000;
+    }
+
+    #startBtn {
+      position: absolute;
+      top: 75%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #8B4513;
+      color: white;
+      padding: 12px 64px;
+      font-size: 20px;
+      font-weight: bold;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+    }
+
+    #fireworksCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1000;
+    }
+  </style>
+</head>
+
+<body>
+  <audio id="celebrationSound" src="celebration.mp3"></audio>
+
+  <!-- Welcome Page -->
+  <div id="welcomePage" class="page">
+    <button id="startBtn" onclick="startMission()">เริ่มภารกิจ</button>
+  </div>
+
+  <!-- Question Page -->
+  <div id="questionPage" class="page" style="display: none;">
+    <div id="questionText" class="question-container"></div>
+
+    <div class="answer-block" id="choice1" onclick="selectAnswer(1)"></div>
+    <div class="answer-block" id="choice2" onclick="selectAnswer(2)"></div>
+    <div class="answer-block" id="choice3" onclick="selectAnswer(3)"></div>
+    <div class="answer-block" id="choice4" onclick="selectAnswer(4)"></div>
+
+    <button class="button-back" onclick="prevQuestion()">ย้อนกลับ</button>
+    <button class="button-confirm" onclick="nextQuestion()">ถัดไป</button>
+  </div>
+
+  <canvas id="fireworksCanvas"></canvas>
+
+  <script>
+    const bgImages = ["bq.png", "bq.png", "bq.png", "bq.png"];
+    const correctAnswers = [3, 3, 2, 3];
+    const questionTexts = [
+      "ชาติพันธุ์ในอีสานมีทั้งหมดกี่ชาติพันธุ์?",
+      "ปราสาทหินในภาคอีสาน เช่น พนมรุ้ง หรือพิมาย สะท้อนอารยธรรมของอาณาจักรใด?",
+      "จังหวัดใดในภาคอีสานที่ค้นพบฟอสซิลไดโนเสาร์จำนวนมาก และมีพิพิธภัณฑ์ไดโนเสาร์ชื่อดัง?",
+      "กลุ่มชาติพันธุ์ในอีสานส่วนใหญ่จัดอยู่ในตระกูลภาษาใด?"
+    ];
+    const choiceTexts = [
+      ["14 ชาติพันธุ์", "6 ชาติพันธุ์", "17 ชาติพันธุ์", "10 ชาติพันธุ์"],
+      ["อาณาจักรล้านนา", "อาณาจักรอยุธยา", "อาณาจักรขอม", "อาณาจักรสุโขทัย"],
+      ["มุกดาหาร", "กาฬสินธ์ู", "ร้อยเอ็ด", "สุรินทร์"],
+      ["ภาษามอญ-เขมร", "ภาษาจีน-ทิเบต", "ภาษาตระกูลไท-กะได", "ภาษาตระกูลออสโตรเอเชียติก"]
+    ];
+
+    let current = 0;
+    let userAnswers = new Array(bgImages.length).fill(null);
+    let score = 0;
+
+    function startMission() {
+      document.getElementById("welcomePage").style.display = "none";
+      document.getElementById("questionPage").style.display = "block";
+      updateQuestion();
+    }
+
+    function selectAnswer(num) {
+      userAnswers[current] = num;
+      updateUI();
+    }
+
+    function updateUI() {
+      for (let i = 1; i <= 4; i++) {
+        const btn = document.getElementById("choice" + i);
+        btn.classList.remove("selected");
+        btn.textContent = choiceTexts[current][i - 1];
+      }
+      document.getElementById("questionText").textContent = questionTexts[current];
+
+      if (userAnswers[current]) {
+        document.getElementById("choice" + userAnswers[current]).classList.add("selected");
+      }
+    }
+
+    function updateQuestion() {
+      document.getElementById("questionPage").style.backgroundImage = `url('${bgImages[current]}')`;
+      updateUI();
+    }
+
+    function nextQuestion() {
+      if (userAnswers[current] === null) {
+        alert("กรุณาเลือกคำตอบก่อน");
+        return;
+      }
+      if (current < bgImages.length - 1) {
+        current++;
+        updateQuestion();
+      } else {
+        checkAnswers();
+      }
+    }
+
+    function prevQuestion() {
+      if (current > 0) {
+        current--;
+        updateQuestion();
+      }
+    }
+
+    function checkAnswers() {
+      score = 0;
+      for (let i = 0; i < correctAnswers.length; i++) {
+        if (userAnswers[i] === correctAnswers[i]) {
+          score += 5;
+        }
+      }
+      triggerCelebration();
+      alert(`คุณได้ ${score} คะแนนจากทั้งหมด 20 คะแนน`);
+      setTimeout(() => {
+        window.location.href = "index.html#mapPage";
+      }, 4000);
+    }
+
+    function triggerCelebration() {
+      const canvas = document.getElementById("fireworksCanvas");
+      const ctx = canvas.getContext("2d");
+      const sound = document.getElementById("celebrationSound");
+      sound.play().catch(() => {});
+
+      let particles = [];
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      for (let i = 0; i < 80; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          radius: Math.random() * 3 + 2,
+          color: `hsl(${Math.random() * 360}, 100%, 60%)`,
+          speedX: (Math.random() - 0.5) * 10,
+          speedY: (Math.random() - 0.5) * 10,
+          alpha: 1
+        });
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          ctx.globalAlpha = p.alpha;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.fill();
+
+          p.x += p.speedX;
+          p.y += p.speedY;
+          p.alpha -= 0.02;
+        });
+        particles = particles.filter(p => p.alpha > 0);
+        if (particles.length > 0) requestAnimationFrame(animate);
+      }
+
+      animate();
+    }
+  </script>
+</body>
+
+</html>
